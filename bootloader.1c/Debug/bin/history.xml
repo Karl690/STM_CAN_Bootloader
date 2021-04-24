@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="4.3.2 -Os -nostartfiles -Map=bootloader.1c.map -mcpu=cortex-m3 -mthumb -LC:\2013 hyrel projects\bootloader.1c --gc-sections -TC:\2013 hyrel projects\bootloader.1c/link.ld -g">
+      <target file="bootloader.1c.elf" lastModified="141f7420a20">
+         <source file="..\obj\hothead_adc.o" lastModified="141f741fd64"/>
+         <source file="..\obj\startup_stm32f10x_ld.o" lastModified="141f741fda0"/>
+         <source file="..\obj\stm32f10x_tim.o" lastModified="141f741ff1c"/>
+         <source file="..\obj\core_cm3.o" lastModified="141f741ff6c"/>
+         <source file="..\obj\system_stm32f10x.o" lastModified="141f741ffbc"/>
+         <source file="..\obj\stm32f10x_can.o" lastModified="141f742008e"/>
+         <source file="..\obj\stm32f10x_gpio.o" lastModified="141f7420106"/>
+         <source file="..\obj\main.o" lastModified="141f74201ec"/>
+         <source file="..\obj\hothead_hist.o" lastModified="141f7420278"/>
+         <source file="..\obj\stm32f10x_rcc.o" lastModified="141f7420304"/>
+         <source file="..\obj\stm32f10x_adc.o" lastModified="141f74203a4"/>
+         <source file="..\obj\hyrel_can.o" lastModified="141f7420480"/>
+         <source file="..\obj\hothead_tables.o" lastModified="141f74204e4"/>
+         <source file="..\obj\hothead_gpio.o" lastModified="141f7420584"/>
+         <source file="..\obj\hothead_hw_init.o" lastModified="141f7420624"/>
+         <source file="..\obj\stm32f10x_flash.o" lastModified="141f74206ce"/>
+         <source file="..\obj\hothead_can.o" lastModified="141f742076e"/>
+         <source file="..\obj\misc.o" lastModified="141f74207be"/>
+      </target>
+   </processor>
+</history>

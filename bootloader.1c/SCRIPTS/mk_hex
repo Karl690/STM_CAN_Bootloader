@@ -1,0 +1,1 @@
+cat Debug/bin/*.hex | sed 's/://' | sed 's/......../& /g' | sed 's/^/:/' | sed 's/00 / /' | sed 's/^.../& /' > hex ; vi hex

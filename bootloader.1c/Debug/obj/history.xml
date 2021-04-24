@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="arm-none-eabi-gcc noversion nomachine -mcpu=cortex-m3 -mthumb -Wall -ffunction-sections -Os -g -c -DSTM32F10X_LD -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__ -DSTM32F103C6 -I. -Icmsis_boot -Icmsis -Istm_lib -Istm_lib\inc -Icommon\inc -Iinc">
+      <target file="hothead_can.o" lastModified="141f742076e">
+         <source file="..\..\src\hothead_can.c" lastModified="13fd49b8790"/>
+      </target>
+      <target file="stm32f10x_rcc.o" lastModified="141f7420304">
+         <source file="..\..\stm_lib\src\stm32f10x_rcc.c" lastModified="13d0ec4bfc0"/>
+      </target>
+      <target file="hothead_adc.o" lastModified="141f741fd64">
+         <source file="..\..\src\hothead_adc.c" lastModified="13facfe2058"/>
+      </target>
+      <target file="core_cm3.o" lastModified="141f741ff6c">
+         <source file="..\..\cmsis\core_cm3.c" lastModified="13e7bfb7830"/>
+      </target>
+      <target file="misc.o" lastModified="141f74207be">
+         <source file="..\..\stm_lib\src\misc.c" lastModified="13d0ec4bfc0"/>
+      </target>
+      <target file="startup_stm32f10x_ld.o" lastModified="141f741fda0">
+         <source file="..\..\cmsis_boot\startup\startup_stm32f10x_ld.c" lastModified="13d21260a70"/>
+      </target>
+      <target file="hothead_tables.o" lastModified="141f74204e4">
+         <source file="..\..\src\hothead_tables.c" lastModified="13fb05a2080"/>
+      </target>
+      <target file="hothead_hw_init.o" lastModified="141f7420624">
+         <source file="..\..\src\hothead_hw_init.c" lastModified="13fcea5f4b0"/>
+      </target>
+      <target file="stm32f10x_flash.o" lastModified="141f74206ce">
+         <source file="..\..\stm_lib\src\stm32f10x_flash.c" lastModified="13d21260a70"/>
+      </target>
+      <target file="hyrel_can.o" lastModified="141f7420480">
+         <source file="..\..\common\src\hyrel_can.c" lastModified="13fce3fc488"/>
+      </target>
+      <target file="hothead_gpio.o" lastModified="141f7420584">
+         <source file="..\..\src\hothead_gpio.c" lastModified="13fcf531500"/>
+      </target>
+      <target file="hothead_hist.o" lastModified="141f7420278">
+         <source file="..\..\src\hothead_hist.c" lastModified="13fa175ac38"/>
+      </target>
+      <target file="stm32f10x_gpio.o" lastModified="141f7420106">
+         <source file="..\..\stm_lib\src\stm32f10x_gpio.c" lastModified="13cb297b400"/>
+      </target>
+      <target file="stm32f10x_can.o" lastModified="141f742008e">
+         <source file="..\..\stm_lib\src\stm32f10x_can.c" lastModified="13cb297b400"/>
+      </target>
+      <target file="system_stm32f10x.o" lastModified="141f741ffbc">
+         <source file="..\..\cmsis_boot\system_stm32f10x.c" lastModified="13d21260a70"/>
+      </target>
+      <target file="stm32f10x_tim.o" lastModified="141f741ff1c">
+         <source file="..\..\stm_lib\src\stm32f10x_tim.c" lastModified="13d0ec4bfc0"/>
+      </target>
+      <target file="stm32f10x_adc.o" lastModified="141f74203a4">
+         <source file="..\..\stm_lib\src\stm32f10x_adc.c" lastModified="13cb05954f0"/>
+      </target>
+      <target file="main.o" lastModified="141f74201ec">
+         <source file="..\..\main.c" lastModified="13fd4ab3348"/>
+      </target>
+   </processor>
+</history>

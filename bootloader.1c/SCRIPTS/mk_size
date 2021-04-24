@@ -1,0 +1,6 @@
+cat Debug/bin/*.txt | grep ^0 > tmp
+tail -1 Debug/bin/*.txt > tmp1
+cat tmp tmp1 | awk -f SCRIPTS/size.awk | sort -r > size
+rm tmp tmp1
+cat size | awk '{s+=$1}END{print s}' >> size
+vi size
