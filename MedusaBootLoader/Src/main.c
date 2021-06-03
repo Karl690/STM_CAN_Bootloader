@@ -17,21 +17,12 @@
  ******************************************************************************
  */
 
-#include <string.h>
 #include <stdint.h>
 #include "stm32f10x.h"
-#include "stm32f10x_adc.h"
-#include "stm32f10x_gpio.h"
-#include "stm32f10x_can.h"
-#include "stm32f10x_rcc.h"
-#include "stm32f10x_flash.h"
-#include "misc.h"
-#include "main.h"
-#if !defined(__SOFT_FP__) && defined(__ARM_FP)
-  #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
-#endif
 
-static __IO uint32_t usTicks=0;
+
+#include "main.h"
+static volatile uint32_t usTicks=0;
 uint32_t 	i, result, temp, address, length;
 uint32_t 	CanTrasmitMsgWaitCounter = 0;
 uint32_t 	AdcReadWaitCounter = MAX_COUNTDOWN;
@@ -41,11 +32,6 @@ uint8_t 	status = 0;
 uint8_t 	CurrentHeadCanAddress = POSITION_UNPLUGGED; //current head position, which effects the working can bus address of packets sent and received
 uint16_t	HeartbeatCounter = 0x1fff;
 
-
-//Declare the Can Interface's variables
-CAN_InitTypeDef 		CAN_InitStructure;
-CAN_FilterInitTypeDef 	CAN_FilterInitStructure;
-NVIC_InitTypeDef 		NVIC_InitStructure;
 CanRxMsg 				CanRxMessage;
 CanTxMsg 				CanTxMessage;
 uint16_t				CanTxLedStatus = 0x0;
@@ -69,8 +55,8 @@ uint32_t				DownloadApplicationWaitCounter = 0xffff;
 uint32_t				DownloadApplicationAddress = 0;
 uint8_t 				IsUploadApplication = 0;
 
-AppFunction JumpToApplication;
-uint32_t jumpAddress;
+FLASH_Status 			flashStatus = FLASH_COMPLETE;
+__IO uint32_t 			flashTemp= 0;
 
 // data from the Hot Head Resistor Value and 12-bit ADC Value spec
 const HEADPOSITIONTABLE HeadPositionTable[HEAD_POSITION_ENTRIES] = {
@@ -103,6 +89,29 @@ const HEADPOSITIONTABLE HeadPositionTable[HEAD_POSITION_ENTRIES] = {
 	{ MAX_ADC, POSITION_UNPLUGGED } // max adc value an unplugged hothead
 };
 
+void InitRCC()
+{
+    // Update SystemCoreClock value
+	//SystemCoreClockUpdate();
+    // Configure the SysTick timer to overflow every 1 us
+    SysTick_Config(SystemCoreClock / 1000000);
+    //Enable GPIOA clock
+	RCC->APB2ENR |= (RCC_APB2Periph_GPIOA);		//enable clock for peripheral
+	RCC->APB2RSTR &= ~(RCC_APB2Periph_GPIOA);	//remove reset from peripheral
+	//Enable GPIOB clock
+	RCC->APB2ENR |= (RCC_APB2Periph_GPIOB);
+	RCC->APB2RSTR &= ~(RCC_APB2Periph_GPIOB);
+
+	//Enable AFIOEN clock
+	RCC->APB2ENR |= (RCC_APB2ENR_AFIOEN);
+	RCC->APB2RSTR &= ~(RCC_APB2ENR_AFIOEN);
+
+	//Enable CAN1 clock
+
+	RCC->APB1ENR |= (RCC_APB1Periph_CAN1);
+	RCC->APB1RSTR &= ~(RCC_APB1Periph_CAN1);
+
+}
 
 
 // SysTick_Handler function will be called every 1 us
@@ -113,33 +122,6 @@ void SysTick_Handler(uint32_t us)
         usTicks--;
     }
 }
-
-void InitRCC()
-{
-    // Update SystemCoreClock value
-    SystemCoreClockUpdate();
-    // Configure the SysTick timer to overflow every 1 us
-    SysTick_Config(SystemCoreClock / 1000000);
-
-
-    //Enable GPIOA clock
-    RCC->APB2ENR |= (RCC_APB2Periph_GPIOA);		//enable clock for peripheral
-    RCC->APB2RSTR &= ~(RCC_APB2Periph_GPIOA);	//remove reset from peripheral
-
-	//Enable GPIOB clock
-	RCC->APB2ENR |= (RCC_APB2Periph_GPIOB);
-	RCC->APB2RSTR &= ~(RCC_APB2Periph_GPIOB);
-
-	//Enable AFIOEN clock
-	RCC->APB2ENR |= (RCC_APB2ENR_AFIOEN);
-	RCC->APB2RSTR &= ~(RCC_APB2ENR_AFIOEN);
-
-	//Enable CAN1 clock
-	RCC->APB1ENR |= (RCC_APB1Periph_CAN1);
-	RCC->APB1RSTR &= ~(RCC_APB1Periph_CAN1);
-}
-
-
 
 //////////////////////////GPIO FUNCTIONS////////////////////////////////////////////////
 
@@ -188,6 +170,77 @@ void InitGPIO()
 	GPIOB->BRR = LED_B_CANRXERROR;
 }
 
+
+//////////////////////////ADC FUNCTIONS/////////////////////////////////////////////////////////////////////
+
+
+void InitADC()		// bootloader version
+{
+	RCC->CFGR &= CFGR_ADCPRE_Reset_Mask; 					//clock for ADC (max 14MHz --> 72/6=12MHz)
+	RCC->CFGR |= RCC_PCLK2_Div6; // 0x0008000
+
+	RCC->APB2ENR |= (RCC_APB2Periph_ADC1);
+	RCC->APB2RSTR &= ~(RCC_APB2Periph_ADC1);
+
+	//replace ADC_Init(ADC1, &ADC_InitStructure);   		//set config of ADC1
+	ADC1->CR1 &= CR1_CLEAR_Mask;;
+	ADC1->CR2 = (ADC1->CR2 & CR2_CLEAR_Mask) | ADC_ExternalTrigConv_None | 0x2;
+	ADC1->SQR1 = ADC1->SQR1 & SQR1_CLEAR_Mask;
+
+	//replace ADC_Cmd(ADC1,ENABLE);							//enable ADC1
+	ADC1->CR2 |= CR2_ADON_Set;								//enable ADC1
+
+	//  ADC calibration (optional, but recommended at power on)
+	//replace ADC_ResetCalibration(ADC1);					// Reset previous calibration
+	ADC1->CR2 |= CR2_RSTCAL_Set;
+	//while(ADC_GetResetCalibrationStatus(ADC1));
+	while(ADC1->CR2 & CR2_RSTCAL_Set);
+
+	//replace ADC_StartCalibration(ADC1);					// Start new calibration (ADC must be off at that time)
+	ADC1->CR2 |= CR2_CAL_Set;
+	//ADC_GetCalibrationStatus(ADC1));
+	while(ADC1->CR2 & CR2_CAL_Set) ; 			// Wait until calibration is complete
+
+	// adcSetup
+	//replaced:
+	//ADC_RegularChannelConfig(ADC1, HH_ADC_CHANNEL_POS, 1, ADC_SampleTime_239Cycles5);
+	ADC1->SMPR2 = 0x18000000;
+
+	ADC1->SQR3 = 0x00000009;
+
+	//replaced: ADC_Cmd(ADC1, ENABLE); //enable ADC1
+	ADC1->CR2 |= CR2_ADON_Set;
+
+	//replaced: ADC_SoftwareStartConvCmd(ADC1, ENABLE);		 // start conversion (will be endless as we are in continuous mode)
+	ADC1->CR2 |= CR2_EXTTRIG_SWSTART_Set;
+}
+
+//Get the Can Head Address from ADC
+void AdcConvertCanAddress()
+{
+	//TempADCReading= ADC1->DR;
+	//StartNextConversion();//start it right away, so it has the most time to do the conversion
+	if(AdcReadWaitCounter == MAX_COUNTDOWN) //When ADC value reading start.
+	{
+		ADC1->SQR3 |= (0<<0);
+		ADC1->CR2 |= (1<<0);
+	}
+	AdcReadWaitCounter --;
+	if(AdcReadWaitCounter == 0) //Time's up for reading ADC.
+	{
+		AdcReadWaitCounter = MAX_COUNTDOWN;
+		return;
+	}
+	if(!(ADC1->SR & (1<<1)))return;//not a valid conversion, so leave without changing anything
+	//AddressAdcValue += TempADCReading;//add the valid reading to the last value -------------------------|
+	//AddressAdcValue /= 2;//now divide by 2, to perform an average, this will filter out noise -----------| I didn't understand.
+	//AddressAdcValue = (ADC1->DR + AddressAdcValue) /2;
+	if(AddressAdcValue < MAX_ADC) //it would be not be more than 2048(0x800)
+		AddressAdcValue = (ADC1->DR + AddressAdcValue) /2; //now divide by 2, to perform an average, this will filter out noise
+	else
+		AddressAdcValue = ADC1->DR;
+	AdcReadWaitCounter = MAX_COUNTDOWN;
+}
 //takes the current ADC converted value and adjust the calculates the head address based
 // on the HEADPOSITIONTAABLE taable.
 //this represents the value from a voltage drivider located on the head, and the yoke
@@ -217,82 +270,424 @@ void CalculateDevicePosition()
 	case HEAD_04: SetPin(GPIOB, LED_HEADPOS_03); CurrentHeadCanAddress = HEAD_04;break;
 	}
 }
+/////////////////////////////////// CAN Functions //////////////////////////////////////////////////////////////////////
 
-
-//////////////////////////ADC FUNCTIONS/////////////////////////////////////////////////////////////////////
-void InitADC()		// bootloader version
+/**
+  * @brief  Fills each CAN_InitStruct member with its default value.
+  * @param  CAN_InitStruct: pointer to a CAN_InitTypeDef structure which
+  *                         will be initialized.
+  * @retval None.
+  */
+void CAN_StructInit(CAN_InitTypeDef* CAN_InitStruct)
 {
-	RCC->CFGR &= CFGR_ADCPRE_Reset_Mask; 					//clock for ADC (max 14MHz --> 72/6=12MHz)
-	RCC->CFGR |= RCC_PCLK2_Div6; // 0x0008000
+  /* Reset CAN init structure parameters values */
 
-	RCC->APB2ENR |= (RCC_APB2Periph_ADC1);
-	RCC->APB2RSTR &= ~(RCC_APB2Periph_ADC1);
+  /* Initialize the time triggered communication mode */
+  CAN_InitStruct->CAN_TTCM = DISABLE;
 
-	//replace ADC_Init(ADC1, &ADC_InitStructure);   		//set config of ADC1
-	ADC1->CR1 &= CR1_CLEAR_Mask;;
-	ADC1->CR2 = (ADC1->CR2 & CR2_CLEAR_Mask) | ADC_ExternalTrigConv_None | 0x2;
-	ADC1->SQR1 = ADC1->SQR1 & SQR1_CLEAR_Mask;
+  /* Initialize the automatic bus-off management */
+  CAN_InitStruct->CAN_ABOM = DISABLE;
 
-	//replace ADC_Cmd(ADC1,ENABLE);							//enable ADC1
-	ADC1->CR2 |= CR2_ADON_Set;								//enable ADC1
+  /* Initialize the automatic wake-up mode */
+  CAN_InitStruct->CAN_AWUM = DISABLE;
 
-	//  ADC calibration (optional, but recommended at power on)
-	//replace ADC_ResetCalibration(ADC1);					// Reset previous calibration
-	ADC1->CR2 |= CR2_RSTCAL_Set;
-	while(ADC_GetResetCalibrationStatus(ADC1));
+  /* Initialize the no automatic retransmission */
+  CAN_InitStruct->CAN_NART = DISABLE;
 
-	//replace ADC_StartCalibration(ADC1);					// Start new calibration (ADC must be off at that time)
-	ADC1->CR2 |= CR2_CAL_Set;
-	while(ADC_GetCalibrationStatus(ADC1));					// Wait until calibration is complete
+  /* Initialize the receive FIFO locked mode */
+  CAN_InitStruct->CAN_RFLM = DISABLE;
 
-	// adcSetup
-	//replaced:
-	//ADC_RegularChannelConfig(ADC1, HH_ADC_CHANNEL_POS, 1, ADC_SampleTime_239Cycles5);
-	ADC1->SMPR2 = 0x18000000;
-	ADC1->SQR3 = 0x00000009;
+  /* Initialize the transmit FIFO priority */
+  CAN_InitStruct->CAN_TXFP = DISABLE;
 
-	//replaced: ADC_Cmd(ADC1, ENABLE); //enable ADC1
-	ADC1->CR2 |= CR2_ADON_Set;
+  /* Initialize the CAN_Mode member */
+  CAN_InitStruct->CAN_Mode = CAN_Mode_Normal;
 
-	//replaced: ADC_SoftwareStartConvCmd(ADC1, ENABLE);		 // start conversion (will be endless as we are in continuous mode)
-	ADC1->CR2 |= CR2_EXTTRIG_SWSTART_Set;
+  /* Initialize the CAN_SJW member */
+  CAN_InitStruct->CAN_SJW = CAN_SJW_1tq;
+
+  /* Initialize the CAN_BS1 member */
+  CAN_InitStruct->CAN_BS1 = CAN_BS1_4tq;
+
+  /* Initialize the CAN_BS2 member */
+  CAN_InitStruct->CAN_BS2 = CAN_BS2_3tq;
+
+  /* Initialize the CAN_Prescaler member */
+  CAN_InitStruct->CAN_Prescaler = 1;
 }
 
-
-//Get the Can Head Address from ADC
-void AdcConvertCanAddress()
+/**
+  * @brief  Initializes the CAN peripheral according to the specified
+  *         parameters in the CAN_InitStruct.
+  * @param  CANx:           where x can be 1 or 2 to to select the CAN
+  *                         peripheral.
+  * @param  CAN_InitStruct: pointer to a CAN_InitTypeDef structure that
+  *                         contains the configuration information for the
+  *                         CAN peripheral.
+  * @retval Constant indicates initialization succeed which will be
+  *         CAN_InitStatus_Failed or CAN_InitStatus_Success.
+  */
+uint8_t CAN_Init(CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct)
 {
-	//TempADCReading= ADC1->DR;
-	//StartNextConversion();//start it right away, so it has the most time to do the conversion
-	if(AdcReadWaitCounter == MAX_COUNTDOWN) //When ADC value reading start.
-	{
-		ADC1->SQR3 |= (0<<0);
-		ADC1->CR2 |= (1<<0);
-	}
-	AdcReadWaitCounter --;
-	if(AdcReadWaitCounter == 0) //Time's up for reading ADC.
-	{
-		AdcReadWaitCounter = MAX_COUNTDOWN;
-		return;
-	}
-	if(!(ADC1->SR & (1<<1)))return;//not a valid conversion, so leave without changing anything
-	//AddressAdcValue += TempADCReading;//add the valid reading to the last value -------------------------|
-	//AddressAdcValue /= 2;//now divide by 2, to perform an average, this will filter out noise -----------| I didn't understand.
-	//AddressAdcValue = (ADC1->DR + AddressAdcValue) /2;
-	if(AddressAdcValue < MAX_ADC) //it would be not be more than 2048(0x800)
-		AddressAdcValue = (ADC1->DR + AddressAdcValue) /2; //now divide by 2, to perform an average, this will filter out noise
-	else
-		AddressAdcValue = ADC1->DR;
-	AdcReadWaitCounter = MAX_COUNTDOWN;
+  uint8_t InitStatus = CAN_InitStatus_Failed;
+  uint32_t wait_ack = 0x00000000;
+
+  /* Exit from sleep mode */
+  CANx->MCR &= (~(uint32_t)CAN_MCR_SLEEP);
+
+  /* Request initialisation */
+  CANx->MCR |= CAN_MCR_INRQ ;
+
+  /* Wait the acknowledge */
+  while (((CANx->MSR & CAN_MSR_INAK) != CAN_MSR_INAK) && (wait_ack != INAK_TIMEOUT))
+  {
+    wait_ack++;
+  }
+
+  /* Check acknowledge */
+  if ((CANx->MSR & CAN_MSR_INAK) != CAN_MSR_INAK)
+  {
+    InitStatus = CAN_InitStatus_Failed;
+  }
+  else
+  {
+    /* Set the time triggered communication mode */
+    if (CAN_InitStruct->CAN_TTCM == ENABLE)
+    {
+      CANx->MCR |= CAN_MCR_TTCM;
+    }
+    else
+    {
+      CANx->MCR &= ~(uint32_t)CAN_MCR_TTCM;
+    }
+
+    /* Set the automatic bus-off management */
+    if (CAN_InitStruct->CAN_ABOM == ENABLE)
+    {
+      CANx->MCR |= CAN_MCR_ABOM;
+    }
+    else
+    {
+      CANx->MCR &= ~(uint32_t)CAN_MCR_ABOM;
+    }
+
+    /* Set the automatic wake-up mode */
+    if (CAN_InitStruct->CAN_AWUM == ENABLE)
+    {
+      CANx->MCR |= CAN_MCR_AWUM;
+    }
+    else
+    {
+      CANx->MCR &= ~(uint32_t)CAN_MCR_AWUM;
+    }
+
+    /* Set the no automatic retransmission */
+    if (CAN_InitStruct->CAN_NART == ENABLE)
+    {
+      CANx->MCR |= CAN_MCR_NART;
+    }
+    else
+    {
+      CANx->MCR &= ~(uint32_t)CAN_MCR_NART;
+    }
+
+    /* Set the receive FIFO locked mode */
+    if (CAN_InitStruct->CAN_RFLM == ENABLE)
+    {
+      CANx->MCR |= CAN_MCR_RFLM;
+    }
+    else
+    {
+      CANx->MCR &= ~(uint32_t)CAN_MCR_RFLM;
+    }
+
+    /* Set the transmit FIFO priority */
+    if (CAN_InitStruct->CAN_TXFP == ENABLE)
+    {
+      CANx->MCR |= CAN_MCR_TXFP;
+    }
+    else
+    {
+      CANx->MCR &= ~(uint32_t)CAN_MCR_TXFP;
+    }
+
+    /* Set the bit timing register */
+    CANx->BTR = (uint32_t)((uint32_t)CAN_InitStruct->CAN_Mode << 30) | \
+                ((uint32_t)CAN_InitStruct->CAN_SJW << 24) | \
+                ((uint32_t)CAN_InitStruct->CAN_BS1 << 16) | \
+                ((uint32_t)CAN_InitStruct->CAN_BS2 << 20) | \
+               ((uint32_t)CAN_InitStruct->CAN_Prescaler - 1);
+
+    /* Request leave initialisation */
+    CANx->MCR &= ~(uint32_t)CAN_MCR_INRQ;
+
+   /* Wait the acknowledge */
+   wait_ack = 0;
+
+   while (((CANx->MSR & CAN_MSR_INAK) == CAN_MSR_INAK) && (wait_ack != INAK_TIMEOUT))
+   {
+     wait_ack++;
+   }
+
+    /* ...and check acknowledged */
+    if ((CANx->MSR & CAN_MSR_INAK) == CAN_MSR_INAK)
+    {
+      InitStatus = CAN_InitStatus_Failed;
+    }
+    else
+    {
+      InitStatus = CAN_InitStatus_Success ;
+    }
+  }
+
+  /* At this step, return the status of initialization */
+  return InitStatus;
 }
 
+/**
+  * @brief  Initializes the CAN peripheral according to the specified
+  *         parameters in the CAN_FilterInitStruct.
+  * @param  CAN_FilterInitStruct: pointer to a CAN_FilterInitTypeDef
+  *                               structure that contains the configuration
+  *                               information.
+  * @retval None.
+  */
+void CAN_FilterInit(CAN_FilterInitTypeDef* CAN_FilterInitStruct)
+{
+  uint32_t filter_number_bit_pos = 0;
 
+  filter_number_bit_pos = ((uint32_t)1) << CAN_FilterInitStruct->CAN_FilterNumber;
 
-//////////////////////////CAN FUNCTIONS////////////////////////////////////////////////////////////////////
-/*These fuctions are for CAN*/
-//Initialize Can Bus
+  /* Initialisation mode for the filter */
+  CAN1->FMR |= FMR_FINIT;
+
+  /* Filter Deactivation */
+  CAN1->FA1R &= ~(uint32_t)filter_number_bit_pos;
+
+  /* Filter Scale */
+  if (CAN_FilterInitStruct->CAN_FilterScale == CAN_FilterScale_16bit)
+  {
+    /* 16-bit scale for the filter */
+    CAN1->FS1R &= ~(uint32_t)filter_number_bit_pos;
+
+    /* First 16-bit identifier and First 16-bit mask */
+    /* Or First 16-bit identifier and Second 16-bit identifier */
+    CAN1->sFilterRegister[CAN_FilterInitStruct->CAN_FilterNumber].FR1 =
+    ((0x0000FFFF & (uint32_t)CAN_FilterInitStruct->CAN_FilterMaskIdLow) << 16) |
+        (0x0000FFFF & (uint32_t)CAN_FilterInitStruct->CAN_FilterIdLow);
+
+    /* Second 16-bit identifier and Second 16-bit mask */
+    /* Or Third 16-bit identifier and Fourth 16-bit identifier */
+    CAN1->sFilterRegister[CAN_FilterInitStruct->CAN_FilterNumber].FR2 =
+    ((0x0000FFFF & (uint32_t)CAN_FilterInitStruct->CAN_FilterMaskIdHigh) << 16) |
+        (0x0000FFFF & (uint32_t)CAN_FilterInitStruct->CAN_FilterIdHigh);
+  }
+
+  if (CAN_FilterInitStruct->CAN_FilterScale == CAN_FilterScale_32bit)
+  {
+    /* 32-bit scale for the filter */
+    CAN1->FS1R |= filter_number_bit_pos;
+    /* 32-bit identifier or First 32-bit identifier */
+    CAN1->sFilterRegister[CAN_FilterInitStruct->CAN_FilterNumber].FR1 =
+    ((0x0000FFFF & (uint32_t)CAN_FilterInitStruct->CAN_FilterIdHigh) << 16) |
+        (0x0000FFFF & (uint32_t)CAN_FilterInitStruct->CAN_FilterIdLow);
+    /* 32-bit mask or Second 32-bit identifier */
+    CAN1->sFilterRegister[CAN_FilterInitStruct->CAN_FilterNumber].FR2 =
+    ((0x0000FFFF & (uint32_t)CAN_FilterInitStruct->CAN_FilterMaskIdHigh) << 16) |
+        (0x0000FFFF & (uint32_t)CAN_FilterInitStruct->CAN_FilterMaskIdLow);
+  }
+
+  /* Filter Mode */
+  if (CAN_FilterInitStruct->CAN_FilterMode == CAN_FilterMode_IdMask)
+  {
+    /*Id/Mask mode for the filter*/
+    CAN1->FM1R &= ~(uint32_t)filter_number_bit_pos;
+  }
+  else /* CAN_FilterInitStruct->CAN_FilterMode == CAN_FilterMode_IdList */
+  {
+    /*Identifier list mode for the filter*/
+    CAN1->FM1R |= (uint32_t)filter_number_bit_pos;
+  }
+
+  /* Filter FIFO assignment */
+  if (CAN_FilterInitStruct->CAN_FilterFIFOAssignment == CAN_Filter_FIFO0)
+  {
+    /* FIFO 0 assignation for the filter */
+    CAN1->FFA1R &= ~(uint32_t)filter_number_bit_pos;
+  }
+
+  if (CAN_FilterInitStruct->CAN_FilterFIFOAssignment == CAN_Filter_FIFO1)
+  {
+    /* FIFO 1 assignation for the filter */
+    CAN1->FFA1R |= (uint32_t)filter_number_bit_pos;
+  }
+
+  /* Filter activation */
+  if (CAN_FilterInitStruct->CAN_FilterActivation == ENABLE)
+  {
+    CAN1->FA1R |= filter_number_bit_pos;
+  }
+
+  /* Leave the initialisation mode for the filter */
+  CAN1->FMR &= ~FMR_FINIT;
+}
+
+void CAN_ITConfig(CAN_TypeDef* CANx, uint32_t CAN_IT, FunctionalState NewState)
+{
+    if (NewState != DISABLE)
+  {
+    /* Enable the selected CANx interrupt */
+    CANx->IER |= CAN_IT;
+  }
+  else
+  {
+    /* Disable the selected CANx interrupt */
+    CANx->IER &= ~CAN_IT;
+  }
+}
+
+/**
+  * @brief  Initializes the NVIC peripheral according to the specified
+  *         parameters in the NVIC_InitStruct.
+  * @param  NVIC_InitStruct: pointer to a NVIC_InitTypeDef structure that contains
+  *         the configuration information for the specified NVIC peripheral.
+  * @retval None
+  */
+void NVIC_Init(NVIC_InitTypeDef* NVIC_InitStruct)
+{
+  uint32_t tmppriority = 0x00, tmppre = 0x00, tmpsub = 0x0F;
+
+   if (NVIC_InitStruct->NVIC_IRQChannelCmd != DISABLE)
+  {
+    /* Compute the Corresponding IRQ Priority --------------------------------*/
+    tmppriority = (0x700 - ((SCB->AIRCR) & (uint32_t)0x700))>> 0x08;
+    tmppre = (0x4 - tmppriority);
+    tmpsub = tmpsub >> tmppriority;
+
+    tmppriority = (uint32_t)NVIC_InitStruct->NVIC_IRQChannelPreemptionPriority << tmppre;
+    tmppriority |=  NVIC_InitStruct->NVIC_IRQChannelSubPriority & tmpsub;
+    tmppriority = tmppriority << 0x04;
+
+    NVIC->IP[NVIC_InitStruct->NVIC_IRQChannel] = tmppriority;
+
+    /* Enable the Selected IRQ Channels --------------------------------------*/
+    NVIC->ISER[NVIC_InitStruct->NVIC_IRQChannel >> 0x05] =
+      (uint32_t)0x01 << (NVIC_InitStruct->NVIC_IRQChannel & (uint8_t)0x1F);
+  }
+  else
+  {
+    /* Disable the Selected IRQ Channels -------------------------------------*/
+    NVIC->ICER[NVIC_InitStruct->NVIC_IRQChannel >> 0x05] =
+      (uint32_t)0x01 << (NVIC_InitStruct->NVIC_IRQChannel & (uint8_t)0x1F);
+  }
+}
+void RCC_APB1PeriphResetCmd(uint32_t RCC_APB1Periph, FunctionalState NewState)
+{
+  /* Check the parameters */
+  if (NewState != DISABLE)
+  {
+    RCC->APB1RSTR |= RCC_APB1Periph;
+  }
+  else
+  {
+    RCC->APB1RSTR &= ~RCC_APB1Periph;
+  }
+}
+void CAN_DeInit(CAN_TypeDef* CANx)
+{
+
+  if (CANx == CAN1)
+  {
+    /* Enable CAN1 reset state */
+    RCC_APB1PeriphResetCmd(RCC_APB1Periph_CAN1, ENABLE);
+    /* Release CAN1 from reset state */
+    RCC_APB1PeriphResetCmd(RCC_APB1Periph_CAN1, DISABLE);
+  }
+
+}
 void InitCAN()
 {
+	/* CAN register init*/
+		//First, Deinitializes the CAN peripheral registers to their default reset values.
+
+
+#ifdef OPTIMIZE
+	RCC->APB1RSTR |= RCC_APB1Periph_CAN1;  /* Enable CAN1 reset state */
+	RCC->APB1RSTR &= ~RCC_APB1Periph_CAN1; /* Release CAN1 from reset state */
+
+	temp = 0;
+	//Initializes the CAN peripheral according to the specified         parameters in the CAN_InitStruct.(CAN_Init(CAN1, &CAN_InitStructure))
+	/* Exit from sleep mode */
+	CAN1->MCR &= (~(uint32_t)CAN_MCR_SLEEP);
+
+	/* Request initialisation */
+	CAN1->MCR |= CAN_MCR_INRQ ;
+
+	/* Wait the acknowledge */
+	while (((CAN1->MSR & CAN_MSR_INAK) != CAN_MSR_INAK) && (temp != INAK_TIMEOUT))
+	{
+		temp++;
+	}
+	/* Set the time triggered communication mode */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_TTCM;  	//CAN_InitStructure.CAN_TTCM = DISABLE;
+	/* Set the automatic bus-off management */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_ABOM;	//CAN_InitStructure.CAN_ABOM = DISABLE;
+	/* Set the automatic wake-up mode */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_AWUM;
+	/* Set the no automatic retransmission */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_NART;	//CAN_InitStructure.CAN_NART = DISABLE;
+	/* Set the receive FIFO locked mode */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_RFLM;	//CAN_InitStructure.CAN_RFLM = DISABLE;
+	/* Set the transmit FIFO priority */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_TXFP;	//CAN_InitStructure.CAN_TXFP = DISABLE;
+
+	/* Set the bit timing register */
+	CAN1->BTR = (uint32_t)((uint32_t)CAN_Mode_Normal << 30) | \
+				((uint32_t)CAN_SJW_1tq << 24) | \
+				((uint32_t)CAN_BS1_3tq << 16) | \
+				((uint32_t)CAN_BS2_5tq << 20) | \
+			   ((uint32_t)8 - 1);
+	/* Request leave initialisation */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_INRQ;
+	/* Wait the acknowledge */
+	temp = 0;
+
+	while (((CAN1->MSR & CAN_MSR_INAK) == CAN_MSR_INAK) && (temp != INAK_TIMEOUT))
+	{
+		temp++;
+	}
+	/*End of Initialized Can Init Structure.*/
+
+	/*Initializes the CAN peripheral according to the specified parameters in the CAN_FilterInitStruct.*/
+	CAN1->FMR |= FMR_FINIT;
+	CAN1->FA1R &= ~(uint32_t)1;
+	CAN1->FS1R |= 1;
+
+	 /* 32-bit identifier or First 32-bit identifier */
+	CAN1->sFilterRegister[0].FR1 = ((0x0000FFFF & (uint32_t)0) << 16) | (0x0000FFFF & (uint32_t)0);
+	/* 32-bit mask or Second 32-bit identifier */
+	CAN1->sFilterRegister[0].FR2 = ((0x0000FFFF & (uint32_t)0) << 16) | (0x0000FFFF & (uint32_t)0);
+
+	CAN1->FM1R &= ~(uint32_t)1;
+	CAN1->FFA1R |= (uint32_t)1;
+	CAN1->FA1R |= 1;
+	/* Leave the initialisation mode for the filter */
+	CAN1->FMR &= ~FMR_FINIT;
+	/*End of Initialized Can Filter Init Structure.*/
+
+	/*Enables the specified CAN1 interrupts.*/
+	CAN1->IER |= CAN_IT_FMP1;
+
+
+	/*Initializes the NVIC peripheral according to the specified parameters in the NVIC_InitStruct.*/
+	NVIC->IP[CAN1_RX1_IRQn] = 0;
+	/* Enable the Selected IRQ Channels --------------------------------------*/
+	NVIC->ISER[CAN1_RX1_IRQn >> 0x05] = (uint32_t)0x01 << (CAN1_RX1_IRQn & (uint8_t)0x1F);
+#else
+	CAN_InitTypeDef 		CAN_InitStructure;
+	CAN_FilterInitTypeDef 	CAN_FilterInitStructure;
+	NVIC_InitTypeDef 		NVIC_InitStructure;
+
 	/* CAN register init*/
 	CAN_DeInit(CAN1);
 	CAN_StructInit(&CAN_InitStructure);
@@ -323,60 +718,91 @@ void InitCAN()
 	CAN_FilterInit(&CAN_FilterInitStructure);
 
 	/* IT Configuration for CAN1 */
-	CAN_ITConfig(CAN1, CAN_IT_FMP1,ENABLE);
+	CAN_ITConfig(CAN1, CAN_IT_FMP0,ENABLE);
 
 	NVIC_InitStructure.NVIC_IRQChannel =  CAN1_RX1_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
+#endif
 }
+/**
+  * @brief  Receives a message.
+  * @param  CANx:       where x can be 1 or 2 to to select the CAN peripheral.
+  * @param  FIFONumber: Receive FIFO number, CAN_FIFO0 or CAN_FIFO1.
+  * @param  RxMessage:  pointer to a structure receive message which contains
+  *                     CAN Id, CAN DLC, CAN datas and FMI number.
+  * @retval None.
+  */
+void CAN_Receive(CAN_TypeDef* CANx, uint8_t FIFONumber, CanRxMsg* RxMessage)
+{
+  /* Check the parameters */
+  /* Get the Id */
+  RxMessage->IDE = (uint8_t)0x04 & CANx->sFIFOMailBox[FIFONumber].RIR;
+  if (RxMessage->IDE == CAN_Id_Standard)
+  {
+    RxMessage->StdId = (uint32_t)0x000007FF & (CANx->sFIFOMailBox[FIFONumber].RIR >> 21);
+  }
+  else
+  {
+    RxMessage->ExtId = (uint32_t)0x1FFFFFFF & (CANx->sFIFOMailBox[FIFONumber].RIR >> 3);
+  }
 
+  RxMessage->RTR = (uint8_t)0x02 & CANx->sFIFOMailBox[FIFONumber].RIR;
+  /* Get the DLC */
+  RxMessage->DLC = (uint8_t)0x0F & CANx->sFIFOMailBox[FIFONumber].RDTR;
+  /* Get the FMI */
+  RxMessage->FMI = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDTR >> 8);
+  /* Get the data field */
+  RxMessage->Data[0] = (uint8_t)0xFF & CANx->sFIFOMailBox[FIFONumber].RDLR;
+  RxMessage->Data[1] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDLR >> 8);
+  RxMessage->Data[2] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDLR >> 16);
+  RxMessage->Data[3] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDLR >> 24);
+  RxMessage->Data[4] = (uint8_t)0xFF & CANx->sFIFOMailBox[FIFONumber].RDHR;
+  RxMessage->Data[5] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDHR >> 8);
+  RxMessage->Data[6] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDHR >> 16);
+  RxMessage->Data[7] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDHR >> 24);
+  /* Release the FIFO */
+  /* Release FIFO0 */
+  if (FIFONumber == CAN_FIFO0)
+  {
+    CANx->RF0R |= CAN_RF0R_RFOM0;
+  }
+  /* Release FIFO1 */
+  else /* FIFONumber == CAN_FIFO1 */
+  {
+    CANx->RF1R |= CAN_RF1R_RFOM1;
+  }
+}
 
 //THis function is a callback for Receiving CAN Message.
 void CAN1_RX1_IRQHandler()
 {
-	//Use the extended message only
-	CanRxMessage.ExtId = 0x1FFFFFFF; // reset the CAN Rx message's Extended Id.
 	CAN_Receive(CAN1, CAN_FIFO1, &CanRxMessage);
-
-	//Normal Can Message Extended ID format:
-	// this version has no Sub-function , it would be 0.
-	//				0x00[Target ID (2B)][Source ID (2B)][FunctionId{2B}]
-	//Upload/Download Can Message Extended ID format:
-	//	function Id would be less than 0x1F because extandted id max value is 1FFFFFFF
-	//		- Upload
-	//			Start:				0x[FunctionId{2B}][Target ID (2B)][file size{4B}]
-	//			During:				0x[FunctionId{2B}][Target ID (2B)][[Offset {4B}]
-	//			End:				0x[FunctionId{2B}][Target ID (2B)][written size {4B}]
-
-	//		- Download
-	//			Start:				0x[FunctionId{2B}][Target ID (2B)][file size{4B}]
-	//			During:				0x[FunctionId{2B}][Target ID (2B)][Offset {4B}]
-	//			End:				0x[FunctionId{2B}][Target ID (2B)][read size {4B}]
-
 	CanRxTargetAddress = (CanRxMessage.ExtId >> 16) & 0xFF;
-	switch((CanRxMessage.ExtId >> 24) & 0xFF)
-	{
-	case CAN_NORMAL_MESSAGE: // Normal function message;
-		//if(IsDownloadFirware || IsUploadFirware) return; //because it is very busy, it will not be response to anyone
-
-		CanRxFunctionId = CanRxMessage.ExtId  & 0xff;
-		CanRxSourceAddress = (CanRxMessage.ExtId >> 8 )& 0xFF;
-		break;
-	case CAN_UPLOAD_START_APPLICATION:
-	case CAN_UPLOADING_APPLICATION:
-	case CAN_UPLOAD_END_APPLICATION:
-	case CAN_DOWNLOAD_START_APPLICATION:
-	case CAN_DOWNLOADING_APPLICATION:
-	case CAN_DOWNLOAD_END_APPLICATION:
-		CanRxFunctionId = (CanRxMessage.ExtId >> 24) & 0xff;
-		CanRxSourceAddress = CAN_DEV_ANALYST;
-		CanRxApplicationData = CanRxMessage.ExtId & 0xffff;
-		break;
-	}
 	if(CanRxTargetAddress == CurrentHeadCanAddress) //if Head Address is same as Can message Head identifier.
 	{
+		switch((CanRxMessage.ExtId >> 24) & 0xFF)
+		{
+		case CAN_NORMAL_MESSAGE: // Normal function message;
+			//if(IsDownloadFirware || IsUploadFirware) return; //because it is very busy, it will not be response to anyone
+
+			CanRxFunctionId = CanRxMessage.ExtId  & 0xff;
+			CanRxSourceAddress = (CanRxMessage.ExtId >> 8 )& 0xFF;
+			break;
+		case CAN_UPLOAD_START_APPLICATION:
+		case CAN_UPLOADING_APPLICATION:
+		case CAN_UPLOAD_END_APPLICATION:
+		case CAN_DOWNLOAD_START_APPLICATION:
+		case CAN_DOWNLOADING_APPLICATION:
+		case CAN_DOWNLOAD_END_APPLICATION:
+			CanRxFunctionId = (CanRxMessage.ExtId >> 24) & 0xff;
+			CanRxSourceAddress = CAN_DEV_ANALYST;
+			CanRxApplicationData = CanRxMessage.ExtId & 0xffff;
+			break;
+		}
+
 		memcpy(CanRxDataBuffer, CanRxMessage.Data, CanRxMessage.DLC);
 		CanMessageReadyToRead = 1;
 	}
@@ -393,30 +819,368 @@ void CAN1_RX1_IRQHandler()
 
 void SendCanMessage(uint16_t target, uint8_t funcId, uint8_t* data, uint8_t size)
 {
-	CanTxMessage.ExtId = (target << 16) + (CurrentHeadCanAddress << 8) + funcId;
-	CanTxMessage.RTR= CAN_RTR_DATA;
-	CanTxMessage.IDE= CAN_ID_EXT;
-	CanTxMessage.DLC= size;  //the data size to send, which would be smaller than 8bytes.
+	temp = (target << 16) + (CurrentHeadCanAddress << 8) + funcId; //this is Ext ID
+	//CanTxMessage.RTR= CAN_RTR_DATA;
+	//CanTxMessage.IDE= CAN_ID_EXT;
+	//CanTxMessage.DLC= size;  //the data size to send, which would be smaller than 8bytes.
 	if(size > 0) memcpy(CanTxMessage.Data, data, size); // copy the data to TxMessage's buffer
 
-	CanTransmitMailbox = CAN_Transmit(CAN1, &CanTxMessage);
+	/* Select one empty transmit mailbox */
+	if ((CAN1->TSR&CAN_TSR_TME0) == CAN_TSR_TME0)
+	{
+		CanTransmitMailbox = 0;
+	}
+	else if ((CAN1->TSR&CAN_TSR_TME1) == CAN_TSR_TME1)
+	{
+		CanTransmitMailbox = 1;
+	}
+	else if ((CAN1->TSR&CAN_TSR_TME2) == CAN_TSR_TME2)
+	{
+		CanTransmitMailbox = 2;
+	}
+	else
+	{
+		CanTransmitMailbox = CAN_TxStatus_NoMailBox;
+	}
+
+	if (CanTransmitMailbox != CAN_TxStatus_NoMailBox) {
+		CAN1->sTxMailBox[CanTransmitMailbox].TIR &= TMIDxR_TXRQ;
+
+		CAN1->sTxMailBox[CanTransmitMailbox].TIR |= ((temp << 3) | \
+													CAN_Id_Extended | \
+														CAN_RTR_Data);
+
+		/* Set up the DLC */
+
+		CAN1->sTxMailBox[CanTransmitMailbox].TDTR &= (uint32_t)0xFFFFFFF0;
+		CAN1->sTxMailBox[CanTransmitMailbox].TDTR |= size; //Data Size
+
+		/* Set up the data field */
+		CAN1->sTxMailBox[CanTransmitMailbox].TDLR = (((uint32_t)data[3] << 24) |
+												 ((uint32_t)data[2] << 16) |
+												 ((uint32_t)data[1] << 8) |
+												 ((uint32_t)data[0]));
+		CAN1->sTxMailBox[CanTransmitMailbox].TDHR = (((uint32_t)data[7] << 24) |
+												 ((uint32_t)data[6] << 16) |
+												 ((uint32_t)data[5] << 8) |
+												 ((uint32_t)data[4]));
+		/* Request transmission */
+		CAN1->sTxMailBox[CanTransmitMailbox].TIR |= TMIDxR_TXRQ;
+	}
+	//CanTransmitMailbox = CAN_Transmit(CAN1, &CanTxMessage);
 	CanTrasmitMsgWaitCounter = 0xFFFF; //it would be count down until Can trasmit is ok..
 }
 
-//Send ping messsage to all devices.
+/**
+  * @brief  Checks the transmission of a message.
+  * @param  CANx:            where x can be 1 or 2 to to select the
+  *                          CAN peripheral.
+  * @param  TransmitMailbox: the number of the mailbox that is used for
+  *                          transmission.
+  * @retval CAN_TxStatus_Ok if the CAN driver transmits the message, CAN_TxStatus_Failed
+  *         in an other case.
+  */
+uint8_t CAN_TransmitStatus(CAN_TypeDef* CANx, uint8_t TransmitMailbox)
+{
+  uint32_t state = 0;
 
-void PingCanMessage(uint8_t target, uint8_t IsReqeust)
-{
-	CanMessageBuffer[0] = IsReqeust ? CAN_REQUEST_PING: CAN_RESPONSE_PING;
-	SendCanMessage(target, CAN_FUNCTION_PING, CanMessageBuffer, 8);
+
+  switch (TransmitMailbox)
+  {
+    case (CAN_TXMAILBOX_0):
+      state =   CANx->TSR &  (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0);
+      break;
+    case (CAN_TXMAILBOX_1):
+      state =   CANx->TSR &  (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1);
+      break;
+    case (CAN_TXMAILBOX_2):
+      state =   CANx->TSR &  (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2);
+      break;
+    default:
+      state = CAN_TxStatus_Failed;
+      break;
+  }
+  switch (state)
+  {
+      /* transmit pending  */
+    case (0x0): state = CAN_TxStatus_Pending;
+      break;
+      /* transmit failed  */
+     case (CAN_TSR_RQCP0 | CAN_TSR_TME0): state = CAN_TxStatus_Failed;
+      break;
+     case (CAN_TSR_RQCP1 | CAN_TSR_TME1): state = CAN_TxStatus_Failed;
+      break;
+     case (CAN_TSR_RQCP2 | CAN_TSR_TME2): state = CAN_TxStatus_Failed;
+      break;
+      /* transmit succeeded  */
+    case (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0):state = CAN_TxStatus_Ok;
+      break;
+    case (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1):state = CAN_TxStatus_Ok;
+      break;
+    case (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2):state = CAN_TxStatus_Ok;
+      break;
+    default: state = CAN_TxStatus_Failed;
+      break;
+  }
+  return (uint8_t) state;
 }
-//////////////////////////////////////////////////////////////////////////////////////////////
-//Initialize the all variables for bootloader.
-void InitVariable()
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+  * @brief  Resets the RCC clock configuration to the default reset state.
+  * @param  None
+  * @retval None
+  */
+void RCC_DeInit(void)
 {
-	IsInitialized = 1;
-	AdcReadWaitCounter = MAX_COUNTDOWN;
+  /* Set HSION bit */
+  RCC->CR |= (uint32_t)0x00000001;
+
+  /* Reset SW, HPRE, PPRE1, PPRE2, ADCPRE and MCO bits */
+  RCC->CFGR &= (uint32_t)0xF8FF0000;
+
+  /* Reset HSEON, CSSON and PLLON bits */
+  RCC->CR &= (uint32_t)0xFEF6FFFF;
+
+  /* Reset HSEBYP bit */
+  RCC->CR &= (uint32_t)0xFFFBFFFF;
+
+  /* Reset PLLSRC, PLLXTPRE, PLLMUL and USBPRE/OTGFSPRE bits */
+  RCC->CFGR &= (uint32_t)0xFF80FFFF;
+
+  /* Disable all interrupts and clear pending bits  */
+  RCC->CIR = 0x009F0000;
+
 }
+
+void DeinitEverything()
+{
+	__HAL_RCC_GPIOC_CLK_DISABLE();
+	__HAL_RCC_GPIOD_CLK_DISABLE();
+	__HAL_RCC_GPIOB_CLK_DISABLE();
+	__HAL_RCC_GPIOA_CLK_DISABLE();
+	__HAL_RCC_TIM1_CLK_DISABLE();
+	__HAL_RCC_SPI1_CLK_DISABLE();
+	__HAL_RCC_USART1_CLK_DISABLE();
+
+	RCC_DeInit();
+
+	__HAL_RCC_APB1_FORCE_RESET();
+	__HAL_RCC_APB1_RELEASE_RESET();
+	__HAL_RCC_APB2_FORCE_RESET();
+	__HAL_RCC_APB2_RELEASE_RESET();
+
+	SysTick->CTRL = 0;
+	SysTick->LOAD = 0;
+	SysTick->VAL = 0;
+}
+
+void jumpToApp(const uint32_t address)
+{
+	const JumpStruct* vector_p = (JumpStruct*)address;
+	DeinitEverything();
+	SCB->VTOR = FLASH_APPLICATION_OFFSET_ADDRESS;
+
+	/* let's do The Jump! */
+    /* Jump, used asm to avoid stack optimization */
+    asm("msr msp, %0; bx %1;" : : "r"(vector_p->stack_addr), "r"(vector_p->func_p));
+}
+
+//////////////////////////////////////// Flash functions ///////////////////////////////////////////
+
+/**
+  * @brief  Unlocks the FLASH Program Erase Controller.
+  * @note   This function can be used for all STM32F10x devices.
+  *         - For STM32F10X_XL devices this function unlocks Bank1 and Bank2.
+  *         - For all other devices it unlocks Bank1 and it is equivalent
+  *           to FLASH_UnlockBank1 function..
+  * @param  None
+  * @retval None
+  */
+void FLASH_Unlock(void)
+{
+  /* Authorize the FPEC of Bank1 Access */
+  FLASH->KEYR = FLASH_KEY1;
+  FLASH->KEYR = FLASH_KEY2;
+}
+
+/**
+  * @brief  Locks the FLASH Program Erase Controller.
+  * @note   This function can be used for all STM32F10x devices.
+  *         - For STM32F10X_XL devices this function Locks Bank1 and Bank2.
+  *         - For all other devices it Locks Bank1 and it is equivalent
+  *           to FLASH_LockBank1 function.
+  * @param  None
+  * @retval None
+  */
+void FLASH_Lock(void)
+{
+  /* Set the Lock Bit to lock the FPEC and the CR of  Bank1 */
+  FLASH->CR |= CR_LOCK_Set;
+}
+
+
+/**
+  * @brief  Clears the FLASH's pending flags.
+  * @note   This function can be used for all STM32F10x devices.
+  *         - For STM32F10X_XL devices, this function clears Bank1 or Bank2’s pending flags
+  *         - For other devices, it clears Bank1’s pending flags.
+  * @param  FLASH_FLAG: specifies the FLASH flags to clear.
+  *   This parameter can be any combination of the following values:
+  *     @arg FLASH_FLAG_PGERR: FLASH Program error flag
+  *     @arg FLASH_FLAG_WRPRTERR: FLASH Write protected error flag
+  *     @arg FLASH_FLAG_EOP: FLASH End of Operation flag
+  * @retval None
+  */
+void FLASH_ClearFlag(uint32_t FLASH_FLAG)
+{
+  /* Clear the flags */
+  FLASH->SR = FLASH_FLAG;
+}
+
+/**
+  * @brief  Returns the FLASH Bank1 Status.
+  * @note   This function can be used for all STM32F10x devices, it is equivalent
+  *         to FLASH_GetStatus function.
+  * @param  None
+  * @retval FLASH Status: The returned value can be: FLASH_BUSY, FLASH_ERROR_PG,
+  *         FLASH_ERROR_WRP or FLASH_COMPLETE
+  */
+FLASH_Status FLASH_GetBank1Status(void)
+{
+
+  if((FLASH->SR & FLASH_FLAG_BANK1_BSY) == FLASH_FLAG_BSY)
+  {
+    flashStatus = FLASH_BUSY;
+  }
+  else
+  {
+    if((FLASH->SR & FLASH_FLAG_BANK1_PGERR) != 0)
+    {
+      flashStatus = FLASH_ERROR_PG;
+    }
+    else
+    {
+      if((FLASH->SR & FLASH_FLAG_BANK1_WRPRTERR) != 0 )
+      {
+        flashStatus = FLASH_ERROR_WRP;
+      }
+      else
+      {
+        flashStatus = FLASH_COMPLETE;
+      }
+    }
+  }
+  /* Return the Flash Status */
+  return flashStatus;
+}
+/**
+  * @brief  Waits for a Flash operation to complete or a TIMEOUT to occur.
+  * @note   This function can be used for all STM32F10x devices,
+  *         it is equivalent to FLASH_WaitForLastBank1Operation.
+  *         - For STM32F10X_XL devices this function waits for a Bank1 Flash operation
+  *           to complete or a TIMEOUT to occur.
+  *         - For all other devices it waits for a Flash operation to complete
+  *           or a TIMEOUT to occur.
+  * @param  Timeout: FLASH programming Timeout
+  * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  */
+FLASH_Status FLASH_WaitForLastOperation(uint32_t Timeout)
+{
+	flashStatus = FLASH_COMPLETE;
+
+  /* Check for the Flash Status */
+	flashStatus = FLASH_GetBank1Status();
+  /* Wait for a Flash operation to complete or a TIMEOUT to occur */
+	while((flashStatus == FLASH_BUSY) && (Timeout != 0x00))
+	{
+		flashStatus = FLASH_GetBank1Status();
+		Timeout--;
+  	}
+	if(Timeout == 0x00 )
+  	{
+  		flashStatus = FLASH_TIMEOUT;
+  	}
+  /* Return the operation status */
+	return flashStatus;
+}
+
+
+/**
+  * @brief  Erases a specified FLASH page.
+  * @note   This function can be used for all STM32F10x devices.
+  * @param  Page_Address: The page address to be erased.
+  * @retval FLASH Status: The returned value can be: FLASH_BUSY, FLASH_ERROR_PG,
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  */
+FLASH_Status FLASH_ErasePage(uint32_t Page_Address)
+{
+  /* Wait for last operation to be completed */
+  if(FLASH_WaitForLastOperation(EraseTimeout) != FLASH_COMPLETE) return FLASH_ERROR_PG;
+  /* if the previous operation is completed, proceed to erase the page */
+	FLASH->CR|= CR_PER_Set;
+	FLASH->AR = Page_Address;
+	FLASH->CR|= CR_STRT_Set;
+
+	/* Wait for last operation to be completed */
+	FLASH_WaitForLastOperation(EraseTimeout);
+	/* Disable the PER Bit */
+	FLASH->CR &= CR_PER_Reset;
+
+  /* Return the Erase Status */
+	return FLASH_COMPLETE;
+}
+
+/**
+  * @brief  Programs a word at a specified address.
+  * @note   This function can be used for all STM32F10x devices.
+  * @param  Address: specifies the address to be programmed.
+  * @param  Data: specifies the data to be programmed.
+  * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  */
+FLASH_Status FLASH_ProgramWord(uint32_t Address, uint32_t Data)
+{
+  /* Wait for last operation to be completed */
+  flashStatus = FLASH_WaitForLastOperation(ProgramTimeout);
+
+  if(flashStatus == FLASH_COMPLETE)
+  {
+    /* if the previous operation is completed, proceed to program the new first
+    half word */
+    FLASH->CR |= CR_PG_Set;
+
+    *(__IO uint16_t*)Address = (uint16_t)Data;
+    /* Wait for last operation to be completed */
+    flashStatus = FLASH_WaitForLastOperation(ProgramTimeout);
+
+    if(flashStatus == FLASH_COMPLETE)
+    {
+      /* if the previous operation is completed, proceed to program the new second
+      half word */
+      flashTemp = Address + 2;
+
+      *(__IO uint16_t*) flashTemp = Data >> 16;
+
+      /* Wait for last operation to be completed */
+      flashStatus = FLASH_WaitForLastOperation(ProgramTimeout);
+
+      /* Disable the PG Bit */
+      FLASH->CR &= CR_PG_Reset;
+    }
+    else
+    {
+      /* Disable the PG Bit */
+      FLASH->CR &= CR_PG_Reset;
+    }
+  }
+
+  /* Return the Program Status */
+  return flashStatus;
+}
+
+
 
 // Erase the flash memory with StartAddress and length.
 // 		StartAddress : the start Address of flash to erase
@@ -460,7 +1224,7 @@ uint8_t WriteFlash(uint32_t address, uint32_t data)
 uint8_t WriteFlash8Bytes(uint32_t addr, uint8_t* data)
 {
 	result = SUCCESS;
-	temp = BYTE2UINT32(data);
+	temp = BYTE2UINT32(data[3], data[2], data[1], data[0]);
 
 	FLASH_Unlock();
 
@@ -468,7 +1232,7 @@ uint8_t WriteFlash8Bytes(uint32_t addr, uint8_t* data)
 	{
 		result = ERROR;
 	}else {
-		temp = BYTE2UINT32(data + 4);
+		temp = BYTE2UINT32(data[7], data[6], data[5], data[4]);
 		if(FLASH_ProgramWord(addr+ 4, temp) != FLASH_COMPLETE)
 		{
 			result = ERROR;
@@ -492,112 +1256,29 @@ uint32_t ReadFlash(uint32_t addr)
 
 }
 
-//Convert the 32bit Integer to bytes array.
-void ConvertUint32ToBytes(uint32_t integer, uint8_t* bytes)
-{
-	bytes[3] = (integer >>24); //shift right 24bit
-	bytes[2] = (integer >>16); //shift right 16bytes
-	bytes[1] = (integer >>8);	//shift right 8bytes
-	bytes[0] = (integer & 0xff);
-}
 
-typedef void (application_t)(void);
-
-typedef struct
-{
-    uint32_t		stack_addr;     // Stack Pointer
-    application_t*	func_p;        // Program Counter
-} JumpStruct;
-
-
-void DeinitEverything()
-{
-	//-- reset peripherals to guarantee flawless start of user application
-	//HAL_GPIO_DeInit(LED_GPIO_Port, LED_Pin);
-
-	__HAL_RCC_GPIOC_CLK_DISABLE();
-	__HAL_RCC_GPIOD_CLK_DISABLE();
-	__HAL_RCC_GPIOB_CLK_DISABLE();
-	__HAL_RCC_GPIOA_CLK_DISABLE();
-	__HAL_RCC_TIM1_CLK_DISABLE();
-	__HAL_RCC_SPI1_CLK_DISABLE();
-	__HAL_RCC_USART1_CLK_DISABLE();
-
-	RCC_DeInit();
-
-	__HAL_RCC_APB1_FORCE_RESET();
-	__HAL_RCC_APB1_RELEASE_RESET();
-	__HAL_RCC_APB2_FORCE_RESET();
-	__HAL_RCC_APB2_RELEASE_RESET();
-
-	SysTick->CTRL = 0;
-	SysTick->LOAD = 0;
-	SysTick->VAL = 0;
-}
-void JumpToApp(const uint32_t address)
-{
-	const JumpStruct* vector_p = (JumpStruct*)address;
-
-	//__disable_irq();
-	DeinitEverything();
-	SCB->VTOR = 0x8004000;
-	/* let's do The Jump! */
-    /* Jump, used asm to avoid stack optimization */
-    asm("msr msp, %0; bx %1;" : : "r"(vector_p->stack_addr), "r"(vector_p->func_p));
-}
-//////////////////////////////////////////////////////////////////////////////////
-/// This code doesn't work here.
-void applicationMain()
-{
-
-//	SysTick->CTRL = 0;
-//	SysTick->LOAD = 0;
-//	SysTick->VAL  = 0;
-//	__disable_irq();
-	//SCB->VTOR = FLASH_APPLICATION_START_ADDRESS;
-	/* Jump to user application */
-	/**
-	 * Step: Set jump memory location for system memory
-	 *       Use address with 4 bytes offset which specifies jump location where program starts
-	 */
-
-
-	jumpAddress = *(__IO uint32_t*) (FLASH_APPLICATION_START_ADDRESS+ 4); //
-
-	/**
-	 * Step: Set main stack pointer.
-	 *       This step must be done last otherwise local variables in this function
-	 *       don't have proper value since stack pointer is located on different position
-	 *
-	 *       Set direct address location which specifies stack pointer in SRAM location
-	 */
-	__set_MSP(*(uint32_t *)FLASH_APPLICATION_START_ADDRESS);
-
-	JumpToApplication = (AppFunction) jumpAddress;
-	JumpToApplication();
-}
-//////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
 
 void processCanMsgFunction()
 {
-	address = BYTE2UINT32(CanRxDataBuffer);
-	temp = BYTE2UINT32(CanRxDataBuffer + 4);
+	address = BYTE2UINT32(CanRxDataBuffer[3], CanRxDataBuffer[2], CanRxDataBuffer[1],CanRxDataBuffer[0]);
+	temp = BYTE2UINT32(CanRxDataBuffer[7], CanRxDataBuffer[6], CanRxDataBuffer[5],CanRxDataBuffer[4]);
 
 	switch(CanRxFunctionId)
 	{
 	case CAN_FUNCTION_PING: // Response for request ping
-		PingCanMessage(CanRxSourceAddress, 0);
+		//PingCanMessage(CanRxSourceAddress, 0);
+		SendCanMessage(CAN_DEV_ANALYST, CAN_FUNCTION_PING, CanMessageBuffer, 0);
 		break;
 	case CAN_FUNCTION_BLINK_HEARTBEAT:
 		break;
 	case CAN_FUNCTION_JUMP_TO_APPLICATION:
 		//applicationMain();
-		JumpToApp(FLASH_APPLICATION_START_ADDRESS);
-		//applicationMain();
+		jumpToApp(FLASH_APPLICATION_START_ADDRESS);
 		break;
 	case CAN_FUNCTION_ERASE_FLASH:
 		//Data Format: [0-3]: Start Address, [4-7]: Length
-		length = BYTE2UINT32(CanRxDataBuffer + 4);
+		length = BYTE2UINT32(CanRxDataBuffer[7], CanRxDataBuffer[6],CanRxDataBuffer[5],CanRxDataBuffer[4]);
 		result = EraseFlash(address, length);
 		CanMessageBuffer[0] = result;
 		SendCanMessage(CanRxSourceAddress, CAN_FUNCTION_ERASE_FLASH, CanMessageBuffer, 8);
@@ -642,12 +1323,9 @@ void processCanMsgFunction()
 		}
 		break;
 	case CAN_UPLOADING_APPLICATION:
-		//Write the data at the address in flash
-		//CanRxApplicationData is the address to upload
 		result = WriteFlash8Bytes(FLASH_APPLICATION_START_ADDRESS + CanRxApplicationData, CanRxDataBuffer);
 		if(result == ERROR)
 		{
-			//if there are errors, send the error message,
 			SendCanMessage(CAN_DEV_ANALYST, CAN_APPLICATION_UPLOADDOWNLOAD_ERROR, CanMessageBuffer, 0);
 			IsUploadApplication = 0;
 		}
@@ -657,35 +1335,35 @@ void processCanMsgFunction()
 		SendCanMessage(CAN_DEV_ANALYST, CAN_APPLICATION_UPLOADDOWNLOAD_SUCCESS, CanMessageBuffer, 0);
 		IsUploadApplication = 0;
 		break;
-	case CAN_DOWNLOAD_START_APPLICATION: //Notify that the upload has been completed
+	case CAN_DOWNLOAD_START_APPLICATION:
 		//Read the application size at the 0x08004000 address.
 		ReadFlash8Bytes(FLASH_APPLICATION_SIZE_ADDRESS, CanMessageBuffer);
 		SendCanMessage(CAN_DEV_ANALYST, CAN_DOWNLOAD_START_APPLICATION, CanMessageBuffer, 8);
 		DownloadApplicationWaitCounter = MAX_COUNTDOWN;
 		IsDownloadApplication = 1;
 		break;
-	case CAN_DOWNLOADING_APPLICATION: // Send the data of that address
+	case CAN_DOWNLOADING_APPLICATION:
 		//uploading frame Id format : 0x[1B][Target ID (2B)][[Address {4B}]
 		//Here, CanRxApplicationDat is offset address to read.
 		ReadFlash8Bytes(FLASH_APPLICATION_START_ADDRESS + CanRxApplicationData, CanMessageBuffer);
 		SendCanMessage(CAN_DEV_ANALYST, CAN_DOWNLOADING_APPLICATION, CanMessageBuffer, 8);
 		break;
 		IsDownloadApplication = 0;
-	case CAN_DOWNLOAD_END_APPLICATION: //Notify that the download has been completed
+	case CAN_DOWNLOAD_END_APPLICATION:
 		SendCanMessage(CAN_DEV_ANALYST, CAN_DOWNLOAD_END_APPLICATION, CanMessageBuffer, 8);
 		IsDownloadApplication = 0;
 		break;
 	}
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
-	//Initialize RCC, GPIO, ADC, CAN Interfaces.
-	InitRCC();//setup internal clock PLL, so we are at 72mhz
-	InitGPIO();//set necessary pins for safe boot up and can bus comm
-	InitVariable();//initialize working variables
+	InitRCC();
+	InitGPIO();
 
-	InitADC();//set up adc, so we can read the address resistor and determine position/can address
-	InitCAN();//turn on can transceiver so we can try to register with host.
+	InitADC();
+
+	InitCAN();
 
 	for (i=0; i < 500; i ++)
 	{
@@ -694,34 +1372,10 @@ int main(void)
 		WaitMicrosecond(50);
 	}
 
-	// at this point we have clocks and i/o and canbus and adc initialized and working
-	//now we will start the registration loop
 
-	//Get the Head position from PB
-	CalculateDevicePosition();
 	SendCanMessage(CAN_DEV_ANALYST, 0xBB, CanMessageBuffer, 0);
-	while(1)
-	{
-		// we need to put a case here that will fire about 10 times per second
-		//it will read the canaddressadc,
-		//then update the head address,
-		//then send a ping message until it registers
-
-		CanAddressAdcConvertCounter --; //count down AdcConvertCounter to zero
-		if(!CanAddressAdcConvertCounter)
-		{
-			CanAddressAdcConvertCounter = MAX_COUNTDOWN;
-
-			AdcConvertCanAddress(); 	//get the head resister value by adc converting.
-
-			if(AddressAdcValue < 0x7ff) //if successful,
-			{
-				CalculateDevicePosition(); 	//update the device address with that.
-				//if(CurrentHeadCanAddress != POSITION_UNPLUGGED)
-					//PingCanMessage();			//send the ping message to all device.
-			}
-		}
-
+    /* Loop forever */
+	while(1){
 		//lets update the heartbeat now
 		HeartbeatCounter --;//count down to zero
 		if(HeartbeatCounter & 0x1000)
@@ -734,20 +1388,59 @@ int main(void)
 			if(!HeartbeatCounter)	HeartbeatCounter = MAX_COUNTDOWN;//reset the counter if we are at zero
 		}
 
-		if(CanTrasmitMsgWaitCounter) //if Can message are transmitting....
+    	// we need to put a case here that will fire about 10 times per second
+		//it will read the canaddressadc,
+		//then update the head address,
+		//then send a ping message until it registers
+
+    	CanAddressAdcConvertCounter --; //count down AdcConvertCounter to zero
+    	if(!CanAddressAdcConvertCounter)
+    	{
+    		CanAddressAdcConvertCounter = MAX_COUNTDOWN;
+
+    		AdcConvertCanAddress(); 	//get the head resister value by adc converting.
+
+    		if(AddressAdcValue < 0x7ff) //if successful,
+    		{
+    			CalculateDevicePosition(); 	//update the device address with that.
+				//if(CurrentHeadCanAddress != POSITION_UNPLUGGED)
+					//PingCanMessage();			//send the ping message to all device.
+    		}
+    	}
+
+
+
+    	//////////////// Can Message Transmitting Process //////////////////////////////
+    	if(CanTrasmitMsgWaitCounter) //if Can is transsming,
+    	{
+    		status = CAN_TransmitStatus(CAN1, CanTransmitMailbox); //Check the Can Transmit status
+    		if((status != CAN_TxStatus_Ok) && (CanTrasmitMsgWaitCounter))
+    			CanTrasmitMsgWaitCounter --; //Count down the counter for CAN transmit
+    		else if(status == CAN_TxStatus_Ok)
+    		{
+    			//if Can transmit successfull, set the flag.
+    			CanMessageReadyToSend = 1;
+    			CanTrasmitMsgWaitCounter = 0; //Can Transmit Status set as Idle.
+    		}
+    	}
+    	if (CanMessageReadyToSend)	//if Can transmitting has done.
 		{
-			status = CAN_TransmitStatus(CAN1, CanTrasmitMsgWaitCounter); //Get the status of Can Message Transmitting.
-			if(status == CANTXOK)
-			{
-				//when it has done, flags would be reset.
-				CanMessageReadyToSend = 1;
-				CanTrasmitMsgWaitCounter = 0;
-			}
-			else //otherwise, counter would be count down to zero.
-				CanTrasmitMsgWaitCounter --;
+			//this will be used in response to a memory read request by the host, over the
+			//	can bus bootloader, can bus can only send 8 bytes of data at a time,
+			//so we will need a counter and pointer to keep track of what memory to read
+			//and when we have sent ALL the requested data.
+			CanTxLedStatus = MAX_COUNTDOWN;  //set the semaphore Can Tx Led status
+			CanMessageReadyToSend = 0; //clear the Can Message Send flag.
 		}
 
-		//set the can traffic transmit led on or off
+		if(CanMessageReadyToRead) // If Can message received.
+		{
+			//process the message();
+			CanRxLedStatus = MAX_COUNTDOWN;//just guessing, but 10,000 loops should be enough time to see the led.
+			CanMessageReadyToRead = 0;  //clear the Can Message Rcv flag.
+			processCanMsgFunction();
+		}
+    	//set the can traffic transmit led on or off
 		if(CanTxLedStatus)
 		{
 			//get here means the led should be on
@@ -771,51 +1464,5 @@ int main(void)
 			//the led has had enough time to be seen, so now we can turn it off
 			ClearCanRxLed;
 		}
-
-		///////////////// Toggle Switch Process //////////////////////////////////////////
-		if(!ReadToggleSwitchA)
-		{
-			// if zero, the switch is activated
-			TogglePin(GPIOB, LED_HEADPOS_00);
-		}
-		if(!ReadToggleSwitchB)
-		{
-			// if zero, the switch is activated
-			TogglePin(GPIOB, LED_HEADPOS_01);
-		}
-		///////////////////////////////////////////////////////////////////////////////////
-
-		//////////////// Can Message Transmitting Process //////////////////////////////
-		if(CanTrasmitMsgWaitCounter) //if Can is transsming,
-		{
-			status = CAN_TransmitStatus(CAN1, CanTransmitMailbox); //Check the Can Transmit status
-			if((status != CANTXOK) && (CanTrasmitMsgWaitCounter))
-				CanTrasmitMsgWaitCounter --; //Count down the counter for CAN transmit
-			else if(status == CANTXOK)
-			{
-				//if Can transmit successfull, set the flag.
-				CanMessageReadyToSend = 1;
-				CanTrasmitMsgWaitCounter = 0; //Can Transmit Status set as Idle.
-			}
-		}
-
-		if (CanMessageReadyToSend)	//if Can transmitting has done.
-		{
-			//this will be used in response to a memory read request by the host, over the
-			//	can bus bootloader, can bus can only send 8 bytes of data at a time,
-			//so we will need a counter and pointer to keep track of what memory to read
-			//and when we have sent ALL the requested data.
-			CanTxLedStatus = MAX_COUNTDOWN;  //set the semaphore Can Tx Led status
-			CanMessageReadyToSend = 0; //clear the Can Message Send flag.
-		}
-
-		if(CanMessageReadyToRead) // If Can message received.
-		{
-			//process the message();
-			CanRxLedStatus = MAX_COUNTDOWN;//just guessing, but 10,000 loops should be enough time to see the led.
-			CanMessageReadyToRead = 0;  //clear the Can Message Rcv flag.
-			processCanMsgFunction();
-		}
-		////////////////////////////////////////////////////////////////////////////////
 	}
 }
