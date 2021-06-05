@@ -14,8 +14,8 @@
  * License. You may obtain a copy of the License at:
  *                        opensource.org/licenses/BSD-3-Clause
  *
- * written date: 04/06/2021
- * revision number: SV 1.001
+ * written date: 06/05/2021
+ * revision number: SV 1.002
  ******************************************************************************
  */
 
@@ -59,34 +59,35 @@ FLASH_Status 			flashStatus = FLASH_COMPLETE;
 __IO uint32_t 			flashTemp= 0;
 
 // data from the Hot Head Resistor Value and 12-bit ADC Value spec
-const HEADPOSITIONTABLE HeadPositionTable[HEAD_POSITION_ENTRIES] = {
-	{  108, 91 }, // max adc value for hotbed1 position
-	{  294, 26 }, // max adc value for yoke 2 aux2
-	{  452, 16 }, // max adc value for yoke 1 aux2
-	{  635, 21 }, // max adc value for yoke 2 hot head 1
-	{  804, 11 }, // max adc value for yoke 1 hot head 1
-	{  943, 22 }, // max adc value for yoke 2 hot head 2
-	{ 1082, 12 }, // max adc value for yoke 1 hot head 2
-	{ 1228, 23 }, // max adc value for yoke 2 hot head 3
-	{ 1389, 13 }, // max adc value for yoke 1 hot head 3
-	{ 1563, 24 }, // max adc value for yoke 2 hot head 4
-	{ 1751, 14 }, // max adc value for yoke 1 hot head 4
-	{ 1946, 25 }, // max adc value for yoke 2 aux1
-	{ 2140, 15 }, // max adc value for yoke 1 aux1
-	{ 2345, 92 }, // max adc value for hotbed2 position
-	{ 2544, 46 }, // max adc value for yoke 4 aux2
-	{ 2723, 36 }, // max adc value for yoke 3 aux2
-	{ 2901, 41 }, // max adc value for yoke 4 hot head 1
-	{ 3065, 31 }, // max adc value for yoke 3 hot head 1
-	{ 3200, 42 }, // max adc value for yoke 4 hot head 2
-	{ 3317, 32 }, // max adc value for yoke 3 hot head 2
-	{ 3439, 43 }, // max adc value for yoke 4 hot head 3
-	{ 3557, 33 }, // max adc value for yoke 3 hot head 3
-	{ 3667, 44 }, // max adc value for yoke 4 hot head 4
-	{ 3780, 34 }, // max adc value for yoke 3 hot head 4
-	{ 3906, 45 }, // max adc value for yoke 4 aux1
-	{ 4034, 35 }, // max adc value for yoke 3 aux1
-	{ MAX_ADC, POSITION_UNPLUGGED } // max adc value an unplugged hothead
+const uint16_t HeadPositionTable[HEAD_POSITION_ENTRIES] = {
+		///(ADC /4 <<6) + Head
+		1788, 					//{  108/4, 60(91) }, // max adc value for hotbed1 position
+		4698, 		//{  294, 26 }, // max adc value for yoke 2 aux2
+		7248 , 		//{  452, 16 }, // max adc value for yoke 1 aux2
+		10133, 		//{  635, 21 }, // max adc value for yoke 2 hot head 1
+		12875, 		//{  804, 11 }, // max adc value for yoke 1 hot head 1
+		15062,		//{  943, 22 }, // max adc value for yoke 2 hot head 2
+		17292, 		//{ 1082, 12 }, // max adc value for yoke 1 hot head 2
+		19671, 		//{ 1228, 23 }, // max adc value for yoke 2 hot head 3
+		22221, 		//{ 1389, 13 }, // max adc value for yoke 1 hot head 3
+		24984, 		//{ 1563, 24 }, // max adc value for yoke 2 hot head 4
+		27982, 		//{ 1751, 14 }, // max adc value for yoke 1 hot head 4
+		31129, 		//{ 1946, 25 }, // max adc value for yoke 2 aux1
+		34255, 		//{ 2140, 15 }, // max adc value for yoke 1 aux1
+		37565, 		//{ 2345, 61(92) }, // max adc value for hotbed2 position
+		40750, 		//{ 2544, 46 }, // max adc value for yoke 4 aux2
+		43556, 		//{ 2723, 36 }, // max adc value for yoke 3 aux2
+		46441, //{ 2901, 41 }, // max adc value for yoke 4 hot head 1
+		49055, //{ 3065, 31 }, // max adc value for yoke 3 hot head 1
+		51242, //{ 3200, 42 }, // max adc value for yoke 4 hot head 2
+		53088, //{ 3317, 32 }, // max adc value for yoke 3 hot head 2
+		55019, //{ 3439, 43 }, // max adc value for yoke 4 hot head 3
+		56929,//{ 3557, 33 }, // max adc value for yoke 3 hot head 3
+		58668, //{ 3667, 44 }, // max adc value for yoke 4 hot head 4
+		60514, //{ 3780, 34 }, // max adc value for yoke 3 hot head 4
+		62509, //{ 3906, 45 }, // max adc value for yoke 4 aux1
+		64547, //{ 4034, 35 }, // max adc value for yoke 3 aux1
+	((MAX_ADC/4)<<6)+POSITION_UNPLUGGED// { MAX_ADC, POSITION_UNPLUGGED } // max adc value an unplugged hothead
 };
 
 void InitRCC()
@@ -94,7 +95,7 @@ void InitRCC()
     // Update SystemCoreClock value
 	//SystemCoreClockUpdate();
     // Configure the SysTick timer to overflow every 1 us
-    SysTick_Config(SystemCoreClock / 1000000);
+    SysTick_Config(SYSCLK_FREQ_72MHz / 1000000);
     //Enable GPIOA clock
 	RCC->APB2ENR |= (RCC_APB2Periph_GPIOA);		//enable clock for peripheral
 	RCC->APB2RSTR &= ~(RCC_APB2Periph_GPIOA);	//remove reset from peripheral
@@ -250,7 +251,7 @@ void CalculateDevicePosition()
 	if(AddressAdcValue>0x1000)return;//invalid data, try again later
 	for (i = 0; i < HEAD_POSITION_ENTRIES; i++)
 	{
-		if (AddressAdcValue <= HeadPositionTable[i].adcRaw)
+		if (AddressAdcValue <= (HeadPositionTable[i]>>6) * 4)
 		{
 			break;
 		}
@@ -261,7 +262,7 @@ void CalculateDevicePosition()
 		return;
 	}
 
-	switch(HeadPositionTable[i].position)
+	switch(HeadPositionTable[i]&0x7F) //Only for 7bit
 	{
 	case HEAD_01: SetPin(GPIOB, LED_HEADPOS_00); CurrentHeadCanAddress = HEAD_01; break;
 	case HEAD_02: SetPin(GPIOB, LED_HEADPOS_01); CurrentHeadCanAddress = HEAD_02;break;
@@ -974,6 +975,22 @@ int main(void)
 			TurnOffHeartBeatLed;
 			if(!HeartbeatCounter)	HeartbeatCounter = MAX_COUNTDOWN;//reset the counter if we are at zero
 		}
+
+
+    	CanAddressAdcConvertCounter --; //count down AdcConvertCounter to zero
+    	if(!CanAddressAdcConvertCounter)
+    	{
+    		CanAddressAdcConvertCounter = MAX_COUNTDOWN;
+
+    		AdcConvertCanAddress(); 	//get the head resister value by adc converting.
+
+    		if(AddressAdcValue < 0x7ff) //if successful,
+    		{
+    			CalculateDevicePosition(); 	//update the device address with that.
+				//if(CurrentHeadCanAddress != POSITION_UNPLUGGED)
+					//PingCanMessage();			//send the ping message to all device.
+    		}
+    	}
 
     	// we need to put a case here that will fire about 10 times per second
 		//it will read the canaddressadc,

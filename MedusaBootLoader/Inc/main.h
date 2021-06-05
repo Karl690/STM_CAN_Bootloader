@@ -1,4 +1,8 @@
+
+
 //////////////////////////////////////            GLOBAL Contants 							///////////////////////////
+#define SYSCLK_FREQ_72MHz  72000000
+
 #define MAX_COUNTDOWN 0x2000
 
 #define HEAD_POSITION_ENTRIES 		27
@@ -10,8 +14,8 @@
 #define ALL_DEVICE 0
 
 #define MAX_ADC 					0x0fff
-#define POSITION_UNPLUGGED			0xFE
-#define CAN_DEV_ANALYST				0xFC
+#define POSITION_UNPLUGGED			0x3F
+#define CAN_DEV_ANALYST				0x3E
 
 typedef struct {
 	uint16_t	adcRaw;			// max adcValue for corresponding position
