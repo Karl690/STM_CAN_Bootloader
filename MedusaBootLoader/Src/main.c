@@ -262,7 +262,7 @@ void CalculateDevicePosition()
 		return;
 	}
 
-	switch(HeadPositionTable[i]&0x7F) //Only for 7bit
+	switch(HeadPositionTable[i]&0x3F) //Only for 7bit
 	{
 	case HEAD_01: SetPin(GPIOB, LED_HEADPOS_00); CurrentHeadCanAddress = HEAD_01; break;
 	case HEAD_02: SetPin(GPIOB, LED_HEADPOS_01); CurrentHeadCanAddress = HEAD_02;break;
