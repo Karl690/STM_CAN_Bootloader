@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32002.261
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HyrelCanAnalyzer", "HyrelCanAnalyzer\HyrelCanAnalyzer.csproj", "{C76EAA0D-B175-4404-9D1F-6C47D208E58D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C76EAA0D-B175-4404-9D1F-6C47D208E58D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C76EAA0D-B175-4404-9D1F-6C47D208E58D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C76EAA0D-B175-4404-9D1F-6C47D208E58D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C76EAA0D-B175-4404-9D1F-6C47D208E58D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A62E6865-8374-43D7-84CD-1DF0317A87F3}
+	EndGlobalSection
+EndGlobal
