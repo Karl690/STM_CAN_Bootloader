@@ -168,12 +168,25 @@ namespace HyrelCanAnalyzer
             }
             return sz;
         }
-        public HEADPOSITION DevPosition
+        public HEADPOSITION SourceID
         {
             get
             {
-                int pos = (int)(ID & 0b0000011111111000000000000000) >> 16;
-                if(Enum.IsDefined(typeof(HEADPOSITION), pos))
+                int pos = (int)(ID & 0x00ff0000) >> 16; //0b0000011111111000000000000000
+                if (Enum.IsDefined(typeof(HEADPOSITION), pos))
+                {
+                    return (HEADPOSITION)pos;
+                }
+                return HEADPOSITION.UNPLUGGED;
+            }
+        }
+
+        public HEADPOSITION TargetID
+        {
+            get
+            {
+                int pos = (int)(ID & 0x0000ff00) >> 8;
+                if (Enum.IsDefined(typeof(HEADPOSITION), pos))
                 {
                     return (HEADPOSITION)pos;
                 }

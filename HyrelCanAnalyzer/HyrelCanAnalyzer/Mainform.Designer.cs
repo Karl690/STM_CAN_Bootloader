@@ -62,7 +62,8 @@ namespace HyrelCanAnalyzer
             this.sETTINGSToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(919, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 4, 0, 4);
+            this.menuStrip1.Size = new System.Drawing.Size(1378, 27);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -73,7 +74,7 @@ namespace HyrelCanAnalyzer
             this.toolStripMenuItemDisconnect,
             this.toolStripMenuItemExit});
             this.cANToolStripMenuItem.Name = "cANToolStripMenuItem";
-            this.cANToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.cANToolStripMenuItem.Size = new System.Drawing.Size(44, 19);
             this.cANToolStripMenuItem.Text = "CAN";
             // 
             // connectToolStripMenuItem
@@ -118,19 +119,19 @@ namespace HyrelCanAnalyzer
             this.sTARTToolStripMenuItem,
             this.sTOPToolStripMenuItem});
             this.sETTINGSToolStripMenuItem.Name = "sETTINGSToolStripMenuItem";
-            this.sETTINGSToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
+            this.sETTINGSToolStripMenuItem.Size = new System.Drawing.Size(69, 19);
             this.sETTINGSToolStripMenuItem.Text = "CAPTURE";
             // 
             // sTARTToolStripMenuItem
             // 
             this.sTARTToolStripMenuItem.Name = "sTARTToolStripMenuItem";
-            this.sTARTToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.sTARTToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
             this.sTARTToolStripMenuItem.Text = "START";
             // 
             // sTOPToolStripMenuItem
             // 
             this.sTOPToolStripMenuItem.Name = "sTOPToolStripMenuItem";
-            this.sTOPToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.sTOPToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
             this.sTOPToolStripMenuItem.Text = "STOP";
             // 
             // toolStrip1
@@ -143,9 +144,9 @@ namespace HyrelCanAnalyzer
             this.toolStripCmbFilterMessage,
             this.toolStripCapture,
             this.toolStripButton1});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 27);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(919, 31);
+            this.toolStrip1.Size = new System.Drawing.Size(1378, 31);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -156,7 +157,7 @@ namespace HyrelCanAnalyzer
             "CAN1",
             "CAN2"});
             this.toolStripCmbCanChannel.Name = "toolStripCmbCanChannel";
-            this.toolStripCmbCanChannel.Size = new System.Drawing.Size(121, 31);
+            this.toolStripCmbCanChannel.Size = new System.Drawing.Size(179, 31);
             // 
             // toolStripButtonConnect
             // 
@@ -177,13 +178,13 @@ namespace HyrelCanAnalyzer
             // toolStripCmbFilterHead
             // 
             this.toolStripCmbFilterHead.Name = "toolStripCmbFilterHead";
-            this.toolStripCmbFilterHead.Size = new System.Drawing.Size(121, 31);
+            this.toolStripCmbFilterHead.Size = new System.Drawing.Size(179, 31);
             this.toolStripCmbFilterHead.TextChanged += new System.EventHandler(this.toolStripCmbFilterHead_TextChanged);
             // 
             // toolStripCmbFilterMessage
             // 
             this.toolStripCmbFilterMessage.Name = "toolStripCmbFilterMessage";
-            this.toolStripCmbFilterMessage.Size = new System.Drawing.Size(220, 31);
+            this.toolStripCmbFilterMessage.Size = new System.Drawing.Size(328, 31);
             this.toolStripCmbFilterMessage.TextChanged += new System.EventHandler(this.toolStripCmbFilterMessage_TextChanged);
             // 
             // toolStripCapture
@@ -217,21 +218,24 @@ namespace HyrelCanAnalyzer
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.GridLines = true;
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(0, 55);
+            this.listView1.Location = new System.Drawing.Point(0, 58);
+            this.listView1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(919, 462);
+            this.listView1.Size = new System.Drawing.Size(1378, 777);
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             // 
             // Mainform
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(919, 517);
+            this.ClientSize = new System.Drawing.Size(1378, 835);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
+            this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MainMenuStrip = this.menuStrip1;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Mainform";
             this.Text = "Hyrel CAN Analyzer";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Mainform_FormClosed);

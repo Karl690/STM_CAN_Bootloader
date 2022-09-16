@@ -174,6 +174,7 @@ namespace HyrelCanAnalyzer
         HOTHEAD3_YOKE1 = 13,
         HOTHEAD4_YOKE2 = 24,
         HOTHEAD4_YOKE1 = 14,
+        HOTHEAD5_YOKE1 = 15,
 
         AUX1_YOKE2 = 25,
         AUX1_YOKE1 = 15,
@@ -191,6 +192,7 @@ namespace HyrelCanAnalyzer
         AUX1_YOKE4 = 45,
         AUX1_YOKE3 = 35,
 
+        HYDRA407 = 0x40,
         UNPLUGGED = 0xFF,
     }
 }

@@ -23,6 +23,7 @@ namespace HyrelCanAnalyzer
             InitializeComponent();
             InitControl();
             canInterface.CapturePacketEvent += CanInterface_CapturePacketEvent;
+            this.WindowState = FormWindowState.Maximized;
         }
 
         
@@ -35,10 +36,11 @@ namespace HyrelCanAnalyzer
             listView1.FullRowSelect = true;            
             listView1.Columns.Add("Frame ID", 80);
             listView1.Columns.Add("Data", 100);
-            listView1.Columns.Add("DEVPOS", 100);
-            listView1.Columns.Add("MSGTYPE", 100);
-            listView1.Columns.Add("MSGID", 100);
-            listView1.Columns.Add("Content", 400);
+            listView1.Columns.Add("SourceID", 200);
+            listView1.Columns.Add("TargetID", 200);
+            listView1.Columns.Add("MSGTYPE", 300);
+            listView1.Columns.Add("MSGID", 200);
+            listView1.Columns.Add("Content", 500);
 
             foreach (var head in Enum.GetValues(typeof(HEADPOSITION)).Cast<HEADPOSITION>().ToList())
             {
@@ -122,7 +124,7 @@ namespace HyrelCanAnalyzer
         {   
             if (FilterHeadString != "")
             {
-                int pos = FilterHeads.IndexOf(e.msgInfo.DevPosition);
+                int pos = FilterHeads.IndexOf(e.msgInfo.SourceID);
                 if (pos < 0) return;
             }
 
@@ -136,10 +138,11 @@ namespace HyrelCanAnalyzer
             item.Tag = e.msgInfo;
             item.Text = e.msgInfo.ID.ToString("X");
             item.SubItems.Add(e.msgInfo.GetDataString());
-            item.SubItems.Add(e.msgInfo.DevPosition.ToString());
+            item.SubItems.Add(e.msgInfo.SourceID.ToString() + ":" + string.Format("0x{0:X2}", (int)e.msgInfo.SourceID));
+            item.SubItems.Add(e.msgInfo.TargetID.ToString() + ":" + string.Format("0x{0:X2}", (int)e.msgInfo.TargetID));
             item.SubItems.Add(e.msgInfo.MsgType.ToString());
             item.SubItems.Add(e.msgInfo.MsgId.ToString());
-            item.SubItems.Add(Hyrel.ProcessCanMessage(e.msgInfo.DevPosition, e.msgInfo.MsgId, e.msgInfo.data));
+            item.SubItems.Add(Hyrel.ProcessCanMessage(e.msgInfo.SourceID, e.msgInfo.MsgId, e.msgInfo.data));
 
             if (listView1.InvokeRequired)
             {
