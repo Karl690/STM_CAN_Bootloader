@@ -113,6 +113,7 @@ namespace HyrelCanAnalyzer
             this.toolStripRunStop.Name = "toolStripRunStop";
             this.toolStripRunStop.Size = new System.Drawing.Size(23, 28);
             this.toolStripRunStop.Text = "Start";
+            this.toolStripRunStop.ToolTipText = "Run/Stop";
             this.toolStripRunStop.Click += new System.EventHandler(this.toolStripCapture_Click);
             // 
             // toolStripRecord
@@ -124,6 +125,7 @@ namespace HyrelCanAnalyzer
             this.toolStripRecord.Name = "toolStripRecord";
             this.toolStripRecord.Size = new System.Drawing.Size(23, 28);
             this.toolStripRecord.Text = "toolStripButton2";
+            this.toolStripRecord.ToolTipText = "Record";
             this.toolStripRecord.Click += new System.EventHandler(this.toolStripRecord_Click);
             // 
             // toolStripClear
@@ -135,6 +137,7 @@ namespace HyrelCanAnalyzer
             this.toolStripClear.Name = "toolStripClear";
             this.toolStripClear.Size = new System.Drawing.Size(28, 28);
             this.toolStripClear.Text = "toolStripButtonClear";
+            this.toolStripClear.ToolTipText = "Remove all items in List";
             this.toolStripClear.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripOpenCSV
@@ -146,6 +149,7 @@ namespace HyrelCanAnalyzer
             this.toolStripOpenCSV.Name = "toolStripOpenCSV";
             this.toolStripOpenCSV.Size = new System.Drawing.Size(26, 28);
             this.toolStripOpenCSV.Text = "toolStripButton3";
+            this.toolStripOpenCSV.ToolTipText = "Open CSV";
             this.toolStripOpenCSV.Click += new System.EventHandler(this.toolStripOpenCSV_Click);
             // 
             // toolStripSaveCSV
@@ -157,6 +161,7 @@ namespace HyrelCanAnalyzer
             this.toolStripSaveCSV.Name = "toolStripSaveCSV";
             this.toolStripSaveCSV.Size = new System.Drawing.Size(23, 28);
             this.toolStripSaveCSV.Text = "toolStripButton4";
+            this.toolStripSaveCSV.ToolTipText = "Save CSV";
             this.toolStripSaveCSV.Click += new System.EventHandler(this.toolStripSaveCSV_Click);
             // 
             // timer1
