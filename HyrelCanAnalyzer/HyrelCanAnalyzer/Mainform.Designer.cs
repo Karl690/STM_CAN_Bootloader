@@ -30,109 +30,21 @@ namespace HyrelCanAnalyzer
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mainform));
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.cANToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemConnectCan1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemConnectCan2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemDisconnect = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.sETTINGSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sTARTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sTOPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripCmbCanChannel = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripButtonConnect = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripCmbFilterHead = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripCmbFilterMessage = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripCapture = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripRunStop = new System.Windows.Forms.ToolStripButton();
+            this.toolStripRecord = new System.Windows.Forms.ToolStripButton();
+            this.toolStripClear = new System.Windows.Forms.ToolStripButton();
+            this.toolStripOpenCSV = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSaveCSV = new System.Windows.Forms.ToolStripButton();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.listView1 = new System.Windows.Forms.ListView();
-            this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cANToolStripMenuItem,
-            this.sETTINGSToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 4, 0, 4);
-            this.menuStrip1.Size = new System.Drawing.Size(1378, 27);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // cANToolStripMenuItem
-            // 
-            this.cANToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.connectToolStripMenuItem,
-            this.toolStripMenuItemDisconnect,
-            this.toolStripMenuItemExit});
-            this.cANToolStripMenuItem.Name = "cANToolStripMenuItem";
-            this.cANToolStripMenuItem.Size = new System.Drawing.Size(44, 19);
-            this.cANToolStripMenuItem.Text = "CAN";
-            // 
-            // connectToolStripMenuItem
-            // 
-            this.connectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemConnectCan1,
-            this.toolStripMenuItemConnectCan2});
-            this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.connectToolStripMenuItem.Text = "Connect";
-            // 
-            // toolStripMenuItemConnectCan1
-            // 
-            this.toolStripMenuItemConnectCan1.Name = "toolStripMenuItemConnectCan1";
-            this.toolStripMenuItemConnectCan1.Size = new System.Drawing.Size(105, 22);
-            this.toolStripMenuItemConnectCan1.Text = "CAN1";
-            this.toolStripMenuItemConnectCan1.Click += new System.EventHandler(this.toolStripMenuItemConnectCan1_Click);
-            // 
-            // toolStripMenuItemConnectCan2
-            // 
-            this.toolStripMenuItemConnectCan2.Name = "toolStripMenuItemConnectCan2";
-            this.toolStripMenuItemConnectCan2.Size = new System.Drawing.Size(105, 22);
-            this.toolStripMenuItemConnectCan2.Text = "CAN2";
-            this.toolStripMenuItemConnectCan2.Click += new System.EventHandler(this.toolStripMenuItemConnectCan2_Click);
-            // 
-            // toolStripMenuItemDisconnect
-            // 
-            this.toolStripMenuItemDisconnect.Name = "toolStripMenuItemDisconnect";
-            this.toolStripMenuItemDisconnect.Size = new System.Drawing.Size(133, 22);
-            this.toolStripMenuItemDisconnect.Text = "Disconnect";
-            this.toolStripMenuItemDisconnect.Click += new System.EventHandler(this.toolStripMenuItemDisconnect_Click);
-            // 
-            // toolStripMenuItemExit
-            // 
-            this.toolStripMenuItemExit.Name = "toolStripMenuItemExit";
-            this.toolStripMenuItemExit.Size = new System.Drawing.Size(133, 22);
-            this.toolStripMenuItemExit.Text = "Exit";
-            // 
-            // sETTINGSToolStripMenuItem
-            // 
-            this.sETTINGSToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.sTARTToolStripMenuItem,
-            this.sTOPToolStripMenuItem});
-            this.sETTINGSToolStripMenuItem.Name = "sETTINGSToolStripMenuItem";
-            this.sETTINGSToolStripMenuItem.Size = new System.Drawing.Size(69, 19);
-            this.sETTINGSToolStripMenuItem.Text = "CAPTURE";
-            // 
-            // sTARTToolStripMenuItem
-            // 
-            this.sTARTToolStripMenuItem.Name = "sTARTToolStripMenuItem";
-            this.sTARTToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
-            this.sTARTToolStripMenuItem.Text = "START";
-            // 
-            // sTOPToolStripMenuItem
-            // 
-            this.sTOPToolStripMenuItem.Name = "sTOPToolStripMenuItem";
-            this.sTOPToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
-            this.sTOPToolStripMenuItem.Text = "STOP";
             // 
             // toolStrip1
             // 
@@ -142,9 +54,12 @@ namespace HyrelCanAnalyzer
             this.toolStripSeparator1,
             this.toolStripCmbFilterHead,
             this.toolStripCmbFilterMessage,
-            this.toolStripCapture,
-            this.toolStripButton1});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 27);
+            this.toolStripRunStop,
+            this.toolStripRecord,
+            this.toolStripClear,
+            this.toolStripOpenCSV,
+            this.toolStripSaveCSV});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1378, 31);
             this.toolStrip1.TabIndex = 1;
@@ -163,7 +78,9 @@ namespace HyrelCanAnalyzer
             // 
             this.toolStripButtonConnect.AutoSize = false;
             this.toolStripButtonConnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButtonConnect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonConnect.Image")));
+            this.toolStripButtonConnect.Image = global::HyrelCanAnalyzer.Properties.Resources.connect;
+            this.toolStripButtonConnect.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolStripButtonConnect.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButtonConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonConnect.Name = "toolStripButtonConnect";
             this.toolStripButtonConnect.Size = new System.Drawing.Size(80, 28);
@@ -187,26 +104,60 @@ namespace HyrelCanAnalyzer
             this.toolStripCmbFilterMessage.Size = new System.Drawing.Size(328, 31);
             this.toolStripCmbFilterMessage.TextChanged += new System.EventHandler(this.toolStripCmbFilterMessage_TextChanged);
             // 
-            // toolStripCapture
+            // toolStripRunStop
             // 
-            this.toolStripCapture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripCapture.Image = global::HyrelCanAnalyzer.Properties.Resources.start_disable;
-            this.toolStripCapture.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripCapture.Name = "toolStripCapture";
-            this.toolStripCapture.Size = new System.Drawing.Size(23, 28);
-            this.toolStripCapture.Text = "Start";
-            this.toolStripCapture.Click += new System.EventHandler(this.toolStripCapture_Click);
+            this.toolStripRunStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRunStop.Image = global::HyrelCanAnalyzer.Properties.Resources.run;
+            this.toolStripRunStop.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripRunStop.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRunStop.Name = "toolStripRunStop";
+            this.toolStripRunStop.Size = new System.Drawing.Size(23, 28);
+            this.toolStripRunStop.Text = "Start";
+            this.toolStripRunStop.Click += new System.EventHandler(this.toolStripCapture_Click);
             // 
-            // toolStripButton1
+            // toolStripRecord
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = global::HyrelCanAnalyzer.Properties.Resources.clear;
-            this.toolStripButton1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(28, 28);
-            this.toolStripButton1.Text = "toolStripButtonClear";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.toolStripRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRecord.Image = global::HyrelCanAnalyzer.Properties.Resources.record_start;
+            this.toolStripRecord.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripRecord.ImageTransparentColor = System.Drawing.Color.Lime;
+            this.toolStripRecord.Name = "toolStripRecord";
+            this.toolStripRecord.Size = new System.Drawing.Size(23, 28);
+            this.toolStripRecord.Text = "toolStripButton2";
+            this.toolStripRecord.Click += new System.EventHandler(this.toolStripRecord_Click);
+            // 
+            // toolStripClear
+            // 
+            this.toolStripClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripClear.Image = global::HyrelCanAnalyzer.Properties.Resources.clear;
+            this.toolStripClear.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripClear.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripClear.Name = "toolStripClear";
+            this.toolStripClear.Size = new System.Drawing.Size(28, 28);
+            this.toolStripClear.Text = "toolStripButtonClear";
+            this.toolStripClear.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripOpenCSV
+            // 
+            this.toolStripOpenCSV.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripOpenCSV.Image = global::HyrelCanAnalyzer.Properties.Resources.open;
+            this.toolStripOpenCSV.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripOpenCSV.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripOpenCSV.Name = "toolStripOpenCSV";
+            this.toolStripOpenCSV.Size = new System.Drawing.Size(26, 28);
+            this.toolStripOpenCSV.Text = "toolStripButton3";
+            this.toolStripOpenCSV.Click += new System.EventHandler(this.toolStripOpenCSV_Click);
+            // 
+            // toolStripSaveCSV
+            // 
+            this.toolStripSaveCSV.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripSaveCSV.Image = global::HyrelCanAnalyzer.Properties.Resources.save;
+            this.toolStripSaveCSV.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripSaveCSV.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripSaveCSV.Name = "toolStripSaveCSV";
+            this.toolStripSaveCSV.Size = new System.Drawing.Size(23, 28);
+            this.toolStripSaveCSV.Text = "toolStripButton4";
+            this.toolStripSaveCSV.Click += new System.EventHandler(this.toolStripSaveCSV_Click);
             // 
             // timer1
             // 
@@ -218,10 +169,10 @@ namespace HyrelCanAnalyzer
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.GridLines = true;
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(0, 58);
+            this.listView1.Location = new System.Drawing.Point(0, 31);
             this.listView1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(1378, 777);
+            this.listView1.Size = new System.Drawing.Size(1378, 804);
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             // 
@@ -232,15 +183,11 @@ namespace HyrelCanAnalyzer
             this.ClientSize = new System.Drawing.Size(1378, 835);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Mainform";
             this.Text = "Hyrel CAN Analyzer";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Mainform_FormClosed);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -249,27 +196,19 @@ namespace HyrelCanAnalyzer
         }
 
         #endregion
-
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem cANToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemConnectCan1;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemConnectCan2;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemDisconnect;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemExit;
-        private System.Windows.Forms.ToolStripMenuItem sETTINGSToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem sTARTToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem sTOPToolStripMenuItem;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripComboBox toolStripCmbCanChannel;
-        private System.Windows.Forms.ToolStripButton toolStripCapture;
+        private System.Windows.Forms.ToolStripButton toolStripRunStop;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripComboBox toolStripCmbFilterHead;
         private System.Windows.Forms.ToolStripComboBox toolStripCmbFilterMessage;
         private System.Windows.Forms.ToolStripButton toolStripButtonConnect;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripButton toolStripClear;
         private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ToolStripButton toolStripRecord;
+        private System.Windows.Forms.ToolStripButton toolStripOpenCSV;
+        private System.Windows.Forms.ToolStripButton toolStripSaveCSV;
     }
 }
 

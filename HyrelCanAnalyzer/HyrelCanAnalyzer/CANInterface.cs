@@ -58,7 +58,7 @@ namespace HyrelCanAnalyzer
 
         public VCI_CAN_OBJ[] CanReceivedrecobj = new VCI_CAN_OBJ[MAX_RECEVIEDPACKETS];
 
-        public bool IsCapturing { get; set; }
+        public bool IsRunning { get; set; }
         public bool IsDispose { get; private set; }
 
         public Thread CaptureThread = null;
@@ -116,7 +116,7 @@ namespace HyrelCanAnalyzer
         {
             while(!IsDispose)
             {
-                if (!IsCapturing) continue;
+                if (!IsRunning) continue;
                 UInt32 res = new UInt32();
                 res = VCI_Receive(USB_CAN2, 0, Channel, ref CanReceivedrecobj[0], MAX_RECEVIEDPACKETS, 100);
                 for (UInt32 i = 0; i < res; i++)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,12 +19,18 @@ namespace HyrelCanAnalyzer
         public List<CANMSGID> FilterMessageIds = new List<CANMSGID>();
         public string FilterHeadString = "";
         public string FilterMsgIdString = "";
+        public bool IsRecording = false;
+        public string defalutLogFile = "canbuslog.csv";
         public Mainform()
         {
             InitializeComponent();
             InitControl();
+            this.Text = $"{RevisionHistory.RevisionHeader} {RevisionHistory.MajorStep}.{RevisionHistory.MinorStep} - {RevisionHistory.RevisionDate}";
             canInterface.CapturePacketEvent += CanInterface_CapturePacketEvent;
             this.WindowState = FormWindowState.Maximized;
+            toolStripRunStop.Image = Properties.Resources.run;
+            toolStripRecord.Image = Properties.Resources.record_start;
+            defalutLogFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/canbuslog.csv";
         }
 
         
@@ -33,7 +40,8 @@ namespace HyrelCanAnalyzer
             toolStripCmbCanChannel.SelectedIndex = 0;
 
             listView1.View = View.Details;
-            listView1.FullRowSelect = true;            
+            listView1.FullRowSelect = true;
+            listView1.Columns.Add("TIME", 80);
             listView1.Columns.Add("Frame ID", 80);
             listView1.Columns.Add("Data", 100);
             listView1.Columns.Add("SourceID", 200);
@@ -83,19 +91,15 @@ namespace HyrelCanAnalyzer
         {
             if(canInterface.IsConnected)
             {
-                toolStripMenuItemConnectCan1.Checked = canInterface.Channel == 0 ? true : false;
-                toolStripMenuItemConnectCan2.Checked = canInterface.Channel == 0 ? false : true;
                 toolStripCmbCanChannel.SelectedIndex = (int)canInterface.Channel;
-                toolStripCmbCanChannel.Enabled = false;
-                toolStripCapture.Image = Properties.Resources.start_enable;
+                toolStripCmbCanChannel.Enabled = false;                
                 toolStripButtonConnect.Text = "Disconnect";
+
             }else
             {
-                toolStripMenuItemConnectCan1.Checked = false;
-                toolStripMenuItemConnectCan2.Checked = true;
                 toolStripCmbCanChannel.Enabled = true;
                 toolStripButtonConnect.Text = "Connect";
-                toolStripCapture.Image = Properties.Resources.start_disable;
+                
             }
         }
 
@@ -105,20 +109,30 @@ namespace HyrelCanAnalyzer
         }
 
         private void toolStripCapture_Click(object sender, EventArgs e)
-        {
-            if (!canInterface.IsConnected) return;
-            if (canInterface.IsCapturing)
+        {   
+            if (canInterface.IsRunning)
             {
-                canInterface.IsCapturing = false;
-                toolStripCapture.Image = Properties.Resources.start_enable;
+                canInterface.IsRunning = false;
+                toolStripRunStop.Image = Properties.Resources.run;
             }
             else
             {
-                canInterface.IsCapturing = true;
-                toolStripCapture.Image = Properties.Resources.stop;
+                canInterface.IsRunning = true;
+                toolStripRunStop.Image = Properties.Resources.stop;
             }
-                
+        }
+
+        private void RecordDataToFile(string line)
+        {
+            if (!IsRecording) return;
+            bool bFirst = true;
             
+            if (!File.Exists(defalutLogFile))
+            {   
+                File.WriteAllText(defalutLogFile, "TIME,Frame ID,Data,SourceID,TargetID,MSGTYPE,MSGID,Content");
+                
+            }
+            File.AppendAllText(defalutLogFile, line);            
         }
         private void CanInterface_CapturePacketEvent(object sender, CanMessageEventArgs e)
         {   
@@ -135,14 +149,24 @@ namespace HyrelCanAnalyzer
             }
 
             ListViewItem item = new ListViewItem();
+            string line = "\n";
             item.Tag = e.msgInfo;
-            item.Text = e.msgInfo.ID.ToString("X");
-            item.SubItems.Add(e.msgInfo.GetDataString());
-            item.SubItems.Add(e.msgInfo.SourceID.ToString() + ":" + string.Format("0x{0:X2}", (int)e.msgInfo.SourceID));
-            item.SubItems.Add(e.msgInfo.TargetID.ToString() + ":" + string.Format("0x{0:X2}", (int)e.msgInfo.TargetID));
-            item.SubItems.Add(e.msgInfo.MsgType.ToString());
-            item.SubItems.Add(e.msgInfo.MsgId.ToString());
-            item.SubItems.Add(Hyrel.ProcessCanMessage(e.msgInfo.SourceID, e.msgInfo.MsgId, e.msgInfo.data));
+            string time = DateTime.Now.ToString("hh:mm:ss");
+            string id = e.msgInfo.ID.ToString("X");
+            string Data = e.msgInfo.GetDataString();
+            string sourceId = e.msgInfo.SourceID.ToString() + ":" + string.Format("0x{0:X2}", (int)e.msgInfo.SourceID);
+            string targetId = e.msgInfo.TargetID.ToString() + ":" + string.Format("0x{0:X2}", (int)e.msgInfo.TargetID);
+            string msgType = e.msgInfo.MsgType.ToString();
+            string msgId = e.msgInfo.MsgId.ToString();
+            string Content = Hyrel.ProcessCanMessage(e.msgInfo.SourceID, e.msgInfo.MsgId, e.msgInfo.data);
+            item.Text = time;
+            item.SubItems.Add(id);
+            item.SubItems.Add(Data);
+            item.SubItems.Add(sourceId);
+            item.SubItems.Add(targetId);
+            item.SubItems.Add(msgType);
+            item.SubItems.Add(msgId);
+            item.SubItems.Add(Content);
 
             if (listView1.InvokeRequired)
             {
@@ -157,8 +181,11 @@ namespace HyrelCanAnalyzer
                 listView1.Items.Add(item);
                 listView1.Items[listView1.Items.Count - 1].EnsureVisible();
             }
-                
 
+            if (IsRecording)
+            {
+                RecordDataToFile($"\n{time},{id},{Data},{sourceId},{targetId},{msgType},{msgId},{Content}");
+            }
 
         }
 
@@ -169,6 +196,7 @@ namespace HyrelCanAnalyzer
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
+            File.Delete(defalutLogFile);
             listView1.Items.Clear();
         }
 
@@ -195,6 +223,77 @@ namespace HyrelCanAnalyzer
                 {
                     FilterMessageIds.Add(msgid);
                 }
+            }
+        }
+
+        private void toolStripRecord_Click(object sender, EventArgs e)
+        {
+            if(IsRecording)
+            {
+                IsRecording = false;
+                File.Delete(defalutLogFile);
+                toolStripRecord.Image = Properties.Resources.record_start;
+            }else
+            {
+                IsRecording = true;
+                toolStripRecord.Image = Properties.Resources.record_stop;
+            }
+            
+        }
+
+        private void toolStripOpenCSV_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+            
+            
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                IsRecording = false;
+                toolStripRecord.Image = Properties.Resources.record_start;
+                canInterface.IsRunning = false;
+                toolStripRunStop.Image = Properties.Resources.run;
+                string[] lines = File.ReadAllLines(ofd.FileName);
+                bool bFirst = true;
+                listView1.Items.Clear();
+                foreach(var line in lines)
+                {
+                    if (bFirst)
+                    {
+                        bFirst = false;
+                        continue;
+                    }
+                    string[] items = line.Split(',');
+                    if (items.Length != 8) continue;
+                    ListViewItem item = new ListViewItem();
+                    item.Text = items[0];
+                    item.SubItems.Add(items[1]);
+                    item.SubItems.Add(items[2]);
+                    item.SubItems.Add(items[3]);
+                    item.SubItems.Add(items[4]);
+                    item.SubItems.Add(items[5]);
+                    item.SubItems.Add(items[6]);
+                    item.SubItems.Add(items[7]);
+                    listView1.Items.Add(item);
+                    bFirst = false;
+                }
+                if(listView1.Items.Count > 0) listView1.Items[listView1.Items.Count - 1].EnsureVisible();
+                listView1.Update();
+            }
+        }
+
+        private void toolStripSaveCSV_Click(object sender, EventArgs e)
+        {
+            if(!File.Exists(defalutLogFile))
+            {
+                MessageBox.Show("There is no recorded data");
+                return; 
+            }
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+            if(sfd.ShowDialog() == DialogResult.OK)
+            {
+                File.Copy(defalutLogFile, sfd.FileName, true);
             }
         }
     }

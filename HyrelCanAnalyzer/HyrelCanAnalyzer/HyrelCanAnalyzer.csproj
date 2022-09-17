@@ -59,6 +59,7 @@
     <Compile Include="Global.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RevisionHistory.cs" />
     <EmbeddedResource Include="Mainform.resx">
       <DependentUpon>Mainform.cs</DependentUpon>
     </EmbeddedResource>
@@ -89,10 +90,16 @@
     <Content Include="controlcan.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="img\save.png" />
+    <None Include="img\run.png" />
+    <None Include="img\record_stop.png" />
+    <None Include="img\record_start.png" />
+    <None Include="img\open.png" />
+    <None Include="img\connect.png" />
+    <None Include="Resources\stop.png" />
+    <None Include="Resources\run.png" />
     <None Include="img\clear.png" />
     <None Include="img\stop.png" />
-    <None Include="img\start_enable.png" />
-    <None Include="img\start_disable.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
