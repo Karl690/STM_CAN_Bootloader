@@ -90,6 +90,7 @@
     <Content Include="controlcan.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\stop_32x32.png" />
     <None Include="img\save.png" />
     <None Include="img\run.png" />
     <None Include="img\record_stop.png" />

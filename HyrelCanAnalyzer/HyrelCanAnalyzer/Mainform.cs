@@ -39,16 +39,16 @@ namespace HyrelCanAnalyzer
         {
             toolStripCmbCanChannel.SelectedIndex = 0;
 
-            listView1.View = View.Details;
-            listView1.FullRowSelect = true;
-            listView1.Columns.Add("TIME", 80);
-            listView1.Columns.Add("Frame ID", 80);
-            listView1.Columns.Add("Data", 100);
-            listView1.Columns.Add("SourceID", 200);
-            listView1.Columns.Add("TargetID", 200);
-            listView1.Columns.Add("MSGTYPE", 300);
-            listView1.Columns.Add("MSGID", 200);
-            listView1.Columns.Add("Content", 500);
+            listviewCanTraffic.View = View.Details;
+            listviewCanTraffic.FullRowSelect = true;
+            listviewCanTraffic.Columns.Add("TIME", 80);
+            listviewCanTraffic.Columns.Add("Frame ID", 100);
+            listviewCanTraffic.Columns.Add("Data", 200);
+            listviewCanTraffic.Columns.Add("SourceID", 180);
+            listviewCanTraffic.Columns.Add("TargetID", 180);
+            listviewCanTraffic.Columns.Add("MSGTYPE", 300);
+            listviewCanTraffic.Columns.Add("MSGID", 200);
+            listviewCanTraffic.Columns.Add("Content", 500);
 
             foreach (var head in Enum.GetValues(typeof(HEADPOSITION)).Cast<HEADPOSITION>().ToList())
             {
@@ -82,9 +82,17 @@ namespace HyrelCanAnalyzer
         private void toolStripButtonConnect_Click(object sender, EventArgs e)
         {
             if (canInterface.IsConnected)
+            {
                 canInterface.Disconnect();
+                canInterface.IsRunning = false;
+                toolStripRunStop.Image = Properties.Resources.run;
+            }
             else
+            {
                 canInterface.Connect((uint)toolStripCmbCanChannel.SelectedIndex);
+                canInterface.IsRunning = true;
+                toolStripRunStop.Image = Properties.Resources.stop_32x32;
+            }
             UpdateControlStatus();
         }
         private void UpdateControlStatus()
@@ -118,7 +126,7 @@ namespace HyrelCanAnalyzer
             else
             {
                 canInterface.IsRunning = true;
-                toolStripRunStop.Image = Properties.Resources.stop;
+                toolStripRunStop.Image = Properties.Resources.stop_32x32;
             }
         }
 
@@ -168,18 +176,18 @@ namespace HyrelCanAnalyzer
             item.SubItems.Add(msgId);
             item.SubItems.Add(Content);
 
-            if (listView1.InvokeRequired)
+            if (listviewCanTraffic.InvokeRequired)
             {
-                listView1.Invoke((MethodInvoker)delegate ()
+                listviewCanTraffic.Invoke((MethodInvoker)delegate ()
                 {
-                    listView1.Items.Add(item);
-                    listView1.Items[listView1.Items.Count - 1].EnsureVisible();
+                    listviewCanTraffic.Items.Add(item);
+                    listviewCanTraffic.Items[listviewCanTraffic.Items.Count - 1].EnsureVisible();
                 });
             }
             else
             {
-                listView1.Items.Add(item);
-                listView1.Items[listView1.Items.Count - 1].EnsureVisible();
+                listviewCanTraffic.Items.Add(item);
+                listviewCanTraffic.Items[listviewCanTraffic.Items.Count - 1].EnsureVisible();
             }
 
             if (IsRecording)
@@ -197,7 +205,7 @@ namespace HyrelCanAnalyzer
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             File.Delete(defalutLogFile);
-            listView1.Items.Clear();
+            listviewCanTraffic.Items.Clear();
         }
 
         private void toolStripCmbFilterHead_TextChanged(object sender, EventArgs e)
@@ -255,7 +263,7 @@ namespace HyrelCanAnalyzer
                 toolStripRunStop.Image = Properties.Resources.run;
                 string[] lines = File.ReadAllLines(ofd.FileName);
                 bool bFirst = true;
-                listView1.Items.Clear();
+                listviewCanTraffic.Items.Clear();
                 foreach(var line in lines)
                 {
                     if (bFirst)
@@ -274,11 +282,11 @@ namespace HyrelCanAnalyzer
                     item.SubItems.Add(items[5]);
                     item.SubItems.Add(items[6]);
                     item.SubItems.Add(items[7]);
-                    listView1.Items.Add(item);
+                    listviewCanTraffic.Items.Add(item);
                     bFirst = false;
                 }
-                if(listView1.Items.Count > 0) listView1.Items[listView1.Items.Count - 1].EnsureVisible();
-                listView1.Update();
+                if(listviewCanTraffic.Items.Count > 0) listviewCanTraffic.Items[listviewCanTraffic.Items.Count - 1].EnsureVisible();
+                listviewCanTraffic.Update();
             }
         }
 
