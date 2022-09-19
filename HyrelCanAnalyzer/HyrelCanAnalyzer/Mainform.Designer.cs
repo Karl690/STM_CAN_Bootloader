@@ -83,7 +83,6 @@ namespace HyrelCanAnalyzer
             this.toolStripButtonConnect.AutoSize = false;
             this.toolStripButtonConnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButtonConnect.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.toolStripButtonConnect.Image = global::HyrelCanAnalyzer.Properties.Resources.connect;
             this.toolStripButtonConnect.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolStripButtonConnect.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButtonConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -114,7 +113,8 @@ namespace HyrelCanAnalyzer
             // 
             this.toolStripRunStop.AutoSize = false;
             this.toolStripRunStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripRunStop.Image = global::HyrelCanAnalyzer.Properties.Resources.stop_32x32;
+            this.toolStripRunStop.Image = global::HyrelCanAnalyzer.Properties.Resources.stop;
+            this.toolStripRunStop.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripRunStop.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripRunStop.Name = "toolStripRunStop";
             this.toolStripRunStop.Size = new System.Drawing.Size(40, 36);
@@ -127,6 +127,7 @@ namespace HyrelCanAnalyzer
             this.toolStripRecord.AutoSize = false;
             this.toolStripRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripRecord.Image = global::HyrelCanAnalyzer.Properties.Resources.record_start;
+            this.toolStripRecord.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripRecord.ImageTransparentColor = System.Drawing.Color.Lime;
             this.toolStripRecord.Name = "toolStripRecord";
             this.toolStripRecord.Size = new System.Drawing.Size(40, 36);
@@ -139,6 +140,7 @@ namespace HyrelCanAnalyzer
             this.toolStripClear.AutoSize = false;
             this.toolStripClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripClear.Image = global::HyrelCanAnalyzer.Properties.Resources.clear;
+            this.toolStripClear.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripClear.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripClear.Name = "toolStripClear";
             this.toolStripClear.Size = new System.Drawing.Size(40, 36);
@@ -151,6 +153,7 @@ namespace HyrelCanAnalyzer
             this.toolStripOpenCSV.AutoSize = false;
             this.toolStripOpenCSV.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripOpenCSV.Image = global::HyrelCanAnalyzer.Properties.Resources.open;
+            this.toolStripOpenCSV.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripOpenCSV.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripOpenCSV.Name = "toolStripOpenCSV";
             this.toolStripOpenCSV.Size = new System.Drawing.Size(40, 36);
@@ -163,6 +166,7 @@ namespace HyrelCanAnalyzer
             this.toolStripSaveCSV.AutoSize = false;
             this.toolStripSaveCSV.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripSaveCSV.Image = global::HyrelCanAnalyzer.Properties.Resources.save;
+            this.toolStripSaveCSV.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripSaveCSV.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripSaveCSV.Name = "toolStripSaveCSV";
             this.toolStripSaveCSV.Size = new System.Drawing.Size(40, 36);
@@ -175,14 +179,14 @@ namespace HyrelCanAnalyzer
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // listView1
+            // listviewCanTraffic
             // 
             this.listviewCanTraffic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listviewCanTraffic.GridLines = true;
             this.listviewCanTraffic.HideSelection = false;
             this.listviewCanTraffic.Location = new System.Drawing.Point(0, 36);
             this.listviewCanTraffic.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.listviewCanTraffic.Name = "listView1";
+            this.listviewCanTraffic.Name = "listviewCanTraffic";
             this.listviewCanTraffic.Size = new System.Drawing.Size(1378, 799);
             this.listviewCanTraffic.TabIndex = 2;
             this.listviewCanTraffic.UseCompatibleStateImageBehavior = false;

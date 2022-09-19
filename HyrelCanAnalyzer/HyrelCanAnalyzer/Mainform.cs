@@ -91,7 +91,7 @@ namespace HyrelCanAnalyzer
             {
                 canInterface.Connect((uint)toolStripCmbCanChannel.SelectedIndex);
                 canInterface.IsRunning = true;
-                toolStripRunStop.Image = Properties.Resources.stop_32x32;
+                toolStripRunStop.Image = Properties.Resources.stop;
             }
             UpdateControlStatus();
         }
@@ -126,7 +126,7 @@ namespace HyrelCanAnalyzer
             else
             {
                 canInterface.IsRunning = true;
-                toolStripRunStop.Image = Properties.Resources.stop_32x32;
+                toolStripRunStop.Image = Properties.Resources.stop;
             }
         }
 
