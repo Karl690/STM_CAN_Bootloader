@@ -1,2 +1,0 @@
-../cmsis_boot/startup/startup_stm32f10x_ld.c:274:13:Default_Handler	0	static
-../cmsis_boot/startup/startup_stm32f10x_ld.c:180:6:Default_Reset_Handler	8	static,ignoring_inline_asm
