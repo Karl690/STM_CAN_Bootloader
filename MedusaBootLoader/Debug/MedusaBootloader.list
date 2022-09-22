@@ -1,0 +1,2568 @@
+
+MedusaBootloader.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .isr_vector   0000010c  08000000  08000000  00010000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .text         00000f78  0800010c  0800010c  0001010c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .rodata       00000038  08001084  08001084  00011084  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  3 .ARM.extab    00000000  080010bc  080010bc  00020420  2**0
+                  CONTENTS
+  4 .ARM          00000000  080010bc  080010bc  00020420  2**0
+                  CONTENTS
+  5 .preinit_array 00000000  080010bc  080010bc  00020420  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  6 .init_array   00000004  080010bc  080010bc  000110bc  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  7 .fini_array   00000004  080010c0  080010c0  000110c0  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  8 .data         00000020  20000000  080010c4  00020000  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  9 .co_stack     00000400  20000020  080010e4  00020020  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 10 .bss          00000088  20000420  080014e4  00020420  2**2
+                  ALLOC
+ 11 ._user_heap_stack 00000600  200004a8  080014e4  000204a8  2**0
+                  ALLOC
+ 12 .ARM.attributes 00000029  00000000  00000000  00020420  2**0
+                  CONTENTS, READONLY
+ 13 .debug_info   00001eac  00000000  00000000  00020449  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 14 .debug_abbrev 000005e2  00000000  00000000  000222f5  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 15 .debug_loc    00000584  00000000  00000000  000228d7  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 16 .debug_aranges 00000150  00000000  00000000  00022e5b  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 17 .debug_ranges 00000120  00000000  00000000  00022fab  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 18 .debug_macro  00009efc  00000000  00000000  000230cb  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 19 .debug_line   000018da  00000000  00000000  0002cfc7  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 20 .debug_str    00035e79  00000000  00000000  0002e8a1  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 21 .comment      00000050  00000000  00000000  0006471a  2**0
+                  CONTENTS, READONLY
+ 22 .debug_frame  00000318  00000000  00000000  0006476c  2**2
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+
+Disassembly of section .text:
+
+0800010c <__do_global_dtors_aux>:
+ 800010c:	b510      	push	{r4, lr}
+ 800010e:	4c05      	ldr	r4, [pc, #20]	; (8000124 <__do_global_dtors_aux+0x18>)
+ 8000110:	7823      	ldrb	r3, [r4, #0]
+ 8000112:	b933      	cbnz	r3, 8000122 <__do_global_dtors_aux+0x16>
+ 8000114:	4b04      	ldr	r3, [pc, #16]	; (8000128 <__do_global_dtors_aux+0x1c>)
+ 8000116:	b113      	cbz	r3, 800011e <__do_global_dtors_aux+0x12>
+ 8000118:	4804      	ldr	r0, [pc, #16]	; (800012c <__do_global_dtors_aux+0x20>)
+ 800011a:	f3af 8000 	nop.w
+ 800011e:	2301      	movs	r3, #1
+ 8000120:	7023      	strb	r3, [r4, #0]
+ 8000122:	bd10      	pop	{r4, pc}
+ 8000124:	20000420 	.word	0x20000420
+ 8000128:	00000000 	.word	0x00000000
+ 800012c:	0800106c 	.word	0x0800106c
+
+08000130 <frame_dummy>:
+ 8000130:	b508      	push	{r3, lr}
+ 8000132:	4b03      	ldr	r3, [pc, #12]	; (8000140 <frame_dummy+0x10>)
+ 8000134:	b11b      	cbz	r3, 800013e <frame_dummy+0xe>
+ 8000136:	4903      	ldr	r1, [pc, #12]	; (8000144 <frame_dummy+0x14>)
+ 8000138:	4803      	ldr	r0, [pc, #12]	; (8000148 <frame_dummy+0x18>)
+ 800013a:	f3af 8000 	nop.w
+ 800013e:	bd08      	pop	{r3, pc}
+ 8000140:	00000000 	.word	0x00000000
+ 8000144:	20000424 	.word	0x20000424
+ 8000148:	0800106c 	.word	0x0800106c
+
+0800014c <InitRCC>:
+ */
+__STATIC_INLINE uint32_t SysTick_Config(uint32_t ticks)
+{
+  if (ticks > SysTick_LOAD_RELOAD_Msk)  return (1);            /* Reload value impossible */
+
+  SysTick->LOAD  = (ticks & SysTick_LOAD_RELOAD_Msk) - 1;      /* set reload register */
+ 800014c:	f04f 23e0 	mov.w	r3, #3758153728	; 0xe000e000
+ 8000150:	2247      	movs	r2, #71	; 0x47
+ 8000152:	615a      	str	r2, [r3, #20]
+    SCB->SHP[((uint32_t)(IRQn) & 0xF)-4] = ((priority << (8 - __NVIC_PRIO_BITS)) & 0xff); } /* set Priority for Cortex-M  System Interrupts */
+ 8000154:	4a16      	ldr	r2, [pc, #88]	; (80001b0 <InitRCC+0x64>)
+ 8000156:	21f0      	movs	r1, #240	; 0xf0
+ 8000158:	f882 1023 	strb.w	r1, [r2, #35]	; 0x23
+  NVIC_SetPriority (SysTick_IRQn, (1<<__NVIC_PRIO_BITS) - 1);  /* set Priority for Systick Interrupt */
+  SysTick->VAL   = 0;                                          /* Load the SysTick Counter Value */
+ 800015c:	2200      	movs	r2, #0
+ 800015e:	619a      	str	r2, [r3, #24]
+  SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk |
+ 8000160:	2207      	movs	r2, #7
+ 8000162:	611a      	str	r2, [r3, #16]
+    // Update SystemCoreClock value
+	//SystemCoreClockUpdate();
+    // Configure the SysTick timer to overflow every 1 us
+    SysTick_Config(SYSCLK_FREQ_72MHz / 1000000);
+    //Enable GPIOA clock
+	RCC->APB2ENR |= (RCC_APB2Periph_GPIOA);		//enable clock for peripheral
+ 8000164:	f103 43c0 	add.w	r3, r3, #1610612736	; 0x60000000
+ 8000168:	f503 3398 	add.w	r3, r3, #77824	; 0x13000
+ 800016c:	699a      	ldr	r2, [r3, #24]
+ 800016e:	f042 0204 	orr.w	r2, r2, #4
+ 8000172:	619a      	str	r2, [r3, #24]
+	RCC->APB2RSTR &= ~(RCC_APB2Periph_GPIOA);	//remove reset from peripheral
+ 8000174:	68da      	ldr	r2, [r3, #12]
+ 8000176:	f022 0204 	bic.w	r2, r2, #4
+ 800017a:	60da      	str	r2, [r3, #12]
+	//Enable GPIOB clock
+	RCC->APB2ENR |= (RCC_APB2Periph_GPIOB);
+ 800017c:	699a      	ldr	r2, [r3, #24]
+ 800017e:	f042 0208 	orr.w	r2, r2, #8
+ 8000182:	619a      	str	r2, [r3, #24]
+	RCC->APB2RSTR &= ~(RCC_APB2Periph_GPIOB);
+ 8000184:	68da      	ldr	r2, [r3, #12]
+ 8000186:	f022 0208 	bic.w	r2, r2, #8
+ 800018a:	60da      	str	r2, [r3, #12]
+
+	//Enable AFIOEN clock
+	RCC->APB2ENR |= (RCC_APB2ENR_AFIOEN);
+ 800018c:	699a      	ldr	r2, [r3, #24]
+ 800018e:	f042 0201 	orr.w	r2, r2, #1
+ 8000192:	619a      	str	r2, [r3, #24]
+	RCC->APB2RSTR &= ~(RCC_APB2ENR_AFIOEN);
+ 8000194:	68da      	ldr	r2, [r3, #12]
+ 8000196:	f022 0201 	bic.w	r2, r2, #1
+ 800019a:	60da      	str	r2, [r3, #12]
+
+	//Enable CAN1 clock
+
+	RCC->APB1ENR |= (RCC_APB1Periph_CAN1);
+ 800019c:	69da      	ldr	r2, [r3, #28]
+ 800019e:	f042 7200 	orr.w	r2, r2, #33554432	; 0x2000000
+ 80001a2:	61da      	str	r2, [r3, #28]
+	RCC->APB1RSTR &= ~(RCC_APB1Periph_CAN1);
+ 80001a4:	691a      	ldr	r2, [r3, #16]
+ 80001a6:	f022 7200 	bic.w	r2, r2, #33554432	; 0x2000000
+ 80001aa:	611a      	str	r2, [r3, #16]
+
+}
+ 80001ac:	4770      	bx	lr
+ 80001ae:	bf00      	nop
+ 80001b0:	e000ed00 	.word	0xe000ed00
+
+080001b4 <SysTick_Handler>:
+
+
+// SysTick_Handler function will be called every 1 us
+void SysTick_Handler(uint32_t us)
+{
+    if (usTicks != 0)
+ 80001b4:	4b03      	ldr	r3, [pc, #12]	; (80001c4 <SysTick_Handler+0x10>)
+ 80001b6:	681b      	ldr	r3, [r3, #0]
+ 80001b8:	b11b      	cbz	r3, 80001c2 <SysTick_Handler+0xe>
+    {
+        usTicks--;
+ 80001ba:	4a02      	ldr	r2, [pc, #8]	; (80001c4 <SysTick_Handler+0x10>)
+ 80001bc:	6813      	ldr	r3, [r2, #0]
+ 80001be:	3b01      	subs	r3, #1
+ 80001c0:	6013      	str	r3, [r2, #0]
+    }
+}
+ 80001c2:	4770      	bx	lr
+ 80001c4:	200004a4 	.word	0x200004a4
+
+080001c8 <InitGPIO>:
+//////////////////////////GPIO FUNCTIONS////////////////////////////////////////////////
+
+//Initialize the GPIO
+void InitGPIO()
+{
+	AFIO->MAPR &= 0xf8ffffff;
+ 80001c8:	4b0f      	ldr	r3, [pc, #60]	; (8000208 <InitGPIO+0x40>)
+ 80001ca:	685a      	ldr	r2, [r3, #4]
+ 80001cc:	f022 62e0 	bic.w	r2, r2, #117440512	; 0x7000000
+ 80001d0:	605a      	str	r2, [r3, #4]
+	AFIO->MAPR |= 0x02000000; //FOR JTAG
+ 80001d2:	685a      	ldr	r2, [r3, #4]
+ 80001d4:	f042 7200 	orr.w	r2, r2, #33554432	; 0x2000000
+ 80001d8:	605a      	str	r2, [r3, #4]
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Pin   = SWITCH_B_LEFT | SWITCH_B_RIGHT;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+#else
+	GPIOA->CRH = PortAControlBits8_15;
+ 80001da:	4a0c      	ldr	r2, [pc, #48]	; (800020c <InitGPIO+0x44>)
+ 80001dc:	4b0c      	ldr	r3, [pc, #48]	; (8000210 <InitGPIO+0x48>)
+ 80001de:	6053      	str	r3, [r2, #4]
+	GPIOB->CRH = PortBControlBits8_15;
+ 80001e0:	4b0c      	ldr	r3, [pc, #48]	; (8000214 <InitGPIO+0x4c>)
+ 80001e2:	490d      	ldr	r1, [pc, #52]	; (8000218 <InitGPIO+0x50>)
+ 80001e4:	6059      	str	r1, [r3, #4]
+	GPIOB->CRL = PortBControlBits0_7;
+ 80001e6:	f101 5108 	add.w	r1, r1, #570425344	; 0x22000000
+ 80001ea:	f501 5110 	add.w	r1, r1, #9216	; 0x2400
+ 80001ee:	313c      	adds	r1, #60	; 0x3c
+ 80001f0:	6019      	str	r1, [r3, #0]
+#endif
+	//Reset the Leds.
+	GPIOA->BRR = LED_A_HEARTBEAT;
+ 80001f2:	f44f 4100 	mov.w	r1, #32768	; 0x8000
+ 80001f6:	6151      	str	r1, [r2, #20]
+	GPIOB->BRR = LED_B_CANTX;
+ 80001f8:	2208      	movs	r2, #8
+ 80001fa:	615a      	str	r2, [r3, #20]
+	GPIOB->BRR = LED_B_CANRX;
+ 80001fc:	2210      	movs	r2, #16
+ 80001fe:	615a      	str	r2, [r3, #20]
+	GPIOB->BRR = LED_B_CANRXERROR;
+ 8000200:	2220      	movs	r2, #32
+ 8000202:	615a      	str	r2, [r3, #20]
+}
+ 8000204:	4770      	bx	lr
+ 8000206:	bf00      	nop
+ 8000208:	40010000 	.word	0x40010000
+ 800020c:	40010800 	.word	0x40010800
+ 8000210:	200b8000 	.word	0x200b8000
+ 8000214:	40010c00 	.word	0x40010c00
+ 8000218:	22220008 	.word	0x22220008
+
+0800021c <InitADC>:
+//////////////////////////ADC FUNCTIONS/////////////////////////////////////////////////////////////////////
+
+
+void InitADC()		// bootloader version
+{
+	RCC->CFGR &= CFGR_ADCPRE_Reset_Mask; 					//clock for ADC (max 14MHz --> 72/6=12MHz)
+ 800021c:	4b25      	ldr	r3, [pc, #148]	; (80002b4 <InitADC+0x98>)
+ 800021e:	685a      	ldr	r2, [r3, #4]
+ 8000220:	f422 4240 	bic.w	r2, r2, #49152	; 0xc000
+ 8000224:	605a      	str	r2, [r3, #4]
+	RCC->CFGR |= RCC_PCLK2_Div6; // 0x0008000
+ 8000226:	685a      	ldr	r2, [r3, #4]
+ 8000228:	f442 4200 	orr.w	r2, r2, #32768	; 0x8000
+ 800022c:	605a      	str	r2, [r3, #4]
+
+	RCC->APB2ENR |= (RCC_APB2Periph_ADC1);
+ 800022e:	699a      	ldr	r2, [r3, #24]
+ 8000230:	f442 7200 	orr.w	r2, r2, #512	; 0x200
+ 8000234:	619a      	str	r2, [r3, #24]
+	RCC->APB2RSTR &= ~(RCC_APB2Periph_ADC1);
+ 8000236:	68da      	ldr	r2, [r3, #12]
+ 8000238:	f422 7200 	bic.w	r2, r2, #512	; 0x200
+ 800023c:	60da      	str	r2, [r3, #12]
+
+	//replace ADC_Init(ADC1, &ADC_InitStructure);   		//set config of ADC1
+	ADC1->CR1 &= CR1_CLEAR_Mask;;
+ 800023e:	f5a3 436c 	sub.w	r3, r3, #60416	; 0xec00
+ 8000242:	685a      	ldr	r2, [r3, #4]
+ 8000244:	f422 2270 	bic.w	r2, r2, #983040	; 0xf0000
+ 8000248:	f422 7280 	bic.w	r2, r2, #256	; 0x100
+ 800024c:	605a      	str	r2, [r3, #4]
+	ADC1->CR2 = (ADC1->CR2 & CR2_CLEAR_Mask) | ADC_ExternalTrigConv_None | 0x2;
+ 800024e:	6899      	ldr	r1, [r3, #8]
+ 8000250:	4a19      	ldr	r2, [pc, #100]	; (80002b8 <InitADC+0x9c>)
+ 8000252:	400a      	ands	r2, r1
+ 8000254:	f442 2260 	orr.w	r2, r2, #917504	; 0xe0000
+ 8000258:	f042 0202 	orr.w	r2, r2, #2
+ 800025c:	609a      	str	r2, [r3, #8]
+	ADC1->SQR1 = ADC1->SQR1 & SQR1_CLEAR_Mask;
+ 800025e:	6ada      	ldr	r2, [r3, #44]	; 0x2c
+ 8000260:	f422 0270 	bic.w	r2, r2, #15728640	; 0xf00000
+ 8000264:	62da      	str	r2, [r3, #44]	; 0x2c
+
+	//replace ADC_Cmd(ADC1,ENABLE);							//enable ADC1
+	ADC1->CR2 |= CR2_ADON_Set;								//enable ADC1
+ 8000266:	689a      	ldr	r2, [r3, #8]
+ 8000268:	f042 0201 	orr.w	r2, r2, #1
+ 800026c:	609a      	str	r2, [r3, #8]
+
+	//  ADC calibration (optional, but recommended at power on)
+	//replace ADC_ResetCalibration(ADC1);					// Reset previous calibration
+	ADC1->CR2 |= CR2_RSTCAL_Set;
+ 800026e:	689a      	ldr	r2, [r3, #8]
+ 8000270:	f042 0208 	orr.w	r2, r2, #8
+ 8000274:	609a      	str	r2, [r3, #8]
+	//while(ADC_GetResetCalibrationStatus(ADC1));
+	while(ADC1->CR2 & CR2_RSTCAL_Set);
+ 8000276:	4b11      	ldr	r3, [pc, #68]	; (80002bc <InitADC+0xa0>)
+ 8000278:	689b      	ldr	r3, [r3, #8]
+ 800027a:	f013 0f08 	tst.w	r3, #8
+ 800027e:	d1fa      	bne.n	8000276 <InitADC+0x5a>
+
+	//replace ADC_StartCalibration(ADC1);					// Start new calibration (ADC must be off at that time)
+	ADC1->CR2 |= CR2_CAL_Set;
+ 8000280:	4a0e      	ldr	r2, [pc, #56]	; (80002bc <InitADC+0xa0>)
+ 8000282:	6893      	ldr	r3, [r2, #8]
+ 8000284:	f043 0304 	orr.w	r3, r3, #4
+ 8000288:	6093      	str	r3, [r2, #8]
+	//ADC_GetCalibrationStatus(ADC1));
+	while(ADC1->CR2 & CR2_CAL_Set) ; 			// Wait until calibration is complete
+ 800028a:	4b0c      	ldr	r3, [pc, #48]	; (80002bc <InitADC+0xa0>)
+ 800028c:	689b      	ldr	r3, [r3, #8]
+ 800028e:	f013 0f04 	tst.w	r3, #4
+ 8000292:	d1fa      	bne.n	800028a <InitADC+0x6e>
+
+	// adcSetup
+	//replaced:
+	//ADC_RegularChannelConfig(ADC1, HH_ADC_CHANNEL_POS, 1, ADC_SampleTime_239Cycles5);
+	ADC1->SMPR2 = 0x18000000;
+ 8000294:	4b09      	ldr	r3, [pc, #36]	; (80002bc <InitADC+0xa0>)
+ 8000296:	f04f 52c0 	mov.w	r2, #402653184	; 0x18000000
+ 800029a:	611a      	str	r2, [r3, #16]
+
+	ADC1->SQR3 = 0x00000009;
+ 800029c:	2209      	movs	r2, #9
+ 800029e:	635a      	str	r2, [r3, #52]	; 0x34
+
+	//replaced: ADC_Cmd(ADC1, ENABLE); //enable ADC1
+	ADC1->CR2 |= CR2_ADON_Set;
+ 80002a0:	689a      	ldr	r2, [r3, #8]
+ 80002a2:	f042 0201 	orr.w	r2, r2, #1
+ 80002a6:	609a      	str	r2, [r3, #8]
+
+	//replaced: ADC_SoftwareStartConvCmd(ADC1, ENABLE);		 // start conversion (will be endless as we are in continuous mode)
+	ADC1->CR2 |= CR2_EXTTRIG_SWSTART_Set;
+ 80002a8:	689a      	ldr	r2, [r3, #8]
+ 80002aa:	f442 02a0 	orr.w	r2, r2, #5242880	; 0x500000
+ 80002ae:	609a      	str	r2, [r3, #8]
+}
+ 80002b0:	4770      	bx	lr
+ 80002b2:	bf00      	nop
+ 80002b4:	40021000 	.word	0x40021000
+ 80002b8:	fff1f7fd 	.word	0xfff1f7fd
+ 80002bc:	40012400 	.word	0x40012400
+
+080002c0 <AdcConvertCanAddress>:
+//Get the Can Head Address from ADC
+void AdcConvertCanAddress()
+{
+	//TempADCReading= ADC1->DR;
+	//StartNextConversion();//start it right away, so it has the most time to do the conversion
+	if(AdcReadWaitCounter == MAX_COUNTDOWN) //When ADC value reading start.
+ 80002c0:	4b18      	ldr	r3, [pc, #96]	; (8000324 <AdcConvertCanAddress+0x64>)
+ 80002c2:	681b      	ldr	r3, [r3, #0]
+ 80002c4:	f5b3 5f00 	cmp.w	r3, #8192	; 0x2000
+ 80002c8:	d019      	beq.n	80002fe <AdcConvertCanAddress+0x3e>
+	{
+		ADC1->SQR3 |= (0<<0);
+		ADC1->CR2 |= (1<<0);
+	}
+	AdcReadWaitCounter --;
+ 80002ca:	3b01      	subs	r3, #1
+ 80002cc:	4a15      	ldr	r2, [pc, #84]	; (8000324 <AdcConvertCanAddress+0x64>)
+ 80002ce:	6013      	str	r3, [r2, #0]
+	if(AdcReadWaitCounter == 0) //Time's up for reading ADC.
+ 80002d0:	b1eb      	cbz	r3, 800030e <AdcConvertCanAddress+0x4e>
+	{
+		AdcReadWaitCounter = MAX_COUNTDOWN;
+		return;
+	}
+	if(!(ADC1->SR & (1<<1)))  return;//not a valid conversion, so leave without changing anything
+ 80002d2:	4b15      	ldr	r3, [pc, #84]	; (8000328 <AdcConvertCanAddress+0x68>)
+ 80002d4:	681b      	ldr	r3, [r3, #0]
+ 80002d6:	f013 0f02 	tst.w	r3, #2
+ 80002da:	d00f      	beq.n	80002fc <AdcConvertCanAddress+0x3c>
+	//AddressAdcValue += TempADCReading;//add the valid reading to the last value -------------------------|
+	//AddressAdcValue /= 2;//now divide by 2, to perform an average, this will filter out noise -----------| I didn't understand.
+	//AddressAdcValue = (ADC1->DR + AddressAdcValue) /2;
+	if(AddressAdcValue < MAX_ADC) //it would be not be more than 2048(0x800)
+ 80002dc:	4b13      	ldr	r3, [pc, #76]	; (800032c <AdcConvertCanAddress+0x6c>)
+ 80002de:	881b      	ldrh	r3, [r3, #0]
+ 80002e0:	f640 72fe 	movw	r2, #4094	; 0xffe
+ 80002e4:	4293      	cmp	r3, r2
+ 80002e6:	d817      	bhi.n	8000318 <AdcConvertCanAddress+0x58>
+		AddressAdcValue = (ADC1->DR + AddressAdcValue) /2; //now divide by 2, to perform an average, this will filter out noise
+ 80002e8:	4a0f      	ldr	r2, [pc, #60]	; (8000328 <AdcConvertCanAddress+0x68>)
+ 80002ea:	6cd2      	ldr	r2, [r2, #76]	; 0x4c
+ 80002ec:	4413      	add	r3, r2
+ 80002ee:	085b      	lsrs	r3, r3, #1
+ 80002f0:	4a0e      	ldr	r2, [pc, #56]	; (800032c <AdcConvertCanAddress+0x6c>)
+ 80002f2:	8013      	strh	r3, [r2, #0]
+	else
+		AddressAdcValue = ADC1->DR;
+	AdcReadWaitCounter = MAX_COUNTDOWN;
+ 80002f4:	4b0b      	ldr	r3, [pc, #44]	; (8000324 <AdcConvertCanAddress+0x64>)
+ 80002f6:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 80002fa:	601a      	str	r2, [r3, #0]
+}
+ 80002fc:	4770      	bx	lr
+		ADC1->SQR3 |= (0<<0);
+ 80002fe:	4a0a      	ldr	r2, [pc, #40]	; (8000328 <AdcConvertCanAddress+0x68>)
+ 8000300:	6b51      	ldr	r1, [r2, #52]	; 0x34
+ 8000302:	6351      	str	r1, [r2, #52]	; 0x34
+		ADC1->CR2 |= (1<<0);
+ 8000304:	6891      	ldr	r1, [r2, #8]
+ 8000306:	f041 0101 	orr.w	r1, r1, #1
+ 800030a:	6091      	str	r1, [r2, #8]
+ 800030c:	e7dd      	b.n	80002ca <AdcConvertCanAddress+0xa>
+		AdcReadWaitCounter = MAX_COUNTDOWN;
+ 800030e:	4613      	mov	r3, r2
+ 8000310:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000314:	601a      	str	r2, [r3, #0]
+		return;
+ 8000316:	4770      	bx	lr
+		AddressAdcValue = ADC1->DR;
+ 8000318:	4b03      	ldr	r3, [pc, #12]	; (8000328 <AdcConvertCanAddress+0x68>)
+ 800031a:	6cda      	ldr	r2, [r3, #76]	; 0x4c
+ 800031c:	4b03      	ldr	r3, [pc, #12]	; (800032c <AdcConvertCanAddress+0x6c>)
+ 800031e:	801a      	strh	r2, [r3, #0]
+ 8000320:	e7e8      	b.n	80002f4 <AdcConvertCanAddress+0x34>
+ 8000322:	bf00      	nop
+ 8000324:	20000000 	.word	0x20000000
+ 8000328:	40012400 	.word	0x40012400
+ 800032c:	20000004 	.word	0x20000004
+
+08000330 <CalculateDevicePosition>:
+// on the HEADPOSITIONTAABLE taable.
+//this represents the value from a voltage drivider located on the head, and the yoke
+//
+void CalculateDevicePosition()
+{
+	if(AddressAdcValue>0x1000)return;//invalid data, try again later
+ 8000330:	4b24      	ldr	r3, [pc, #144]	; (80003c4 <CalculateDevicePosition+0x94>)
+ 8000332:	8819      	ldrh	r1, [r3, #0]
+ 8000334:	f5b1 5f80 	cmp.w	r1, #4096	; 0x1000
+ 8000338:	d842      	bhi.n	80003c0 <CalculateDevicePosition+0x90>
+	for (i = 0; i < HEAD_POSITION_ENTRIES; i++)
+ 800033a:	4b23      	ldr	r3, [pc, #140]	; (80003c8 <CalculateDevicePosition+0x98>)
+ 800033c:	2200      	movs	r2, #0
+ 800033e:	601a      	str	r2, [r3, #0]
+ 8000340:	4b21      	ldr	r3, [pc, #132]	; (80003c8 <CalculateDevicePosition+0x98>)
+ 8000342:	681b      	ldr	r3, [r3, #0]
+ 8000344:	2b1a      	cmp	r3, #26
+ 8000346:	d80a      	bhi.n	800035e <CalculateDevicePosition+0x2e>
+	{
+		if (AddressAdcValue <= (HeadPositionTable[i]>>6) * 4)
+ 8000348:	4a20      	ldr	r2, [pc, #128]	; (80003cc <CalculateDevicePosition+0x9c>)
+ 800034a:	f832 2013 	ldrh.w	r2, [r2, r3, lsl #1]
+ 800034e:	0992      	lsrs	r2, r2, #6
+ 8000350:	ebb1 0f82 	cmp.w	r1, r2, lsl #2
+ 8000354:	dd03      	ble.n	800035e <CalculateDevicePosition+0x2e>
+	for (i = 0; i < HEAD_POSITION_ENTRIES; i++)
+ 8000356:	3301      	adds	r3, #1
+ 8000358:	4a1b      	ldr	r2, [pc, #108]	; (80003c8 <CalculateDevicePosition+0x98>)
+ 800035a:	6013      	str	r3, [r2, #0]
+ 800035c:	e7f0      	b.n	8000340 <CalculateDevicePosition+0x10>
+		{
+			break;
+		}
+	}
+	if (i == HEAD_POSITION_ENTRIES)
+ 800035e:	2b1b      	cmp	r3, #27
+ 8000360:	d00b      	beq.n	800037a <CalculateDevicePosition+0x4a>
+	{
+		CurrentHeadCanAddress = POSITION_UNPLUGGED;
+		return;
+	}
+
+	switch(HeadPositionTable[i]&0x3F) //Only for 7bit
+ 8000362:	4a1a      	ldr	r2, [pc, #104]	; (80003cc <CalculateDevicePosition+0x9c>)
+ 8000364:	f832 3013 	ldrh.w	r3, [r2, r3, lsl #1]
+ 8000368:	f003 033f 	and.w	r3, r3, #63	; 0x3f
+ 800036c:	3b0b      	subs	r3, #11
+ 800036e:	2b03      	cmp	r3, #3
+ 8000370:	d826      	bhi.n	80003c0 <CalculateDevicePosition+0x90>
+ 8000372:	e8df f003 	tbb	[pc, r3]
+ 8000376:	0e06      	.short	0x0e06
+ 8000378:	1e16      	.short	0x1e16
+		CurrentHeadCanAddress = POSITION_UNPLUGGED;
+ 800037a:	4b15      	ldr	r3, [pc, #84]	; (80003d0 <CalculateDevicePosition+0xa0>)
+ 800037c:	223f      	movs	r2, #63	; 0x3f
+ 800037e:	701a      	strb	r2, [r3, #0]
+		return;
+ 8000380:	4770      	bx	lr
+	{
+	case HEAD_01: SetPin(GPIOB, LED_HEADPOS_00); CurrentHeadCanAddress = HEAD_01; break;
+ 8000382:	4b14      	ldr	r3, [pc, #80]	; (80003d4 <CalculateDevicePosition+0xa4>)
+ 8000384:	f44f 4200 	mov.w	r2, #32768	; 0x8000
+ 8000388:	611a      	str	r2, [r3, #16]
+ 800038a:	4b11      	ldr	r3, [pc, #68]	; (80003d0 <CalculateDevicePosition+0xa0>)
+ 800038c:	220b      	movs	r2, #11
+ 800038e:	701a      	strb	r2, [r3, #0]
+ 8000390:	4770      	bx	lr
+	case HEAD_02: SetPin(GPIOB, LED_HEADPOS_01); CurrentHeadCanAddress = HEAD_02;break;
+ 8000392:	4b10      	ldr	r3, [pc, #64]	; (80003d4 <CalculateDevicePosition+0xa4>)
+ 8000394:	f44f 4280 	mov.w	r2, #16384	; 0x4000
+ 8000398:	611a      	str	r2, [r3, #16]
+ 800039a:	4b0d      	ldr	r3, [pc, #52]	; (80003d0 <CalculateDevicePosition+0xa0>)
+ 800039c:	220c      	movs	r2, #12
+ 800039e:	701a      	strb	r2, [r3, #0]
+ 80003a0:	4770      	bx	lr
+	case HEAD_03: SetPin(GPIOB, LED_HEADPOS_02); CurrentHeadCanAddress = HEAD_03;break;
+ 80003a2:	4b0c      	ldr	r3, [pc, #48]	; (80003d4 <CalculateDevicePosition+0xa4>)
+ 80003a4:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 80003a8:	611a      	str	r2, [r3, #16]
+ 80003aa:	4b09      	ldr	r3, [pc, #36]	; (80003d0 <CalculateDevicePosition+0xa0>)
+ 80003ac:	220d      	movs	r2, #13
+ 80003ae:	701a      	strb	r2, [r3, #0]
+ 80003b0:	4770      	bx	lr
+	case HEAD_04: SetPin(GPIOB, LED_HEADPOS_03); CurrentHeadCanAddress = HEAD_04;break;
+ 80003b2:	4b08      	ldr	r3, [pc, #32]	; (80003d4 <CalculateDevicePosition+0xa4>)
+ 80003b4:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 80003b8:	611a      	str	r2, [r3, #16]
+ 80003ba:	4b05      	ldr	r3, [pc, #20]	; (80003d0 <CalculateDevicePosition+0xa0>)
+ 80003bc:	220e      	movs	r2, #14
+ 80003be:	701a      	strb	r2, [r3, #0]
+	}
+}
+ 80003c0:	4770      	bx	lr
+ 80003c2:	bf00      	nop
+ 80003c4:	20000004 	.word	0x20000004
+ 80003c8:	20000490 	.word	0x20000490
+ 80003cc:	08001084 	.word	0x08001084
+ 80003d0:	20000014 	.word	0x20000014
+ 80003d4:	40010c00 	.word	0x40010c00
+
+080003d8 <InitCAN>:
+
+void InitCAN()
+{
+	/* CAN register init*/
+		//First, Deinitializes the CAN peripheral registers to their default reset values.
+	RCC->APB1RSTR |= RCC_APB1Periph_CAN1;  /* Enable CAN1 reset state */
+ 80003d8:	4b47      	ldr	r3, [pc, #284]	; (80004f8 <InitCAN+0x120>)
+ 80003da:	691a      	ldr	r2, [r3, #16]
+ 80003dc:	f042 7200 	orr.w	r2, r2, #33554432	; 0x2000000
+ 80003e0:	611a      	str	r2, [r3, #16]
+	RCC->APB1RSTR &= ~RCC_APB1Periph_CAN1; /* Release CAN1 from reset state */
+ 80003e2:	691a      	ldr	r2, [r3, #16]
+ 80003e4:	f022 7200 	bic.w	r2, r2, #33554432	; 0x2000000
+ 80003e8:	611a      	str	r2, [r3, #16]
+
+	temp = 0;
+ 80003ea:	4b44      	ldr	r3, [pc, #272]	; (80004fc <InitCAN+0x124>)
+ 80003ec:	2200      	movs	r2, #0
+ 80003ee:	601a      	str	r2, [r3, #0]
+	//Initializes the CAN peripheral according to the specified         parameters in the CAN_InitStruct.(CAN_Init(CAN1, &CAN_InitStructure))
+	/* Exit from sleep mode */
+	CAN1->MCR &= (~(uint32_t)CAN_MCR_SLEEP);
+ 80003f0:	4b43      	ldr	r3, [pc, #268]	; (8000500 <InitCAN+0x128>)
+ 80003f2:	681a      	ldr	r2, [r3, #0]
+ 80003f4:	f022 0202 	bic.w	r2, r2, #2
+ 80003f8:	601a      	str	r2, [r3, #0]
+
+	/* Request initialisation */
+	CAN1->MCR |= CAN_MCR_INRQ ;
+ 80003fa:	681a      	ldr	r2, [r3, #0]
+ 80003fc:	f042 0201 	orr.w	r2, r2, #1
+ 8000400:	601a      	str	r2, [r3, #0]
+
+	/* Wait the acknowledge */
+	while (((CAN1->MSR & CAN_MSR_INAK) != CAN_MSR_INAK) && (temp != INAK_TIMEOUT))
+ 8000402:	e002      	b.n	800040a <InitCAN+0x32>
+	{
+		temp++;
+ 8000404:	3301      	adds	r3, #1
+ 8000406:	4a3d      	ldr	r2, [pc, #244]	; (80004fc <InitCAN+0x124>)
+ 8000408:	6013      	str	r3, [r2, #0]
+	while (((CAN1->MSR & CAN_MSR_INAK) != CAN_MSR_INAK) && (temp != INAK_TIMEOUT))
+ 800040a:	4b3d      	ldr	r3, [pc, #244]	; (8000500 <InitCAN+0x128>)
+ 800040c:	685b      	ldr	r3, [r3, #4]
+ 800040e:	f013 0f01 	tst.w	r3, #1
+ 8000412:	d105      	bne.n	8000420 <InitCAN+0x48>
+ 8000414:	4b39      	ldr	r3, [pc, #228]	; (80004fc <InitCAN+0x124>)
+ 8000416:	681b      	ldr	r3, [r3, #0]
+ 8000418:	f64f 72ff 	movw	r2, #65535	; 0xffff
+ 800041c:	4293      	cmp	r3, r2
+ 800041e:	d1f1      	bne.n	8000404 <InitCAN+0x2c>
+	}
+	/* Set the time triggered communication mode */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_TTCM;  	//CAN_InitStructure.CAN_TTCM = DISABLE;
+ 8000420:	4b37      	ldr	r3, [pc, #220]	; (8000500 <InitCAN+0x128>)
+ 8000422:	681a      	ldr	r2, [r3, #0]
+ 8000424:	f022 0280 	bic.w	r2, r2, #128	; 0x80
+ 8000428:	601a      	str	r2, [r3, #0]
+	/* Set the automatic bus-off management */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_ABOM;	//CAN_InitStructure.CAN_ABOM = DISABLE;
+ 800042a:	681a      	ldr	r2, [r3, #0]
+ 800042c:	f022 0240 	bic.w	r2, r2, #64	; 0x40
+ 8000430:	601a      	str	r2, [r3, #0]
+	/* Set the automatic wake-up mode */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_AWUM;
+ 8000432:	681a      	ldr	r2, [r3, #0]
+ 8000434:	f022 0220 	bic.w	r2, r2, #32
+ 8000438:	601a      	str	r2, [r3, #0]
+	/* Set the no automatic retransmission */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_NART;	//CAN_InitStructure.CAN_NART = DISABLE;
+ 800043a:	681a      	ldr	r2, [r3, #0]
+ 800043c:	f022 0210 	bic.w	r2, r2, #16
+ 8000440:	601a      	str	r2, [r3, #0]
+	/* Set the receive FIFO locked mode */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_RFLM;	//CAN_InitStructure.CAN_RFLM = DISABLE;
+ 8000442:	681a      	ldr	r2, [r3, #0]
+ 8000444:	f022 0208 	bic.w	r2, r2, #8
+ 8000448:	601a      	str	r2, [r3, #0]
+	/* Set the transmit FIFO priority */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_TXFP;	//CAN_InitStructure.CAN_TXFP = DISABLE;
+ 800044a:	681a      	ldr	r2, [r3, #0]
+ 800044c:	f022 0204 	bic.w	r2, r2, #4
+ 8000450:	601a      	str	r2, [r3, #0]
+
+	/* Set the bit timing register */
+	CAN1->BTR = (uint32_t)((uint32_t)CAN_Mode_Normal << 30) | \
+ 8000452:	4a2c      	ldr	r2, [pc, #176]	; (8000504 <InitCAN+0x12c>)
+ 8000454:	61da      	str	r2, [r3, #28]
+				((uint32_t)CAN_SJW_1tq << 24) | \
+				((uint32_t)CAN_BS1_3tq << 16) | \
+				((uint32_t)CAN_BS2_5tq << 20) | \
+			   ((uint32_t)8 - 1);
+	/* Request leave initialisation */
+	CAN1->MCR &= ~(uint32_t)CAN_MCR_INRQ;
+ 8000456:	681a      	ldr	r2, [r3, #0]
+ 8000458:	f022 0201 	bic.w	r2, r2, #1
+ 800045c:	601a      	str	r2, [r3, #0]
+	/* Wait the acknowledge */
+	temp = 0;
+ 800045e:	4b27      	ldr	r3, [pc, #156]	; (80004fc <InitCAN+0x124>)
+ 8000460:	2200      	movs	r2, #0
+ 8000462:	601a      	str	r2, [r3, #0]
+
+	while (((CAN1->MSR & CAN_MSR_INAK) == CAN_MSR_INAK) && (temp != INAK_TIMEOUT))
+ 8000464:	e002      	b.n	800046c <InitCAN+0x94>
+	{
+		temp++;
+ 8000466:	3301      	adds	r3, #1
+ 8000468:	4a24      	ldr	r2, [pc, #144]	; (80004fc <InitCAN+0x124>)
+ 800046a:	6013      	str	r3, [r2, #0]
+	while (((CAN1->MSR & CAN_MSR_INAK) == CAN_MSR_INAK) && (temp != INAK_TIMEOUT))
+ 800046c:	4b24      	ldr	r3, [pc, #144]	; (8000500 <InitCAN+0x128>)
+ 800046e:	685b      	ldr	r3, [r3, #4]
+ 8000470:	f013 0f01 	tst.w	r3, #1
+ 8000474:	d005      	beq.n	8000482 <InitCAN+0xaa>
+ 8000476:	4b21      	ldr	r3, [pc, #132]	; (80004fc <InitCAN+0x124>)
+ 8000478:	681b      	ldr	r3, [r3, #0]
+ 800047a:	f64f 72ff 	movw	r2, #65535	; 0xffff
+ 800047e:	4293      	cmp	r3, r2
+ 8000480:	d1f1      	bne.n	8000466 <InitCAN+0x8e>
+	}
+	/*End of Initialized Can Init Structure.*/
+
+	/*Initializes the CAN peripheral according to the specified parameters in the CAN_FilterInitStruct.*/
+	CAN1->FMR |= FMR_FINIT;
+ 8000482:	4b1f      	ldr	r3, [pc, #124]	; (8000500 <InitCAN+0x128>)
+ 8000484:	f8d3 2200 	ldr.w	r2, [r3, #512]	; 0x200
+ 8000488:	f042 0201 	orr.w	r2, r2, #1
+ 800048c:	f8c3 2200 	str.w	r2, [r3, #512]	; 0x200
+	CAN1->FA1R &= ~(uint32_t)1;
+ 8000490:	f8d3 221c 	ldr.w	r2, [r3, #540]	; 0x21c
+ 8000494:	f022 0201 	bic.w	r2, r2, #1
+ 8000498:	f8c3 221c 	str.w	r2, [r3, #540]	; 0x21c
+	CAN1->FS1R |= 1;
+ 800049c:	f8d3 220c 	ldr.w	r2, [r3, #524]	; 0x20c
+ 80004a0:	f042 0201 	orr.w	r2, r2, #1
+ 80004a4:	f8c3 220c 	str.w	r2, [r3, #524]	; 0x20c
+
+	 /* 32-bit identifier or First 32-bit identifier */
+	CAN1->sFilterRegister[0].FR1 = ((0x0000FFFF & (uint32_t)0) << 16) | (0x0000FFFF & (uint32_t)0);
+ 80004a8:	2200      	movs	r2, #0
+ 80004aa:	f8c3 2240 	str.w	r2, [r3, #576]	; 0x240
+	/* 32-bit mask or Second 32-bit identifier */
+	CAN1->sFilterRegister[0].FR2 = ((0x0000FFFF & (uint32_t)0) << 16) | (0x0000FFFF & (uint32_t)0);
+ 80004ae:	f8c3 2244 	str.w	r2, [r3, #580]	; 0x244
+
+	CAN1->FM1R &= ~(uint32_t)1;
+ 80004b2:	f8d3 1204 	ldr.w	r1, [r3, #516]	; 0x204
+ 80004b6:	f021 0101 	bic.w	r1, r1, #1
+ 80004ba:	f8c3 1204 	str.w	r1, [r3, #516]	; 0x204
+	CAN1->FFA1R |= (uint32_t)1;
+ 80004be:	f8d3 1214 	ldr.w	r1, [r3, #532]	; 0x214
+ 80004c2:	f041 0101 	orr.w	r1, r1, #1
+ 80004c6:	f8c3 1214 	str.w	r1, [r3, #532]	; 0x214
+	CAN1->FA1R |= 1;
+ 80004ca:	f8d3 121c 	ldr.w	r1, [r3, #540]	; 0x21c
+ 80004ce:	f041 0101 	orr.w	r1, r1, #1
+ 80004d2:	f8c3 121c 	str.w	r1, [r3, #540]	; 0x21c
+	/* Leave the initialisation mode for the filter */
+	CAN1->FMR &= ~FMR_FINIT;
+ 80004d6:	f8d3 1200 	ldr.w	r1, [r3, #512]	; 0x200
+ 80004da:	f021 0101 	bic.w	r1, r1, #1
+ 80004de:	f8c3 1200 	str.w	r1, [r3, #512]	; 0x200
+	/*End of Initialized Can Filter Init Structure.*/
+
+	/*Enables the specified CAN1 interrupts.*/
+	CAN1->IER |= CAN_IT_FMP1;
+ 80004e2:	6959      	ldr	r1, [r3, #20]
+ 80004e4:	f041 0110 	orr.w	r1, r1, #16
+ 80004e8:	6159      	str	r1, [r3, #20]
+
+
+	/*Initializes the NVIC peripheral according to the specified parameters in the NVIC_InitStruct.*/
+	NVIC->IP[CAN1_RX1_IRQn] = 0;
+ 80004ea:	4b07      	ldr	r3, [pc, #28]	; (8000508 <InitCAN+0x130>)
+ 80004ec:	f883 2315 	strb.w	r2, [r3, #789]	; 0x315
+	/* Enable the Selected IRQ Channels --------------------------------------*/
+	NVIC->ISER[CAN1_RX1_IRQn >> 0x05] = (uint32_t)0x01 << (CAN1_RX1_IRQn & (uint8_t)0x1F);
+ 80004f0:	f44f 1200 	mov.w	r2, #2097152	; 0x200000
+ 80004f4:	601a      	str	r2, [r3, #0]
+}
+ 80004f6:	4770      	bx	lr
+ 80004f8:	40021000 	.word	0x40021000
+ 80004fc:	200004a0 	.word	0x200004a0
+ 8000500:	40006400 	.word	0x40006400
+ 8000504:	00420007 	.word	0x00420007
+ 8000508:	e000e100 	.word	0xe000e100
+
+0800050c <CAN_Receive>:
+  * @param  RxMessage:  pointer to a structure receive message which contains
+  *                     CAN Id, CAN DLC, CAN datas and FMI number.
+  * @retval None.
+  */
+void CAN_Receive(CAN_TypeDef* CANx, uint8_t FIFONumber, CanRxMsg* RxMessage)
+{
+ 800050c:	b410      	push	{r4}
+  /* Check the parameters */
+  /* Get the Id */
+  RxMessage->IDE = (uint8_t)0x04 & CANx->sFIFOMailBox[FIFONumber].RIR;
+ 800050e:	f101 031b 	add.w	r3, r1, #27
+ 8000512:	011b      	lsls	r3, r3, #4
+ 8000514:	58c3      	ldr	r3, [r0, r3]
+ 8000516:	f003 0304 	and.w	r3, r3, #4
+ 800051a:	7213      	strb	r3, [r2, #8]
+  if (RxMessage->IDE == CAN_Id_Standard)
+ 800051c:	2b00      	cmp	r3, #0
+ 800051e:	d13e      	bne.n	800059e <CAN_Receive+0x92>
+  {
+    RxMessage->StdId = (uint32_t)0x000007FF & (CANx->sFIFOMailBox[FIFONumber].RIR >> 21);
+ 8000520:	f101 031b 	add.w	r3, r1, #27
+ 8000524:	011b      	lsls	r3, r3, #4
+ 8000526:	58c3      	ldr	r3, [r0, r3]
+ 8000528:	0d5b      	lsrs	r3, r3, #21
+ 800052a:	6013      	str	r3, [r2, #0]
+  else
+  {
+    RxMessage->ExtId = (uint32_t)0x1FFFFFFF & (CANx->sFIFOMailBox[FIFONumber].RIR >> 3);
+  }
+
+  RxMessage->RTR = (uint8_t)0x02 & CANx->sFIFOMailBox[FIFONumber].RIR;
+ 800052c:	f101 031b 	add.w	r3, r1, #27
+ 8000530:	011c      	lsls	r4, r3, #4
+ 8000532:	eb00 1303 	add.w	r3, r0, r3, lsl #4
+ 8000536:	5904      	ldr	r4, [r0, r4]
+ 8000538:	f004 0402 	and.w	r4, r4, #2
+ 800053c:	7254      	strb	r4, [r2, #9]
+  /* Get the DLC */
+  RxMessage->DLC = (uint8_t)0x0F & CANx->sFIFOMailBox[FIFONumber].RDTR;
+ 800053e:	685c      	ldr	r4, [r3, #4]
+ 8000540:	f004 040f 	and.w	r4, r4, #15
+ 8000544:	7294      	strb	r4, [r2, #10]
+  /* Get the FMI */
+  RxMessage->FMI = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDTR >> 8);
+ 8000546:	685b      	ldr	r3, [r3, #4]
+ 8000548:	0a1b      	lsrs	r3, r3, #8
+ 800054a:	74d3      	strb	r3, [r2, #19]
+  /* Get the data field */
+  RxMessage->Data[0] = (uint8_t)0xFF & CANx->sFIFOMailBox[FIFONumber].RDLR;
+ 800054c:	eb00 1301 	add.w	r3, r0, r1, lsl #4
+ 8000550:	f8d3 41b8 	ldr.w	r4, [r3, #440]	; 0x1b8
+ 8000554:	72d4      	strb	r4, [r2, #11]
+  RxMessage->Data[1] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDLR >> 8);
+ 8000556:	f8d3 41b8 	ldr.w	r4, [r3, #440]	; 0x1b8
+ 800055a:	0a24      	lsrs	r4, r4, #8
+ 800055c:	7314      	strb	r4, [r2, #12]
+  RxMessage->Data[2] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDLR >> 16);
+ 800055e:	f8d3 41b8 	ldr.w	r4, [r3, #440]	; 0x1b8
+ 8000562:	0c24      	lsrs	r4, r4, #16
+ 8000564:	7354      	strb	r4, [r2, #13]
+  RxMessage->Data[3] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDLR >> 24);
+ 8000566:	f8d3 41b8 	ldr.w	r4, [r3, #440]	; 0x1b8
+ 800056a:	0e24      	lsrs	r4, r4, #24
+ 800056c:	7394      	strb	r4, [r2, #14]
+  RxMessage->Data[4] = (uint8_t)0xFF & CANx->sFIFOMailBox[FIFONumber].RDHR;
+ 800056e:	f8d3 41bc 	ldr.w	r4, [r3, #444]	; 0x1bc
+ 8000572:	73d4      	strb	r4, [r2, #15]
+  RxMessage->Data[5] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDHR >> 8);
+ 8000574:	f8d3 41bc 	ldr.w	r4, [r3, #444]	; 0x1bc
+ 8000578:	0a24      	lsrs	r4, r4, #8
+ 800057a:	7414      	strb	r4, [r2, #16]
+  RxMessage->Data[6] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDHR >> 16);
+ 800057c:	f8d3 41bc 	ldr.w	r4, [r3, #444]	; 0x1bc
+ 8000580:	ea4f 4c14 	mov.w	ip, r4, lsr #16
+ 8000584:	f882 c011 	strb.w	ip, [r2, #17]
+  RxMessage->Data[7] = (uint8_t)0xFF & (CANx->sFIFOMailBox[FIFONumber].RDHR >> 24);
+ 8000588:	f8d3 31bc 	ldr.w	r3, [r3, #444]	; 0x1bc
+ 800058c:	0e1b      	lsrs	r3, r3, #24
+ 800058e:	7493      	strb	r3, [r2, #18]
+  /* Release the FIFO */
+  /* Release FIFO0 */
+  if (FIFONumber == CAN_FIFO0)
+ 8000590:	b961      	cbnz	r1, 80005ac <CAN_Receive+0xa0>
+  {
+    CANx->RF0R |= CAN_RF0R_RFOM0;
+ 8000592:	68c3      	ldr	r3, [r0, #12]
+ 8000594:	f043 0320 	orr.w	r3, r3, #32
+ 8000598:	60c3      	str	r3, [r0, #12]
+  /* Release FIFO1 */
+  else /* FIFONumber == CAN_FIFO1 */
+  {
+    CANx->RF1R |= CAN_RF1R_RFOM1;
+  }
+}
+ 800059a:	bc10      	pop	{r4}
+ 800059c:	4770      	bx	lr
+    RxMessage->ExtId = (uint32_t)0x1FFFFFFF & (CANx->sFIFOMailBox[FIFONumber].RIR >> 3);
+ 800059e:	f101 031b 	add.w	r3, r1, #27
+ 80005a2:	011b      	lsls	r3, r3, #4
+ 80005a4:	58c3      	ldr	r3, [r0, r3]
+ 80005a6:	08db      	lsrs	r3, r3, #3
+ 80005a8:	6053      	str	r3, [r2, #4]
+ 80005aa:	e7bf      	b.n	800052c <CAN_Receive+0x20>
+    CANx->RF1R |= CAN_RF1R_RFOM1;
+ 80005ac:	6903      	ldr	r3, [r0, #16]
+ 80005ae:	f043 0320 	orr.w	r3, r3, #32
+ 80005b2:	6103      	str	r3, [r0, #16]
+}
+ 80005b4:	e7f1      	b.n	800059a <CAN_Receive+0x8e>
+	...
+
+080005b8 <CAN1_RX1_IRQHandler>:
+
+//THis function is a callback for Receiving CAN Message.
+void CAN1_RX1_IRQHandler()
+{
+ 80005b8:	b510      	push	{r4, lr}
+	CAN_Receive(CAN1, CAN_FIFO1, &CanRxMessage);
+ 80005ba:	4c18      	ldr	r4, [pc, #96]	; (800061c <CAN1_RX1_IRQHandler+0x64>)
+ 80005bc:	4622      	mov	r2, r4
+ 80005be:	2101      	movs	r1, #1
+ 80005c0:	4817      	ldr	r0, [pc, #92]	; (8000620 <CAN1_RX1_IRQHandler+0x68>)
+ 80005c2:	f7ff ffa3 	bl	800050c <CAN_Receive>
+	CanRxTargetAddress = (CanRxMessage.ExtId >> 16) & 0xFF;
+ 80005c6:	6863      	ldr	r3, [r4, #4]
+ 80005c8:	f3c3 4207 	ubfx	r2, r3, #16, #8
+ 80005cc:	4915      	ldr	r1, [pc, #84]	; (8000624 <CAN1_RX1_IRQHandler+0x6c>)
+ 80005ce:	800a      	strh	r2, [r1, #0]
+	if(CanRxTargetAddress == CurrentHeadCanAddress) //if Head Address is same as Can message Head identifier.
+ 80005d0:	4915      	ldr	r1, [pc, #84]	; (8000628 <CAN1_RX1_IRQHandler+0x70>)
+ 80005d2:	7809      	ldrb	r1, [r1, #0]
+ 80005d4:	428a      	cmp	r2, r1
+ 80005d6:	d000      	beq.n	80005da <CAN1_RX1_IRQHandler+0x22>
+		}
+
+		memcpy(CanRxDataBuffer, CanRxMessage.Data, CanRxMessage.DLC);
+		CanMessageReadyToRead = 1;
+	}
+}
+ 80005d8:	bd10      	pop	{r4, pc}
+		switch((CanRxMessage.ExtId >> 24) & 0xFF)
+ 80005da:	0e1a      	lsrs	r2, r3, #24
+ 80005dc:	d00c      	beq.n	80005f8 <CAN1_RX1_IRQHandler+0x40>
+ 80005de:	f1a2 011a 	sub.w	r1, r2, #26
+ 80005e2:	2905      	cmp	r1, #5
+ 80005e4:	d80f      	bhi.n	8000606 <CAN1_RX1_IRQHandler+0x4e>
+			CanRxFunctionId = (CanRxMessage.ExtId >> 24) & 0xff;
+ 80005e6:	4911      	ldr	r1, [pc, #68]	; (800062c <CAN1_RX1_IRQHandler+0x74>)
+ 80005e8:	800a      	strh	r2, [r1, #0]
+			CanRxSourceAddress = CAN_DEV_ANALYST;
+ 80005ea:	4a11      	ldr	r2, [pc, #68]	; (8000630 <CAN1_RX1_IRQHandler+0x78>)
+ 80005ec:	213e      	movs	r1, #62	; 0x3e
+ 80005ee:	8011      	strh	r1, [r2, #0]
+			CanRxApplicationData = CanRxMessage.ExtId & 0xffff;
+ 80005f0:	b29b      	uxth	r3, r3
+ 80005f2:	4a10      	ldr	r2, [pc, #64]	; (8000634 <CAN1_RX1_IRQHandler+0x7c>)
+ 80005f4:	6013      	str	r3, [r2, #0]
+			break;
+ 80005f6:	e006      	b.n	8000606 <CAN1_RX1_IRQHandler+0x4e>
+			CanRxFunctionId = CanRxMessage.ExtId  & 0xff;
+ 80005f8:	b2d9      	uxtb	r1, r3
+ 80005fa:	4a0c      	ldr	r2, [pc, #48]	; (800062c <CAN1_RX1_IRQHandler+0x74>)
+ 80005fc:	8011      	strh	r1, [r2, #0]
+			CanRxSourceAddress = (CanRxMessage.ExtId >> 8 )& 0xFF;
+ 80005fe:	f3c3 2307 	ubfx	r3, r3, #8, #8
+ 8000602:	4a0b      	ldr	r2, [pc, #44]	; (8000630 <CAN1_RX1_IRQHandler+0x78>)
+ 8000604:	8013      	strh	r3, [r2, #0]
+		memcpy(CanRxDataBuffer, CanRxMessage.Data, CanRxMessage.DLC);
+ 8000606:	4905      	ldr	r1, [pc, #20]	; (800061c <CAN1_RX1_IRQHandler+0x64>)
+ 8000608:	7a8a      	ldrb	r2, [r1, #10]
+ 800060a:	310b      	adds	r1, #11
+ 800060c:	480a      	ldr	r0, [pc, #40]	; (8000638 <CAN1_RX1_IRQHandler+0x80>)
+ 800060e:	f000 fd1f 	bl	8001050 <memcpy>
+		CanMessageReadyToRead = 1;
+ 8000612:	4b0a      	ldr	r3, [pc, #40]	; (800063c <CAN1_RX1_IRQHandler+0x84>)
+ 8000614:	2201      	movs	r2, #1
+ 8000616:	701a      	strb	r2, [r3, #0]
+}
+ 8000618:	e7de      	b.n	80005d8 <CAN1_RX1_IRQHandler+0x20>
+ 800061a:	bf00      	nop
+ 800061c:	20000450 	.word	0x20000450
+ 8000620:	40006400 	.word	0x40006400
+ 8000624:	20000466 	.word	0x20000466
+ 8000628:	20000014 	.word	0x20000014
+ 800062c:	2000044c 	.word	0x2000044c
+ 8000630:	20000464 	.word	0x20000464
+ 8000634:	20000440 	.word	0x20000440
+ 8000638:	20000444 	.word	0x20000444
+ 800063c:	2000043c 	.word	0x2000043c
+
+08000640 <SendCanMessage>:
+//		funcId means the function identifier of message.
+//		data is buffer to send. it must be less than 8bytes.
+//		size is the length of buffer.
+
+void SendCanMessage(uint16_t target, uint8_t funcId, uint8_t* data, uint8_t size)
+{
+ 8000640:	b570      	push	{r4, r5, r6, lr}
+ 8000642:	4614      	mov	r4, r2
+	temp = (target << 16) + (CurrentHeadCanAddress << 8) + funcId; //this is Ext ID
+ 8000644:	4a3a      	ldr	r2, [pc, #232]	; (8000730 <SendCanMessage+0xf0>)
+ 8000646:	7812      	ldrb	r2, [r2, #0]
+ 8000648:	0212      	lsls	r2, r2, #8
+ 800064a:	eb02 4200 	add.w	r2, r2, r0, lsl #16
+ 800064e:	188d      	adds	r5, r1, r2
+ 8000650:	4a38      	ldr	r2, [pc, #224]	; (8000734 <SendCanMessage+0xf4>)
+ 8000652:	6015      	str	r5, [r2, #0]
+	//CanTxMessage.RTR= CAN_RTR_DATA;
+	//CanTxMessage.IDE= CAN_ID_EXT;
+	//CanTxMessage.DLC= size;  //the data size to send, which would be smaller than 8bytes.
+	if(size > 0) memcpy(CanTxMessage.Data, data, size); // copy the data to TxMessage's buffer
+ 8000654:	461e      	mov	r6, r3
+ 8000656:	2b00      	cmp	r3, #0
+ 8000658:	d14e      	bne.n	80006f8 <SendCanMessage+0xb8>
+
+	/* Select one empty transmit mailbox */
+	if ((CAN1->TSR&CAN_TSR_TME0) == CAN_TSR_TME0)
+ 800065a:	4b37      	ldr	r3, [pc, #220]	; (8000738 <SendCanMessage+0xf8>)
+ 800065c:	689b      	ldr	r3, [r3, #8]
+ 800065e:	f013 6f80 	tst.w	r3, #67108864	; 0x4000000
+ 8000662:	d04f      	beq.n	8000704 <SendCanMessage+0xc4>
+	{
+		CanTransmitMailbox = 0;
+ 8000664:	4b35      	ldr	r3, [pc, #212]	; (800073c <SendCanMessage+0xfc>)
+ 8000666:	2200      	movs	r2, #0
+ 8000668:	701a      	strb	r2, [r3, #0]
+	else
+	{
+		CanTransmitMailbox = CAN_TxStatus_NoMailBox;
+	}
+
+	if (CanTransmitMailbox != CAN_TxStatus_NoMailBox) {
+ 800066a:	4b34      	ldr	r3, [pc, #208]	; (800073c <SendCanMessage+0xfc>)
+ 800066c:	f893 c000 	ldrb.w	ip, [r3]
+ 8000670:	f1bc 0f04 	cmp.w	ip, #4
+ 8000674:	d03b      	beq.n	80006ee <SendCanMessage+0xae>
+		CAN1->sTxMailBox[CanTransmitMailbox].TIR &= TMIDxR_TXRQ;
+ 8000676:	4830      	ldr	r0, [pc, #192]	; (8000738 <SendCanMessage+0xf8>)
+ 8000678:	f10c 0318 	add.w	r3, ip, #24
+ 800067c:	ea4f 1e03 	mov.w	lr, r3, lsl #4
+ 8000680:	eb00 1303 	add.w	r3, r0, r3, lsl #4
+ 8000684:	f850 200e 	ldr.w	r2, [r0, lr]
+ 8000688:	f002 0201 	and.w	r2, r2, #1
+ 800068c:	f840 200e 	str.w	r2, [r0, lr]
+
+		CAN1->sTxMailBox[CanTransmitMailbox].TIR |= ((temp << 3) | \
+ 8000690:	f850 200e 	ldr.w	r2, [r0, lr]
+ 8000694:	ea42 02c5 	orr.w	r2, r2, r5, lsl #3
+ 8000698:	f042 0204 	orr.w	r2, r2, #4
+ 800069c:	f840 200e 	str.w	r2, [r0, lr]
+													CAN_Id_Extended | \
+														CAN_RTR_Data);
+
+		/* Set up the DLC */
+
+		CAN1->sTxMailBox[CanTransmitMailbox].TDTR &= (uint32_t)0xFFFFFFF0;
+ 80006a0:	685a      	ldr	r2, [r3, #4]
+ 80006a2:	f022 020f 	bic.w	r2, r2, #15
+ 80006a6:	605a      	str	r2, [r3, #4]
+		CAN1->sTxMailBox[CanTransmitMailbox].TDTR |= size; //Data Size
+ 80006a8:	685a      	ldr	r2, [r3, #4]
+ 80006aa:	4316      	orrs	r6, r2
+ 80006ac:	605e      	str	r6, [r3, #4]
+
+		/* Set up the data field */
+		CAN1->sTxMailBox[CanTransmitMailbox].TDLR = (((uint32_t)data[3] << 24) |
+ 80006ae:	78e2      	ldrb	r2, [r4, #3]
+												 ((uint32_t)data[2] << 16) |
+ 80006b0:	78a3      	ldrb	r3, [r4, #2]
+ 80006b2:	041b      	lsls	r3, r3, #16
+		CAN1->sTxMailBox[CanTransmitMailbox].TDLR = (((uint32_t)data[3] << 24) |
+ 80006b4:	ea43 6302 	orr.w	r3, r3, r2, lsl #24
+												 ((uint32_t)data[1] << 8) |
+ 80006b8:	7862      	ldrb	r2, [r4, #1]
+												 ((uint32_t)data[2] << 16) |
+ 80006ba:	ea43 2302 	orr.w	r3, r3, r2, lsl #8
+												 ((uint32_t)data[0]));
+ 80006be:	7822      	ldrb	r2, [r4, #0]
+												 ((uint32_t)data[1] << 8) |
+ 80006c0:	4313      	orrs	r3, r2
+		CAN1->sTxMailBox[CanTransmitMailbox].TDLR = (((uint32_t)data[3] << 24) |
+ 80006c2:	eb00 1c0c 	add.w	ip, r0, ip, lsl #4
+ 80006c6:	f8cc 3188 	str.w	r3, [ip, #392]	; 0x188
+		CAN1->sTxMailBox[CanTransmitMailbox].TDHR = (((uint32_t)data[7] << 24) |
+ 80006ca:	79e2      	ldrb	r2, [r4, #7]
+												 ((uint32_t)data[6] << 16) |
+ 80006cc:	79a3      	ldrb	r3, [r4, #6]
+ 80006ce:	041b      	lsls	r3, r3, #16
+		CAN1->sTxMailBox[CanTransmitMailbox].TDHR = (((uint32_t)data[7] << 24) |
+ 80006d0:	ea43 6302 	orr.w	r3, r3, r2, lsl #24
+												 ((uint32_t)data[5] << 8) |
+ 80006d4:	7962      	ldrb	r2, [r4, #5]
+												 ((uint32_t)data[6] << 16) |
+ 80006d6:	ea43 2302 	orr.w	r3, r3, r2, lsl #8
+												 ((uint32_t)data[4]));
+ 80006da:	7922      	ldrb	r2, [r4, #4]
+												 ((uint32_t)data[5] << 8) |
+ 80006dc:	4313      	orrs	r3, r2
+		CAN1->sTxMailBox[CanTransmitMailbox].TDHR = (((uint32_t)data[7] << 24) |
+ 80006de:	f8cc 318c 	str.w	r3, [ip, #396]	; 0x18c
+		/* Request transmission */
+		CAN1->sTxMailBox[CanTransmitMailbox].TIR |= TMIDxR_TXRQ;
+ 80006e2:	f850 300e 	ldr.w	r3, [r0, lr]
+ 80006e6:	f043 0301 	orr.w	r3, r3, #1
+ 80006ea:	f840 300e 	str.w	r3, [r0, lr]
+	}
+	//CanTransmitMailbox = CAN_Transmit(CAN1, &CanTxMessage);
+	CanTrasmitMsgWaitCounter = 0xFFFF; //it would be count down until Can trasmit is ok..
+ 80006ee:	4b14      	ldr	r3, [pc, #80]	; (8000740 <SendCanMessage+0x100>)
+ 80006f0:	f64f 72ff 	movw	r2, #65535	; 0xffff
+ 80006f4:	601a      	str	r2, [r3, #0]
+}
+ 80006f6:	bd70      	pop	{r4, r5, r6, pc}
+	if(size > 0) memcpy(CanTxMessage.Data, data, size); // copy the data to TxMessage's buffer
+ 80006f8:	461a      	mov	r2, r3
+ 80006fa:	4621      	mov	r1, r4
+ 80006fc:	4811      	ldr	r0, [pc, #68]	; (8000744 <SendCanMessage+0x104>)
+ 80006fe:	f000 fca7 	bl	8001050 <memcpy>
+ 8000702:	e7aa      	b.n	800065a <SendCanMessage+0x1a>
+	else if ((CAN1->TSR&CAN_TSR_TME1) == CAN_TSR_TME1)
+ 8000704:	4b0c      	ldr	r3, [pc, #48]	; (8000738 <SendCanMessage+0xf8>)
+ 8000706:	689b      	ldr	r3, [r3, #8]
+ 8000708:	f013 6f00 	tst.w	r3, #134217728	; 0x8000000
+ 800070c:	d003      	beq.n	8000716 <SendCanMessage+0xd6>
+		CanTransmitMailbox = 1;
+ 800070e:	4b0b      	ldr	r3, [pc, #44]	; (800073c <SendCanMessage+0xfc>)
+ 8000710:	2201      	movs	r2, #1
+ 8000712:	701a      	strb	r2, [r3, #0]
+ 8000714:	e7a9      	b.n	800066a <SendCanMessage+0x2a>
+	else if ((CAN1->TSR&CAN_TSR_TME2) == CAN_TSR_TME2)
+ 8000716:	4b08      	ldr	r3, [pc, #32]	; (8000738 <SendCanMessage+0xf8>)
+ 8000718:	689b      	ldr	r3, [r3, #8]
+ 800071a:	f013 5f80 	tst.w	r3, #268435456	; 0x10000000
+ 800071e:	d003      	beq.n	8000728 <SendCanMessage+0xe8>
+		CanTransmitMailbox = 2;
+ 8000720:	4b06      	ldr	r3, [pc, #24]	; (800073c <SendCanMessage+0xfc>)
+ 8000722:	2202      	movs	r2, #2
+ 8000724:	701a      	strb	r2, [r3, #0]
+ 8000726:	e7a0      	b.n	800066a <SendCanMessage+0x2a>
+		CanTransmitMailbox = CAN_TxStatus_NoMailBox;
+ 8000728:	4b04      	ldr	r3, [pc, #16]	; (800073c <SendCanMessage+0xfc>)
+ 800072a:	2204      	movs	r2, #4
+ 800072c:	701a      	strb	r2, [r3, #0]
+ 800072e:	e79c      	b.n	800066a <SendCanMessage+0x2a>
+ 8000730:	20000014 	.word	0x20000014
+ 8000734:	200004a0 	.word	0x200004a0
+ 8000738:	40006400 	.word	0x40006400
+ 800073c:	20000468 	.word	0x20000468
+ 8000740:	2000046c 	.word	0x2000046c
+ 8000744:	2000047f 	.word	0x2000047f
+
+08000748 <CAN_TransmitStatus>:
+  */
+uint8_t CAN_TransmitStatus(CAN_TypeDef* CANx, uint8_t TransmitMailbox)
+{
+  uint32_t state = 0;
+
+  switch (TransmitMailbox)
+ 8000748:	2901      	cmp	r1, #1
+ 800074a:	d019      	beq.n	8000780 <CAN_TransmitStatus+0x38>
+ 800074c:	2902      	cmp	r1, #2
+ 800074e:	d01b      	beq.n	8000788 <CAN_TransmitStatus+0x40>
+ 8000750:	b109      	cbz	r1, 8000756 <CAN_TransmitStatus+0xe>
+ 8000752:	2002      	movs	r0, #2
+ 8000754:	4770      	bx	lr
+  {
+    case (CAN_TXMAILBOX_0):
+      state =   CANx->TSR &  (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0);
+ 8000756:	6883      	ldr	r3, [r0, #8]
+ 8000758:	f023 437b 	bic.w	r3, r3, #4211081216	; 0xfb000000
+ 800075c:	f423 037f 	bic.w	r3, r3, #16711680	; 0xff0000
+ 8000760:	f423 437f 	bic.w	r3, r3, #65280	; 0xff00
+ 8000764:	f023 03fc 	bic.w	r3, r3, #252	; 0xfc
+      break;
+    default:
+      state = CAN_TxStatus_Failed;
+      break;
+  }
+  switch (state)
+ 8000768:	4a19      	ldr	r2, [pc, #100]	; (80007d0 <CAN_TransmitStatus+0x88>)
+ 800076a:	4293      	cmp	r3, r2
+ 800076c:	d025      	beq.n	80007ba <CAN_TransmitStatus+0x72>
+ 800076e:	d816      	bhi.n	800079e <CAN_TransmitStatus+0x56>
+ 8000770:	4a18      	ldr	r2, [pc, #96]	; (80007d4 <CAN_TransmitStatus+0x8c>)
+ 8000772:	4293      	cmp	r3, r2
+ 8000774:	d023      	beq.n	80007be <CAN_TransmitStatus+0x76>
+ 8000776:	3202      	adds	r2, #2
+ 8000778:	4293      	cmp	r3, r2
+ 800077a:	d10d      	bne.n	8000798 <CAN_TransmitStatus+0x50>
+     case (CAN_TSR_RQCP1 | CAN_TSR_TME1): state = CAN_TxStatus_Failed;
+      break;
+     case (CAN_TSR_RQCP2 | CAN_TSR_TME2): state = CAN_TxStatus_Failed;
+      break;
+      /* transmit succeeded  */
+    case (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0):state = CAN_TxStatus_Ok;
+ 800077c:	2001      	movs	r0, #1
+ 800077e:	4770      	bx	lr
+      state =   CANx->TSR &  (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1);
+ 8000780:	6882      	ldr	r2, [r0, #8]
+ 8000782:	4b15      	ldr	r3, [pc, #84]	; (80007d8 <CAN_TransmitStatus+0x90>)
+ 8000784:	4013      	ands	r3, r2
+      break;
+ 8000786:	e7ef      	b.n	8000768 <CAN_TransmitStatus+0x20>
+      state =   CANx->TSR &  (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2);
+ 8000788:	6883      	ldr	r3, [r0, #8]
+ 800078a:	f023 436f 	bic.w	r3, r3, #4009754624	; 0xef000000
+ 800078e:	f423 037c 	bic.w	r3, r3, #16515072	; 0xfc0000
+ 8000792:	0c1b      	lsrs	r3, r3, #16
+ 8000794:	041b      	lsls	r3, r3, #16
+      break;
+ 8000796:	e7e7      	b.n	8000768 <CAN_TransmitStatus+0x20>
+  switch (state)
+ 8000798:	b99b      	cbnz	r3, 80007c2 <CAN_TransmitStatus+0x7a>
+ 800079a:	2002      	movs	r0, #2
+ 800079c:	4770      	bx	lr
+ 800079e:	4a0f      	ldr	r2, [pc, #60]	; (80007dc <CAN_TransmitStatus+0x94>)
+ 80007a0:	4293      	cmp	r3, r2
+ 80007a2:	d010      	beq.n	80007c6 <CAN_TransmitStatus+0x7e>
+ 80007a4:	f502 3200 	add.w	r2, r2, #131072	; 0x20000
+ 80007a8:	4293      	cmp	r3, r2
+ 80007aa:	d101      	bne.n	80007b0 <CAN_TransmitStatus+0x68>
+      break;
+    case (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1):state = CAN_TxStatus_Ok;
+      break;
+    case (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2):state = CAN_TxStatus_Ok;
+ 80007ac:	2001      	movs	r0, #1
+ 80007ae:	4770      	bx	lr
+  switch (state)
+ 80007b0:	4a09      	ldr	r2, [pc, #36]	; (80007d8 <CAN_TransmitStatus+0x90>)
+ 80007b2:	4293      	cmp	r3, r2
+ 80007b4:	d109      	bne.n	80007ca <CAN_TransmitStatus+0x82>
+    case (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1):state = CAN_TxStatus_Ok;
+ 80007b6:	2001      	movs	r0, #1
+ 80007b8:	4770      	bx	lr
+     case (CAN_TSR_RQCP1 | CAN_TSR_TME1): state = CAN_TxStatus_Failed;
+ 80007ba:	2000      	movs	r0, #0
+ 80007bc:	4770      	bx	lr
+     case (CAN_TSR_RQCP0 | CAN_TSR_TME0): state = CAN_TxStatus_Failed;
+ 80007be:	2000      	movs	r0, #0
+ 80007c0:	4770      	bx	lr
+      break;
+    default: state = CAN_TxStatus_Failed;
+ 80007c2:	2000      	movs	r0, #0
+ 80007c4:	4770      	bx	lr
+     case (CAN_TSR_RQCP2 | CAN_TSR_TME2): state = CAN_TxStatus_Failed;
+ 80007c6:	2000      	movs	r0, #0
+ 80007c8:	4770      	bx	lr
+    default: state = CAN_TxStatus_Failed;
+ 80007ca:	2000      	movs	r0, #0
+      break;
+  }
+  return (uint8_t) state;
+}
+ 80007cc:	4770      	bx	lr
+ 80007ce:	bf00      	nop
+ 80007d0:	08000100 	.word	0x08000100
+ 80007d4:	04000001 	.word	0x04000001
+ 80007d8:	08000300 	.word	0x08000300
+ 80007dc:	10010000 	.word	0x10010000
+
+080007e0 <RCC_DeInit>:
+  * @retval None
+  */
+void RCC_DeInit(void)
+{
+  /* Set HSION bit */
+  RCC->CR |= (uint32_t)0x00000001;
+ 80007e0:	4b0d      	ldr	r3, [pc, #52]	; (8000818 <RCC_DeInit+0x38>)
+ 80007e2:	681a      	ldr	r2, [r3, #0]
+ 80007e4:	f042 0201 	orr.w	r2, r2, #1
+ 80007e8:	601a      	str	r2, [r3, #0]
+
+  /* Reset SW, HPRE, PPRE1, PPRE2, ADCPRE and MCO bits */
+  RCC->CFGR &= (uint32_t)0xF8FF0000;
+ 80007ea:	6859      	ldr	r1, [r3, #4]
+ 80007ec:	4a0b      	ldr	r2, [pc, #44]	; (800081c <RCC_DeInit+0x3c>)
+ 80007ee:	400a      	ands	r2, r1
+ 80007f0:	605a      	str	r2, [r3, #4]
+
+  /* Reset HSEON, CSSON and PLLON bits */
+  RCC->CR &= (uint32_t)0xFEF6FFFF;
+ 80007f2:	681a      	ldr	r2, [r3, #0]
+ 80007f4:	f022 7284 	bic.w	r2, r2, #17301504	; 0x1080000
+ 80007f8:	f422 3280 	bic.w	r2, r2, #65536	; 0x10000
+ 80007fc:	601a      	str	r2, [r3, #0]
+
+  /* Reset HSEBYP bit */
+  RCC->CR &= (uint32_t)0xFFFBFFFF;
+ 80007fe:	681a      	ldr	r2, [r3, #0]
+ 8000800:	f422 2280 	bic.w	r2, r2, #262144	; 0x40000
+ 8000804:	601a      	str	r2, [r3, #0]
+
+  /* Reset PLLSRC, PLLXTPRE, PLLMUL and USBPRE/OTGFSPRE bits */
+  RCC->CFGR &= (uint32_t)0xFF80FFFF;
+ 8000806:	685a      	ldr	r2, [r3, #4]
+ 8000808:	f422 02fe 	bic.w	r2, r2, #8323072	; 0x7f0000
+ 800080c:	605a      	str	r2, [r3, #4]
+
+  /* Disable all interrupts and clear pending bits  */
+  RCC->CIR = 0x009F0000;
+ 800080e:	f44f 021f 	mov.w	r2, #10420224	; 0x9f0000
+ 8000812:	609a      	str	r2, [r3, #8]
+
+}
+ 8000814:	4770      	bx	lr
+ 8000816:	bf00      	nop
+ 8000818:	40021000 	.word	0x40021000
+ 800081c:	f8ff0000 	.word	0xf8ff0000
+
+08000820 <DeinitEverything>:
+
+void DeinitEverything()
+{
+ 8000820:	b510      	push	{r4, lr}
+	__HAL_RCC_GPIOC_CLK_DISABLE();
+ 8000822:	4c16      	ldr	r4, [pc, #88]	; (800087c <DeinitEverything+0x5c>)
+ 8000824:	69a3      	ldr	r3, [r4, #24]
+ 8000826:	f023 0310 	bic.w	r3, r3, #16
+ 800082a:	61a3      	str	r3, [r4, #24]
+	__HAL_RCC_GPIOD_CLK_DISABLE();
+ 800082c:	69a3      	ldr	r3, [r4, #24]
+ 800082e:	f023 0320 	bic.w	r3, r3, #32
+ 8000832:	61a3      	str	r3, [r4, #24]
+	__HAL_RCC_GPIOB_CLK_DISABLE();
+ 8000834:	69a3      	ldr	r3, [r4, #24]
+ 8000836:	f023 0308 	bic.w	r3, r3, #8
+ 800083a:	61a3      	str	r3, [r4, #24]
+	__HAL_RCC_GPIOA_CLK_DISABLE();
+ 800083c:	69a3      	ldr	r3, [r4, #24]
+ 800083e:	f023 0304 	bic.w	r3, r3, #4
+ 8000842:	61a3      	str	r3, [r4, #24]
+	__HAL_RCC_TIM1_CLK_DISABLE();
+ 8000844:	69a3      	ldr	r3, [r4, #24]
+ 8000846:	f423 6300 	bic.w	r3, r3, #2048	; 0x800
+ 800084a:	61a3      	str	r3, [r4, #24]
+	__HAL_RCC_SPI1_CLK_DISABLE();
+ 800084c:	69a3      	ldr	r3, [r4, #24]
+ 800084e:	f423 5380 	bic.w	r3, r3, #4096	; 0x1000
+ 8000852:	61a3      	str	r3, [r4, #24]
+	__HAL_RCC_USART1_CLK_DISABLE();
+ 8000854:	69a3      	ldr	r3, [r4, #24]
+ 8000856:	f423 4380 	bic.w	r3, r3, #16384	; 0x4000
+ 800085a:	61a3      	str	r3, [r4, #24]
+
+	RCC_DeInit();
+ 800085c:	f7ff ffc0 	bl	80007e0 <RCC_DeInit>
+
+	__HAL_RCC_APB1_FORCE_RESET();
+ 8000860:	f04f 32ff 	mov.w	r2, #4294967295
+ 8000864:	60e2      	str	r2, [r4, #12]
+	__HAL_RCC_APB1_RELEASE_RESET();
+ 8000866:	2300      	movs	r3, #0
+ 8000868:	6123      	str	r3, [r4, #16]
+	__HAL_RCC_APB2_FORCE_RESET();
+ 800086a:	60e2      	str	r2, [r4, #12]
+	__HAL_RCC_APB2_RELEASE_RESET();
+ 800086c:	60e3      	str	r3, [r4, #12]
+
+	SysTick->CTRL = 0;
+ 800086e:	f04f 22e0 	mov.w	r2, #3758153728	; 0xe000e000
+ 8000872:	6113      	str	r3, [r2, #16]
+	SysTick->LOAD = 0;
+ 8000874:	6153      	str	r3, [r2, #20]
+	SysTick->VAL = 0;
+ 8000876:	6193      	str	r3, [r2, #24]
+}
+ 8000878:	bd10      	pop	{r4, pc}
+ 800087a:	bf00      	nop
+ 800087c:	40021000 	.word	0x40021000
+
+08000880 <jumpToApp>:
+
+void jumpToApp(const uint32_t address)
+{
+ 8000880:	b510      	push	{r4, lr}
+ 8000882:	4604      	mov	r4, r0
+	const JumpStruct* vector_p = (JumpStruct*)address;
+	DeinitEverything();
+ 8000884:	f7ff ffcc 	bl	8000820 <DeinitEverything>
+	SCB->VTOR = FLASH_APPLICATION_OFFSET_ADDRESS;
+ 8000888:	4b04      	ldr	r3, [pc, #16]	; (800089c <jumpToApp+0x1c>)
+ 800088a:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 800088e:	609a      	str	r2, [r3, #8]
+
+	/* let's do The Jump! */
+    /* Jump, used asm to avoid stack optimization */
+    asm("msr msp, %0; bx %1;" : : "r"(vector_p->stack_addr), "r"(vector_p->func_p));
+ 8000890:	6823      	ldr	r3, [r4, #0]
+ 8000892:	6862      	ldr	r2, [r4, #4]
+ 8000894:	f383 8808 	msr	MSP, r3
+ 8000898:	4710      	bx	r2
+}
+ 800089a:	bd10      	pop	{r4, pc}
+ 800089c:	e000ed00 	.word	0xe000ed00
+
+080008a0 <FLASH_Unlock>:
+  * @retval None
+  */
+void FLASH_Unlock(void)
+{
+  /* Authorize the FPEC of Bank1 Access */
+  FLASH->KEYR = FLASH_KEY1;
+ 80008a0:	4b03      	ldr	r3, [pc, #12]	; (80008b0 <FLASH_Unlock+0x10>)
+ 80008a2:	4a04      	ldr	r2, [pc, #16]	; (80008b4 <FLASH_Unlock+0x14>)
+ 80008a4:	605a      	str	r2, [r3, #4]
+  FLASH->KEYR = FLASH_KEY2;
+ 80008a6:	f102 3288 	add.w	r2, r2, #2290649224	; 0x88888888
+ 80008aa:	605a      	str	r2, [r3, #4]
+}
+ 80008ac:	4770      	bx	lr
+ 80008ae:	bf00      	nop
+ 80008b0:	40022000 	.word	0x40022000
+ 80008b4:	45670123 	.word	0x45670123
+
+080008b8 <FLASH_Lock>:
+  * @retval None
+  */
+void FLASH_Lock(void)
+{
+  /* Set the Lock Bit to lock the FPEC and the CR of  Bank1 */
+  FLASH->CR |= CR_LOCK_Set;
+ 80008b8:	4a02      	ldr	r2, [pc, #8]	; (80008c4 <FLASH_Lock+0xc>)
+ 80008ba:	6913      	ldr	r3, [r2, #16]
+ 80008bc:	f043 0380 	orr.w	r3, r3, #128	; 0x80
+ 80008c0:	6113      	str	r3, [r2, #16]
+}
+ 80008c2:	4770      	bx	lr
+ 80008c4:	40022000 	.word	0x40022000
+
+080008c8 <FLASH_ClearFlag>:
+  * @retval None
+  */
+void FLASH_ClearFlag(uint32_t FLASH_FLAG)
+{
+  /* Clear the flags */
+  FLASH->SR = FLASH_FLAG;
+ 80008c8:	4b01      	ldr	r3, [pc, #4]	; (80008d0 <FLASH_ClearFlag+0x8>)
+ 80008ca:	60d8      	str	r0, [r3, #12]
+}
+ 80008cc:	4770      	bx	lr
+ 80008ce:	bf00      	nop
+ 80008d0:	40022000 	.word	0x40022000
+
+080008d4 <FLASH_GetBank1Status>:
+  *         FLASH_ERROR_WRP or FLASH_COMPLETE
+  */
+FLASH_Status FLASH_GetBank1Status(void)
+{
+
+  if((FLASH->SR & FLASH_FLAG_BANK1_BSY) == FLASH_FLAG_BSY)
+ 80008d4:	4b0b      	ldr	r3, [pc, #44]	; (8000904 <FLASH_GetBank1Status+0x30>)
+ 80008d6:	68db      	ldr	r3, [r3, #12]
+ 80008d8:	f013 0f01 	tst.w	r3, #1
+ 80008dc:	d10b      	bne.n	80008f6 <FLASH_GetBank1Status+0x22>
+    return FLASH_BUSY;
+  if((FLASH->SR & FLASH_FLAG_BANK1_PGERR) != 0)
+ 80008de:	4b09      	ldr	r3, [pc, #36]	; (8000904 <FLASH_GetBank1Status+0x30>)
+ 80008e0:	68db      	ldr	r3, [r3, #12]
+ 80008e2:	f013 0f04 	tst.w	r3, #4
+ 80008e6:	d108      	bne.n	80008fa <FLASH_GetBank1Status+0x26>
+      return FLASH_ERROR_PG;
+  if((FLASH->SR & FLASH_FLAG_BANK1_WRPRTERR) != 0 )
+ 80008e8:	4b06      	ldr	r3, [pc, #24]	; (8000904 <FLASH_GetBank1Status+0x30>)
+ 80008ea:	68db      	ldr	r3, [r3, #12]
+ 80008ec:	f013 0f10 	tst.w	r3, #16
+ 80008f0:	d105      	bne.n	80008fe <FLASH_GetBank1Status+0x2a>
+	  return FLASH_ERROR_WRP;
+  return  FLASH_COMPLETE;
+ 80008f2:	2004      	movs	r0, #4
+ 80008f4:	4770      	bx	lr
+    return FLASH_BUSY;
+ 80008f6:	2001      	movs	r0, #1
+ 80008f8:	4770      	bx	lr
+      return FLASH_ERROR_PG;
+ 80008fa:	2002      	movs	r0, #2
+ 80008fc:	4770      	bx	lr
+	  return FLASH_ERROR_WRP;
+ 80008fe:	2003      	movs	r0, #3
+}
+ 8000900:	4770      	bx	lr
+ 8000902:	bf00      	nop
+ 8000904:	40022000 	.word	0x40022000
+
+08000908 <FLASH_WaitForLastOperation>:
+  * @param  Timeout: FLASH programming Timeout
+  * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  */
+FLASH_Status FLASH_WaitForLastOperation(uint32_t Timeout)
+{
+ 8000908:	b538      	push	{r3, r4, r5, lr}
+ 800090a:	4604      	mov	r4, r0
+	flashStatus = FLASH_COMPLETE;
+ 800090c:	4d0c      	ldr	r5, [pc, #48]	; (8000940 <FLASH_WaitForLastOperation+0x38>)
+ 800090e:	2304      	movs	r3, #4
+ 8000910:	702b      	strb	r3, [r5, #0]
+
+  /* Check for the Flash Status */
+	flashStatus = FLASH_GetBank1Status();
+ 8000912:	f7ff ffdf 	bl	80008d4 <FLASH_GetBank1Status>
+ 8000916:	7028      	strb	r0, [r5, #0]
+  /* Wait for a Flash operation to complete or a TIMEOUT to occur */
+	while((flashStatus == FLASH_BUSY) && (Timeout != 0x00))
+ 8000918:	e004      	b.n	8000924 <FLASH_WaitForLastOperation+0x1c>
+	{
+		flashStatus = FLASH_GetBank1Status();
+ 800091a:	f7ff ffdb 	bl	80008d4 <FLASH_GetBank1Status>
+ 800091e:	4b08      	ldr	r3, [pc, #32]	; (8000940 <FLASH_WaitForLastOperation+0x38>)
+ 8000920:	7018      	strb	r0, [r3, #0]
+		Timeout--;
+ 8000922:	3c01      	subs	r4, #1
+	while((flashStatus == FLASH_BUSY) && (Timeout != 0x00))
+ 8000924:	4b06      	ldr	r3, [pc, #24]	; (8000940 <FLASH_WaitForLastOperation+0x38>)
+ 8000926:	781b      	ldrb	r3, [r3, #0]
+ 8000928:	2b01      	cmp	r3, #1
+ 800092a:	d101      	bne.n	8000930 <FLASH_WaitForLastOperation+0x28>
+ 800092c:	2c00      	cmp	r4, #0
+ 800092e:	d1f4      	bne.n	800091a <FLASH_WaitForLastOperation+0x12>
+  	}
+	if(Timeout == 0x00 )
+ 8000930:	b914      	cbnz	r4, 8000938 <FLASH_WaitForLastOperation+0x30>
+  	{
+  		flashStatus = FLASH_TIMEOUT;
+ 8000932:	4b03      	ldr	r3, [pc, #12]	; (8000940 <FLASH_WaitForLastOperation+0x38>)
+ 8000934:	2205      	movs	r2, #5
+ 8000936:	701a      	strb	r2, [r3, #0]
+  	}
+  /* Return the operation status */
+	return flashStatus;
+}
+ 8000938:	4b01      	ldr	r3, [pc, #4]	; (8000940 <FLASH_WaitForLastOperation+0x38>)
+ 800093a:	7818      	ldrb	r0, [r3, #0]
+ 800093c:	bd38      	pop	{r3, r4, r5, pc}
+ 800093e:	bf00      	nop
+ 8000940:	2000001e 	.word	0x2000001e
+
+08000944 <FLASH_ErasePage>:
+  * @param  Page_Address: The page address to be erased.
+  * @retval FLASH Status: The returned value can be: FLASH_BUSY, FLASH_ERROR_PG,
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  */
+FLASH_Status FLASH_ErasePage(uint32_t Page_Address)
+{
+ 8000944:	b570      	push	{r4, r5, r6, lr}
+ 8000946:	4605      	mov	r5, r0
+  /* Wait for last operation to be completed */
+  if(FLASH_WaitForLastOperation(EraseTimeout) != FLASH_COMPLETE) return FLASH_ERROR_PG;
+ 8000948:	f44f 2030 	mov.w	r0, #720896	; 0xb0000
+ 800094c:	f7ff ffdc 	bl	8000908 <FLASH_WaitForLastOperation>
+ 8000950:	2804      	cmp	r0, #4
+ 8000952:	d002      	beq.n	800095a <FLASH_ErasePage+0x16>
+ 8000954:	2402      	movs	r4, #2
+	/* Disable the PER Bit */
+	FLASH->CR &= CR_PER_Reset;
+
+  /* Return the Erase Status */
+	return FLASH_COMPLETE;
+}
+ 8000956:	4620      	mov	r0, r4
+ 8000958:	bd70      	pop	{r4, r5, r6, pc}
+ 800095a:	4604      	mov	r4, r0
+	FLASH->CR|= CR_PER_Set;
+ 800095c:	4e0a      	ldr	r6, [pc, #40]	; (8000988 <FLASH_ErasePage+0x44>)
+ 800095e:	6933      	ldr	r3, [r6, #16]
+ 8000960:	f043 0302 	orr.w	r3, r3, #2
+ 8000964:	6133      	str	r3, [r6, #16]
+	FLASH->AR = Page_Address;
+ 8000966:	6175      	str	r5, [r6, #20]
+	FLASH->CR|= CR_STRT_Set;
+ 8000968:	6933      	ldr	r3, [r6, #16]
+ 800096a:	f043 0340 	orr.w	r3, r3, #64	; 0x40
+ 800096e:	6133      	str	r3, [r6, #16]
+	FLASH_WaitForLastOperation(EraseTimeout);
+ 8000970:	f44f 2030 	mov.w	r0, #720896	; 0xb0000
+ 8000974:	f7ff ffc8 	bl	8000908 <FLASH_WaitForLastOperation>
+	FLASH->CR &= CR_PER_Reset;
+ 8000978:	6933      	ldr	r3, [r6, #16]
+ 800097a:	f023 0302 	bic.w	r3, r3, #2
+ 800097e:	04db      	lsls	r3, r3, #19
+ 8000980:	0cdb      	lsrs	r3, r3, #19
+ 8000982:	6133      	str	r3, [r6, #16]
+	return FLASH_COMPLETE;
+ 8000984:	e7e7      	b.n	8000956 <FLASH_ErasePage+0x12>
+ 8000986:	bf00      	nop
+ 8000988:	40022000 	.word	0x40022000
+
+0800098c <FLASH_ProgramWord>:
+  * @param  Data: specifies the data to be programmed.
+  * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  */
+FLASH_Status FLASH_ProgramWord(uint32_t Address, uint32_t Data)
+{
+ 800098c:	b538      	push	{r3, r4, r5, lr}
+ 800098e:	4605      	mov	r5, r0
+ 8000990:	460c      	mov	r4, r1
+  /* Wait for last operation to be completed */
+  flashStatus = FLASH_WaitForLastOperation(ProgramTimeout);
+ 8000992:	f44f 5000 	mov.w	r0, #8192	; 0x2000
+ 8000996:	f7ff ffb7 	bl	8000908 <FLASH_WaitForLastOperation>
+ 800099a:	4b19      	ldr	r3, [pc, #100]	; (8000a00 <FLASH_ProgramWord+0x74>)
+ 800099c:	7018      	strb	r0, [r3, #0]
+
+  if(flashStatus != FLASH_COMPLETE) return flashStatus;
+ 800099e:	2804      	cmp	r0, #4
+ 80009a0:	d000      	beq.n	80009a4 <FLASH_ProgramWord+0x18>
+	  FLASH->CR &= CR_PG_Reset;
+	}
+
+  /* Return the Program Status */
+  return flashStatus;
+}
+ 80009a2:	bd38      	pop	{r3, r4, r5, pc}
+	FLASH->CR |= CR_PG_Set;
+ 80009a4:	4a17      	ldr	r2, [pc, #92]	; (8000a04 <FLASH_ProgramWord+0x78>)
+ 80009a6:	6913      	ldr	r3, [r2, #16]
+ 80009a8:	f043 0301 	orr.w	r3, r3, #1
+ 80009ac:	6113      	str	r3, [r2, #16]
+	*(__IO uint16_t*)Address = (uint16_t)Data;
+ 80009ae:	b2a3      	uxth	r3, r4
+ 80009b0:	802b      	strh	r3, [r5, #0]
+	flashStatus = FLASH_WaitForLastOperation(ProgramTimeout);
+ 80009b2:	f44f 5000 	mov.w	r0, #8192	; 0x2000
+ 80009b6:	f7ff ffa7 	bl	8000908 <FLASH_WaitForLastOperation>
+ 80009ba:	4b11      	ldr	r3, [pc, #68]	; (8000a00 <FLASH_ProgramWord+0x74>)
+ 80009bc:	7018      	strb	r0, [r3, #0]
+	if(flashStatus == FLASH_COMPLETE)
+ 80009be:	2804      	cmp	r0, #4
+ 80009c0:	d009      	beq.n	80009d6 <FLASH_ProgramWord+0x4a>
+	  FLASH->CR &= CR_PG_Reset;
+ 80009c2:	4a10      	ldr	r2, [pc, #64]	; (8000a04 <FLASH_ProgramWord+0x78>)
+ 80009c4:	6913      	ldr	r3, [r2, #16]
+ 80009c6:	f023 0301 	bic.w	r3, r3, #1
+ 80009ca:	04db      	lsls	r3, r3, #19
+ 80009cc:	0cdb      	lsrs	r3, r3, #19
+ 80009ce:	6113      	str	r3, [r2, #16]
+  return flashStatus;
+ 80009d0:	4b0b      	ldr	r3, [pc, #44]	; (8000a00 <FLASH_ProgramWord+0x74>)
+ 80009d2:	7818      	ldrb	r0, [r3, #0]
+ 80009d4:	e7e5      	b.n	80009a2 <FLASH_ProgramWord+0x16>
+	  flashTemp = Address + 2;
+ 80009d6:	3502      	adds	r5, #2
+ 80009d8:	4b0b      	ldr	r3, [pc, #44]	; (8000a08 <FLASH_ProgramWord+0x7c>)
+ 80009da:	601d      	str	r5, [r3, #0]
+	  *(__IO uint16_t*) flashTemp = Data >> 16;
+ 80009dc:	681b      	ldr	r3, [r3, #0]
+ 80009de:	0c21      	lsrs	r1, r4, #16
+ 80009e0:	8019      	strh	r1, [r3, #0]
+	  flashStatus = FLASH_WaitForLastOperation(ProgramTimeout);
+ 80009e2:	f44f 5000 	mov.w	r0, #8192	; 0x2000
+ 80009e6:	f7ff ff8f 	bl	8000908 <FLASH_WaitForLastOperation>
+ 80009ea:	4b05      	ldr	r3, [pc, #20]	; (8000a00 <FLASH_ProgramWord+0x74>)
+ 80009ec:	7018      	strb	r0, [r3, #0]
+	  FLASH->CR &= CR_PG_Reset;
+ 80009ee:	4a05      	ldr	r2, [pc, #20]	; (8000a04 <FLASH_ProgramWord+0x78>)
+ 80009f0:	6913      	ldr	r3, [r2, #16]
+ 80009f2:	f023 0301 	bic.w	r3, r3, #1
+ 80009f6:	04db      	lsls	r3, r3, #19
+ 80009f8:	0cdb      	lsrs	r3, r3, #19
+ 80009fa:	6113      	str	r3, [r2, #16]
+ 80009fc:	e7e8      	b.n	80009d0 <FLASH_ProgramWord+0x44>
+ 80009fe:	bf00      	nop
+ 8000a00:	2000001e 	.word	0x2000001e
+ 8000a04:	40022000 	.word	0x40022000
+ 8000a08:	2000048c 	.word	0x2000048c
+
+08000a0c <EraseFlash>:
+// 		StartAddress : the start Address of flash to erase
+//		length : the length of range
+//
+
+uint8_t EraseFlash(uint32_t StartAddress, uint32_t size)
+{
+ 8000a0c:	b538      	push	{r3, r4, r5, lr}
+ 8000a0e:	4604      	mov	r4, r0
+ 8000a10:	460d      	mov	r5, r1
+	result = SUCCESS;
+ 8000a12:	4b14      	ldr	r3, [pc, #80]	; (8000a64 <EraseFlash+0x58>)
+ 8000a14:	2201      	movs	r2, #1
+ 8000a16:	601a      	str	r2, [r3, #0]
+	FLASH_Unlock();
+ 8000a18:	f7ff ff42 	bl	80008a0 <FLASH_Unlock>
+
+	temp = (size / FLASH_PAGE_SIZE) + 2; // calculate the page size of erase range.
+ 8000a1c:	0aad      	lsrs	r5, r5, #10
+ 8000a1e:	3502      	adds	r5, #2
+ 8000a20:	4b11      	ldr	r3, [pc, #68]	; (8000a68 <EraseFlash+0x5c>)
+ 8000a22:	601d      	str	r5, [r3, #0]
+	FLASH_ClearFlag(FLASH_FLAG_BSY | FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPRTERR);
+ 8000a24:	2035      	movs	r0, #53	; 0x35
+ 8000a26:	f7ff ff4f 	bl	80008c8 <FLASH_ClearFlag>
+	//FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_OPTERR | FLASH_FLAG_WRPRTERR);
+	for(i = 0; i < temp; i ++)
+ 8000a2a:	4b10      	ldr	r3, [pc, #64]	; (8000a6c <EraseFlash+0x60>)
+ 8000a2c:	2200      	movs	r2, #0
+ 8000a2e:	601a      	str	r2, [r3, #0]
+ 8000a30:	e003      	b.n	8000a3a <EraseFlash+0x2e>
+ 8000a32:	4a0e      	ldr	r2, [pc, #56]	; (8000a6c <EraseFlash+0x60>)
+ 8000a34:	6813      	ldr	r3, [r2, #0]
+ 8000a36:	3301      	adds	r3, #1
+ 8000a38:	6013      	str	r3, [r2, #0]
+ 8000a3a:	4b0c      	ldr	r3, [pc, #48]	; (8000a6c <EraseFlash+0x60>)
+ 8000a3c:	6818      	ldr	r0, [r3, #0]
+ 8000a3e:	4b0a      	ldr	r3, [pc, #40]	; (8000a68 <EraseFlash+0x5c>)
+ 8000a40:	681b      	ldr	r3, [r3, #0]
+ 8000a42:	4298      	cmp	r0, r3
+ 8000a44:	d208      	bcs.n	8000a58 <EraseFlash+0x4c>
+	{
+		if(FLASH_ErasePage(StartAddress +  i * FLASH_PAGE_SIZE) != FLASH_COMPLETE)
+ 8000a46:	eb04 2080 	add.w	r0, r4, r0, lsl #10
+ 8000a4a:	f7ff ff7b 	bl	8000944 <FLASH_ErasePage>
+ 8000a4e:	2804      	cmp	r0, #4
+ 8000a50:	d0ef      	beq.n	8000a32 <EraseFlash+0x26>
+		{
+			result = ERROR;
+ 8000a52:	4b04      	ldr	r3, [pc, #16]	; (8000a64 <EraseFlash+0x58>)
+ 8000a54:	2200      	movs	r2, #0
+ 8000a56:	601a      	str	r2, [r3, #0]
+			break;
+		}
+	}
+	FLASH_Lock();
+ 8000a58:	f7ff ff2e 	bl	80008b8 <FLASH_Lock>
+	return result;
+}
+ 8000a5c:	4b01      	ldr	r3, [pc, #4]	; (8000a64 <EraseFlash+0x58>)
+ 8000a5e:	7818      	ldrb	r0, [r3, #0]
+ 8000a60:	bd38      	pop	{r3, r4, r5, pc}
+ 8000a62:	bf00      	nop
+ 8000a64:	20000498 	.word	0x20000498
+ 8000a68:	200004a0 	.word	0x200004a0
+ 8000a6c:	20000490 	.word	0x20000490
+
+08000a70 <WriteFlash>:
+//Write the 32bit data at the address in Flash.
+uint8_t WriteFlash(uint32_t address, uint32_t data)
+{
+ 8000a70:	b538      	push	{r3, r4, r5, lr}
+ 8000a72:	4604      	mov	r4, r0
+ 8000a74:	460d      	mov	r5, r1
+	result = SUCCESS;
+ 8000a76:	4b09      	ldr	r3, [pc, #36]	; (8000a9c <WriteFlash+0x2c>)
+ 8000a78:	2201      	movs	r2, #1
+ 8000a7a:	601a      	str	r2, [r3, #0]
+	FLASH_Unlock();
+ 8000a7c:	f7ff ff10 	bl	80008a0 <FLASH_Unlock>
+
+	if(FLASH_ProgramWord(address, data) != FLASH_COMPLETE)
+ 8000a80:	4629      	mov	r1, r5
+ 8000a82:	4620      	mov	r0, r4
+ 8000a84:	f7ff ff82 	bl	800098c <FLASH_ProgramWord>
+ 8000a88:	2804      	cmp	r0, #4
+ 8000a8a:	d002      	beq.n	8000a92 <WriteFlash+0x22>
+	{
+		result = SUCCESS;
+ 8000a8c:	4b03      	ldr	r3, [pc, #12]	; (8000a9c <WriteFlash+0x2c>)
+ 8000a8e:	2201      	movs	r2, #1
+ 8000a90:	601a      	str	r2, [r3, #0]
+	}
+
+	FLASH_Lock();
+ 8000a92:	f7ff ff11 	bl	80008b8 <FLASH_Lock>
+	return result;
+}
+ 8000a96:	4b01      	ldr	r3, [pc, #4]	; (8000a9c <WriteFlash+0x2c>)
+ 8000a98:	7818      	ldrb	r0, [r3, #0]
+ 8000a9a:	bd38      	pop	{r3, r4, r5, pc}
+ 8000a9c:	20000498 	.word	0x20000498
+
+08000aa0 <WriteFlash8Bytes>:
+
+//Write the 8bytes data at the address in Flash.
+uint8_t WriteFlash8Bytes(uint32_t addr, uint8_t* data)
+{
+ 8000aa0:	b570      	push	{r4, r5, r6, lr}
+ 8000aa2:	4605      	mov	r5, r0
+ 8000aa4:	460c      	mov	r4, r1
+	result = SUCCESS;
+ 8000aa6:	4b1a      	ldr	r3, [pc, #104]	; (8000b10 <WriteFlash8Bytes+0x70>)
+ 8000aa8:	2201      	movs	r2, #1
+ 8000aaa:	601a      	str	r2, [r3, #0]
+	temp = BYTE2UINT32(data[3], data[2], data[1], data[0]);
+ 8000aac:	78ca      	ldrb	r2, [r1, #3]
+ 8000aae:	788b      	ldrb	r3, [r1, #2]
+ 8000ab0:	041b      	lsls	r3, r3, #16
+ 8000ab2:	eb03 6302 	add.w	r3, r3, r2, lsl #24
+ 8000ab6:	784a      	ldrb	r2, [r1, #1]
+ 8000ab8:	eb03 2302 	add.w	r3, r3, r2, lsl #8
+ 8000abc:	780a      	ldrb	r2, [r1, #0]
+ 8000abe:	4413      	add	r3, r2
+ 8000ac0:	4e14      	ldr	r6, [pc, #80]	; (8000b14 <WriteFlash8Bytes+0x74>)
+ 8000ac2:	6033      	str	r3, [r6, #0]
+
+	FLASH_Unlock();
+ 8000ac4:	f7ff feec 	bl	80008a0 <FLASH_Unlock>
+
+	if(FLASH_ProgramWord(addr, temp) != FLASH_COMPLETE)
+ 8000ac8:	6831      	ldr	r1, [r6, #0]
+ 8000aca:	4628      	mov	r0, r5
+ 8000acc:	f7ff ff5e 	bl	800098c <FLASH_ProgramWord>
+ 8000ad0:	2804      	cmp	r0, #4
+ 8000ad2:	d007      	beq.n	8000ae4 <WriteFlash8Bytes+0x44>
+	{
+		result = ERROR;
+ 8000ad4:	4b0e      	ldr	r3, [pc, #56]	; (8000b10 <WriteFlash8Bytes+0x70>)
+ 8000ad6:	2200      	movs	r2, #0
+ 8000ad8:	601a      	str	r2, [r3, #0]
+		{
+			result = ERROR;
+		}
+	}
+
+	FLASH_Lock();
+ 8000ada:	f7ff feed 	bl	80008b8 <FLASH_Lock>
+	return result;
+}
+ 8000ade:	4b0c      	ldr	r3, [pc, #48]	; (8000b10 <WriteFlash8Bytes+0x70>)
+ 8000ae0:	7818      	ldrb	r0, [r3, #0]
+ 8000ae2:	bd70      	pop	{r4, r5, r6, pc}
+		temp = BYTE2UINT32(data[7], data[6], data[5], data[4]);
+ 8000ae4:	79e3      	ldrb	r3, [r4, #7]
+ 8000ae6:	79a1      	ldrb	r1, [r4, #6]
+ 8000ae8:	0409      	lsls	r1, r1, #16
+ 8000aea:	eb01 6103 	add.w	r1, r1, r3, lsl #24
+ 8000aee:	7963      	ldrb	r3, [r4, #5]
+ 8000af0:	eb01 2103 	add.w	r1, r1, r3, lsl #8
+ 8000af4:	7923      	ldrb	r3, [r4, #4]
+ 8000af6:	4419      	add	r1, r3
+ 8000af8:	4b06      	ldr	r3, [pc, #24]	; (8000b14 <WriteFlash8Bytes+0x74>)
+ 8000afa:	6019      	str	r1, [r3, #0]
+		if(FLASH_ProgramWord(addr+ 4, temp) != FLASH_COMPLETE)
+ 8000afc:	1d28      	adds	r0, r5, #4
+ 8000afe:	f7ff ff45 	bl	800098c <FLASH_ProgramWord>
+ 8000b02:	2804      	cmp	r0, #4
+ 8000b04:	d0e9      	beq.n	8000ada <WriteFlash8Bytes+0x3a>
+			result = ERROR;
+ 8000b06:	4b02      	ldr	r3, [pc, #8]	; (8000b10 <WriteFlash8Bytes+0x70>)
+ 8000b08:	2200      	movs	r2, #0
+ 8000b0a:	601a      	str	r2, [r3, #0]
+ 8000b0c:	e7e5      	b.n	8000ada <WriteFlash8Bytes+0x3a>
+ 8000b0e:	bf00      	nop
+ 8000b10:	20000498 	.word	0x20000498
+ 8000b14:	200004a0 	.word	0x200004a0
+
+08000b18 <ReadFlash8Bytes>:
+
+//Read the 8bytes data at the address in Flash.
+void ReadFlash8Bytes(uint32_t addr, uint8_t* data) //data is 8bytes.
+{
+	for(i = 0; i < 8; i ++)
+ 8000b18:	4b07      	ldr	r3, [pc, #28]	; (8000b38 <ReadFlash8Bytes+0x20>)
+ 8000b1a:	2200      	movs	r2, #0
+ 8000b1c:	601a      	str	r2, [r3, #0]
+ 8000b1e:	e005      	b.n	8000b2c <ReadFlash8Bytes+0x14>
+		data[i] = *(__IO uint8_t*)(addr+i);
+ 8000b20:	5c1a      	ldrb	r2, [r3, r0]
+ 8000b22:	54ca      	strb	r2, [r1, r3]
+	for(i = 0; i < 8; i ++)
+ 8000b24:	4a04      	ldr	r2, [pc, #16]	; (8000b38 <ReadFlash8Bytes+0x20>)
+ 8000b26:	6813      	ldr	r3, [r2, #0]
+ 8000b28:	3301      	adds	r3, #1
+ 8000b2a:	6013      	str	r3, [r2, #0]
+ 8000b2c:	4b02      	ldr	r3, [pc, #8]	; (8000b38 <ReadFlash8Bytes+0x20>)
+ 8000b2e:	681b      	ldr	r3, [r3, #0]
+ 8000b30:	2b07      	cmp	r3, #7
+ 8000b32:	d9f5      	bls.n	8000b20 <ReadFlash8Bytes+0x8>
+}
+ 8000b34:	4770      	bx	lr
+ 8000b36:	bf00      	nop
+ 8000b38:	20000490 	.word	0x20000490
+
+08000b3c <processCanMsgFunction>:
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+void processCanMsgFunction()
+{
+ 8000b3c:	b510      	push	{r4, lr}
+	address = BYTE2UINT32(CanRxDataBuffer[3], CanRxDataBuffer[2], CanRxDataBuffer[1],CanRxDataBuffer[0]);
+ 8000b3e:	4b6f      	ldr	r3, [pc, #444]	; (8000cfc <processCanMsgFunction+0x1c0>)
+ 8000b40:	78da      	ldrb	r2, [r3, #3]
+ 8000b42:	7898      	ldrb	r0, [r3, #2]
+ 8000b44:	0400      	lsls	r0, r0, #16
+ 8000b46:	eb00 6002 	add.w	r0, r0, r2, lsl #24
+ 8000b4a:	785a      	ldrb	r2, [r3, #1]
+ 8000b4c:	eb00 2002 	add.w	r0, r0, r2, lsl #8
+ 8000b50:	781a      	ldrb	r2, [r3, #0]
+ 8000b52:	4410      	add	r0, r2
+ 8000b54:	4a6a      	ldr	r2, [pc, #424]	; (8000d00 <processCanMsgFunction+0x1c4>)
+ 8000b56:	6010      	str	r0, [r2, #0]
+	temp = BYTE2UINT32(CanRxDataBuffer[7], CanRxDataBuffer[6], CanRxDataBuffer[5],CanRxDataBuffer[4]);
+ 8000b58:	79da      	ldrb	r2, [r3, #7]
+ 8000b5a:	7999      	ldrb	r1, [r3, #6]
+ 8000b5c:	0409      	lsls	r1, r1, #16
+ 8000b5e:	eb01 6102 	add.w	r1, r1, r2, lsl #24
+ 8000b62:	795a      	ldrb	r2, [r3, #5]
+ 8000b64:	eb01 2102 	add.w	r1, r1, r2, lsl #8
+ 8000b68:	791b      	ldrb	r3, [r3, #4]
+ 8000b6a:	4419      	add	r1, r3
+ 8000b6c:	4b65      	ldr	r3, [pc, #404]	; (8000d04 <processCanMsgFunction+0x1c8>)
+ 8000b6e:	6019      	str	r1, [r3, #0]
+
+	switch(CanRxFunctionId)
+ 8000b70:	4b65      	ldr	r3, [pc, #404]	; (8000d08 <processCanMsgFunction+0x1cc>)
+ 8000b72:	881b      	ldrh	r3, [r3, #0]
+ 8000b74:	2b60      	cmp	r3, #96	; 0x60
+ 8000b76:	d833      	bhi.n	8000be0 <processCanMsgFunction+0xa4>
+ 8000b78:	2b1a      	cmp	r3, #26
+ 8000b7a:	d328      	bcc.n	8000bce <processCanMsgFunction+0x92>
+ 8000b7c:	3b1a      	subs	r3, #26
+ 8000b7e:	2b46      	cmp	r3, #70	; 0x46
+ 8000b80:	d82d      	bhi.n	8000bde <processCanMsgFunction+0xa2>
+ 8000b82:	e8df f003 	tbb	[pc, r3]
+ 8000b86:	7a5d      	.short	0x7a5d
+ 8000b88:	b4a3938c 	.word	0xb4a3938c
+ 8000b8c:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000b90:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000b94:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000b98:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000b9c:	2c2c2c3b 	.word	0x2c2c2c3b
+ 8000ba0:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000ba4:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000ba8:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000bac:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000bb0:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000bb4:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000bb8:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000bbc:	2c2c2c3f 	.word	0x2c2c2c3f
+ 8000bc0:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000bc4:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000bc8:	2c2c2c2c 	.word	0x2c2c2c2c
+ 8000bcc:	4e          	.byte	0x4e
+ 8000bcd:	00          	.byte	0x00
+ 8000bce:	2b10      	cmp	r3, #16
+ 8000bd0:	d105      	bne.n	8000bde <processCanMsgFunction+0xa2>
+	{
+	case CAN_FUNCTION_PING: // Response for request ping
+		SendCanMessage(CAN_DEV_ANALYST, CAN_FUNCTION_PING, CanMessageBuffer, 0);
+ 8000bd2:	2300      	movs	r3, #0
+ 8000bd4:	4a4d      	ldr	r2, [pc, #308]	; (8000d0c <processCanMsgFunction+0x1d0>)
+ 8000bd6:	2110      	movs	r1, #16
+ 8000bd8:	203e      	movs	r0, #62	; 0x3e
+ 8000bda:	f7ff fd31 	bl	8000640 <SendCanMessage>
+		break;
+	case CAN_DOWNLOAD_END_APPLICATION:
+		SendCanMessage(CAN_DEV_ANALYST, CAN_DOWNLOAD_END_APPLICATION, CanMessageBuffer, 8);
+		break;
+	}
+}
+ 8000bde:	bd10      	pop	{r4, pc}
+	switch(CanRxFunctionId)
+ 8000be0:	2b70      	cmp	r3, #112	; 0x70
+ 8000be2:	d1fc      	bne.n	8000bde <processCanMsgFunction+0xa2>
+		ReadFlash8Bytes(address, CanMessageBuffer); //Read the 8Byte data at the address.
+ 8000be4:	4c49      	ldr	r4, [pc, #292]	; (8000d0c <processCanMsgFunction+0x1d0>)
+ 8000be6:	4621      	mov	r1, r4
+ 8000be8:	f7ff ff96 	bl	8000b18 <ReadFlash8Bytes>
+		SendCanMessage(CanRxSourceAddress, CAN_FUNCTION_READ_FLASH, CanMessageBuffer, 8);
+ 8000bec:	2308      	movs	r3, #8
+ 8000bee:	4622      	mov	r2, r4
+ 8000bf0:	2170      	movs	r1, #112	; 0x70
+ 8000bf2:	4847      	ldr	r0, [pc, #284]	; (8000d10 <processCanMsgFunction+0x1d4>)
+ 8000bf4:	8800      	ldrh	r0, [r0, #0]
+ 8000bf6:	f7ff fd23 	bl	8000640 <SendCanMessage>
+		break;
+ 8000bfa:	e7f0      	b.n	8000bde <processCanMsgFunction+0xa2>
+		jumpToApp(FLASH_APPLICATION_START_ADDRESS);
+ 8000bfc:	4845      	ldr	r0, [pc, #276]	; (8000d14 <processCanMsgFunction+0x1d8>)
+ 8000bfe:	f7ff fe3f 	bl	8000880 <jumpToApp>
+		break;
+ 8000c02:	e7ec      	b.n	8000bde <processCanMsgFunction+0xa2>
+		length = BYTE2UINT32(CanRxDataBuffer[7], CanRxDataBuffer[6],CanRxDataBuffer[5],CanRxDataBuffer[4]);
+ 8000c04:	4b44      	ldr	r3, [pc, #272]	; (8000d18 <processCanMsgFunction+0x1dc>)
+ 8000c06:	6019      	str	r1, [r3, #0]
+		result = EraseFlash(address, length);
+ 8000c08:	f7ff ff00 	bl	8000a0c <EraseFlash>
+ 8000c0c:	4b43      	ldr	r3, [pc, #268]	; (8000d1c <processCanMsgFunction+0x1e0>)
+ 8000c0e:	6018      	str	r0, [r3, #0]
+		CanMessageBuffer[0] = result;
+ 8000c10:	4a3e      	ldr	r2, [pc, #248]	; (8000d0c <processCanMsgFunction+0x1d0>)
+ 8000c12:	7010      	strb	r0, [r2, #0]
+		SendCanMessage(CanRxSourceAddress, CAN_FUNCTION_ERASE_FLASH, CanMessageBuffer, 8);
+ 8000c14:	2308      	movs	r3, #8
+ 8000c16:	2150      	movs	r1, #80	; 0x50
+ 8000c18:	483d      	ldr	r0, [pc, #244]	; (8000d10 <processCanMsgFunction+0x1d4>)
+ 8000c1a:	8800      	ldrh	r0, [r0, #0]
+ 8000c1c:	f7ff fd10 	bl	8000640 <SendCanMessage>
+		break;
+ 8000c20:	e7dd      	b.n	8000bde <processCanMsgFunction+0xa2>
+		temp = WriteFlash(address, temp);
+ 8000c22:	f7ff ff25 	bl	8000a70 <WriteFlash>
+ 8000c26:	4b37      	ldr	r3, [pc, #220]	; (8000d04 <processCanMsgFunction+0x1c8>)
+ 8000c28:	6018      	str	r0, [r3, #0]
+		CanMessageBuffer[0] = result;
+ 8000c2a:	4a38      	ldr	r2, [pc, #224]	; (8000d0c <processCanMsgFunction+0x1d0>)
+ 8000c2c:	4b3b      	ldr	r3, [pc, #236]	; (8000d1c <processCanMsgFunction+0x1e0>)
+ 8000c2e:	681b      	ldr	r3, [r3, #0]
+ 8000c30:	7013      	strb	r3, [r2, #0]
+		SendCanMessage(CanRxSourceAddress, CAN_FUNCTION_WRITE_FLASH, CanMessageBuffer, 8);
+ 8000c32:	2308      	movs	r3, #8
+ 8000c34:	2160      	movs	r1, #96	; 0x60
+ 8000c36:	4836      	ldr	r0, [pc, #216]	; (8000d10 <processCanMsgFunction+0x1d4>)
+ 8000c38:	8800      	ldrh	r0, [r0, #0]
+ 8000c3a:	f7ff fd01 	bl	8000640 <SendCanMessage>
+		break;
+ 8000c3e:	e7ce      	b.n	8000bde <processCanMsgFunction+0xa2>
+		length = CanRxApplicationData;
+ 8000c40:	4b37      	ldr	r3, [pc, #220]	; (8000d20 <processCanMsgFunction+0x1e4>)
+ 8000c42:	6819      	ldr	r1, [r3, #0]
+ 8000c44:	4b34      	ldr	r3, [pc, #208]	; (8000d18 <processCanMsgFunction+0x1dc>)
+ 8000c46:	6019      	str	r1, [r3, #0]
+		if( EraseFlash(FLASH_APPLICATION_SIZE_ADDRESS, CanRxApplicationData)  == ERROR) //Add the one page size to register the file size.
+ 8000c48:	4836      	ldr	r0, [pc, #216]	; (8000d24 <processCanMsgFunction+0x1e8>)
+ 8000c4a:	f7ff fedf 	bl	8000a0c <EraseFlash>
+ 8000c4e:	b930      	cbnz	r0, 8000c5e <processCanMsgFunction+0x122>
+			SendCanMessage(CAN_DEV_ANALYST, CAN_APPLICATION_UPLOADDOWNLOAD_ERROR, CanMessageBuffer, 0);
+ 8000c50:	2300      	movs	r3, #0
+ 8000c52:	4a2e      	ldr	r2, [pc, #184]	; (8000d0c <processCanMsgFunction+0x1d0>)
+ 8000c54:	2108      	movs	r1, #8
+ 8000c56:	203e      	movs	r0, #62	; 0x3e
+ 8000c58:	f7ff fcf2 	bl	8000640 <SendCanMessage>
+ 8000c5c:	e7bf      	b.n	8000bde <processCanMsgFunction+0xa2>
+			if(WriteFlash(FLASH_APPLICATION_SIZE_ADDRESS, length) == ERROR)
+ 8000c5e:	4b2e      	ldr	r3, [pc, #184]	; (8000d18 <processCanMsgFunction+0x1dc>)
+ 8000c60:	6819      	ldr	r1, [r3, #0]
+ 8000c62:	4830      	ldr	r0, [pc, #192]	; (8000d24 <processCanMsgFunction+0x1e8>)
+ 8000c64:	f7ff ff04 	bl	8000a70 <WriteFlash>
+ 8000c68:	2800      	cmp	r0, #0
+ 8000c6a:	d1b8      	bne.n	8000bde <processCanMsgFunction+0xa2>
+				SendCanMessage(CAN_DEV_ANALYST, CAN_APPLICATION_UPLOADDOWNLOAD_ERROR, CanMessageBuffer, 0);
+ 8000c6c:	2300      	movs	r3, #0
+ 8000c6e:	4a27      	ldr	r2, [pc, #156]	; (8000d0c <processCanMsgFunction+0x1d0>)
+ 8000c70:	2108      	movs	r1, #8
+ 8000c72:	203e      	movs	r0, #62	; 0x3e
+ 8000c74:	f7ff fce4 	bl	8000640 <SendCanMessage>
+ 8000c78:	e7b1      	b.n	8000bde <processCanMsgFunction+0xa2>
+		if(WriteFlash8Bytes(FLASH_APPLICATION_START_ADDRESS + CanRxApplicationData, CanRxDataBuffer) == ERROR)
+ 8000c7a:	4b29      	ldr	r3, [pc, #164]	; (8000d20 <processCanMsgFunction+0x1e4>)
+ 8000c7c:	6818      	ldr	r0, [r3, #0]
+ 8000c7e:	491f      	ldr	r1, [pc, #124]	; (8000cfc <processCanMsgFunction+0x1c0>)
+ 8000c80:	f100 6000 	add.w	r0, r0, #134217728	; 0x8000000
+ 8000c84:	f500 5000 	add.w	r0, r0, #8192	; 0x2000
+ 8000c88:	f7ff ff0a 	bl	8000aa0 <WriteFlash8Bytes>
+ 8000c8c:	2800      	cmp	r0, #0
+ 8000c8e:	d1a6      	bne.n	8000bde <processCanMsgFunction+0xa2>
+			SendCanMessage(CAN_DEV_ANALYST, CAN_APPLICATION_UPLOADDOWNLOAD_ERROR, CanMessageBuffer, 0);
+ 8000c90:	2300      	movs	r3, #0
+ 8000c92:	4a1e      	ldr	r2, [pc, #120]	; (8000d0c <processCanMsgFunction+0x1d0>)
+ 8000c94:	2108      	movs	r1, #8
+ 8000c96:	203e      	movs	r0, #62	; 0x3e
+ 8000c98:	f7ff fcd2 	bl	8000640 <SendCanMessage>
+ 8000c9c:	e79f      	b.n	8000bde <processCanMsgFunction+0xa2>
+		SendCanMessage(CAN_DEV_ANALYST, CAN_APPLICATION_UPLOADDOWNLOAD_SUCCESS, CanMessageBuffer, 0);
+ 8000c9e:	2300      	movs	r3, #0
+ 8000ca0:	4a1a      	ldr	r2, [pc, #104]	; (8000d0c <processCanMsgFunction+0x1d0>)
+ 8000ca2:	2109      	movs	r1, #9
+ 8000ca4:	203e      	movs	r0, #62	; 0x3e
+ 8000ca6:	f7ff fccb 	bl	8000640 <SendCanMessage>
+		break;
+ 8000caa:	e798      	b.n	8000bde <processCanMsgFunction+0xa2>
+		ReadFlash8Bytes(FLASH_APPLICATION_SIZE_ADDRESS, CanMessageBuffer);
+ 8000cac:	4c17      	ldr	r4, [pc, #92]	; (8000d0c <processCanMsgFunction+0x1d0>)
+ 8000cae:	4621      	mov	r1, r4
+ 8000cb0:	481c      	ldr	r0, [pc, #112]	; (8000d24 <processCanMsgFunction+0x1e8>)
+ 8000cb2:	f7ff ff31 	bl	8000b18 <ReadFlash8Bytes>
+		SendCanMessage(CAN_DEV_ANALYST, CAN_DOWNLOAD_START_APPLICATION, CanMessageBuffer, 8);
+ 8000cb6:	2308      	movs	r3, #8
+ 8000cb8:	4622      	mov	r2, r4
+ 8000cba:	211d      	movs	r1, #29
+ 8000cbc:	203e      	movs	r0, #62	; 0x3e
+ 8000cbe:	f7ff fcbf 	bl	8000640 <SendCanMessage>
+		DownloadApplicationWaitCounter = MAX_COUNTDOWN;
+ 8000cc2:	4b19      	ldr	r3, [pc, #100]	; (8000d28 <processCanMsgFunction+0x1ec>)
+ 8000cc4:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000cc8:	601a      	str	r2, [r3, #0]
+		break;
+ 8000cca:	e788      	b.n	8000bde <processCanMsgFunction+0xa2>
+		ReadFlash8Bytes(FLASH_APPLICATION_START_ADDRESS + CanRxApplicationData, CanMessageBuffer);
+ 8000ccc:	4c0f      	ldr	r4, [pc, #60]	; (8000d0c <processCanMsgFunction+0x1d0>)
+ 8000cce:	4b14      	ldr	r3, [pc, #80]	; (8000d20 <processCanMsgFunction+0x1e4>)
+ 8000cd0:	6818      	ldr	r0, [r3, #0]
+ 8000cd2:	4621      	mov	r1, r4
+ 8000cd4:	f100 6000 	add.w	r0, r0, #134217728	; 0x8000000
+ 8000cd8:	f500 5000 	add.w	r0, r0, #8192	; 0x2000
+ 8000cdc:	f7ff ff1c 	bl	8000b18 <ReadFlash8Bytes>
+		SendCanMessage(CAN_DEV_ANALYST, CAN_DOWNLOADING_APPLICATION, CanMessageBuffer, 8);
+ 8000ce0:	2308      	movs	r3, #8
+ 8000ce2:	4622      	mov	r2, r4
+ 8000ce4:	211e      	movs	r1, #30
+ 8000ce6:	203e      	movs	r0, #62	; 0x3e
+ 8000ce8:	f7ff fcaa 	bl	8000640 <SendCanMessage>
+		break;
+ 8000cec:	e777      	b.n	8000bde <processCanMsgFunction+0xa2>
+		SendCanMessage(CAN_DEV_ANALYST, CAN_DOWNLOAD_END_APPLICATION, CanMessageBuffer, 8);
+ 8000cee:	2308      	movs	r3, #8
+ 8000cf0:	4a06      	ldr	r2, [pc, #24]	; (8000d0c <processCanMsgFunction+0x1d0>)
+ 8000cf2:	211f      	movs	r1, #31
+ 8000cf4:	203e      	movs	r0, #62	; 0x3e
+ 8000cf6:	f7ff fca3 	bl	8000640 <SendCanMessage>
+}
+ 8000cfa:	e770      	b.n	8000bde <processCanMsgFunction+0xa2>
+ 8000cfc:	20000444 	.word	0x20000444
+ 8000d00:	20000488 	.word	0x20000488
+ 8000d04:	200004a0 	.word	0x200004a0
+ 8000d08:	2000044c 	.word	0x2000044c
+ 8000d0c:	2000000c 	.word	0x2000000c
+ 8000d10:	20000464 	.word	0x20000464
+ 8000d14:	08002000 	.word	0x08002000
+ 8000d18:	20000494 	.word	0x20000494
+ 8000d1c:	20000498 	.word	0x20000498
+ 8000d20:	20000440 	.word	0x20000440
+ 8000d24:	08001c00 	.word	0x08001c00
+ 8000d28:	20000018 	.word	0x20000018
+
+08000d2c <main>:
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int main(void)
+{
+ 8000d2c:	b508      	push	{r3, lr}
+	InitRCC();
+ 8000d2e:	f7ff fa0d 	bl	800014c <InitRCC>
+	InitGPIO();
+ 8000d32:	f7ff fa49 	bl	80001c8 <InitGPIO>
+
+	InitADC();
+ 8000d36:	f7ff fa71 	bl	800021c <InitADC>
+
+	InitCAN();
+ 8000d3a:	f7ff fb4d 	bl	80003d8 <InitCAN>
+
+	for (i=0; i < 500; i ++)
+ 8000d3e:	4b5a      	ldr	r3, [pc, #360]	; (8000ea8 <main+0x17c>)
+ 8000d40:	2200      	movs	r2, #0
+ 8000d42:	601a      	str	r2, [r3, #0]
+ 8000d44:	4b58      	ldr	r3, [pc, #352]	; (8000ea8 <main+0x17c>)
+ 8000d46:	681b      	ldr	r3, [r3, #0]
+ 8000d48:	f5b3 7ffa 	cmp.w	r3, #500	; 0x1f4
+ 8000d4c:	d212      	bcs.n	8000d74 <main+0x48>
+	{
+		AdcConvertCanAddress();
+ 8000d4e:	f7ff fab7 	bl	80002c0 <AdcConvertCanAddress>
+		if(AddressAdcValue <= MAX_ADC) break;
+ 8000d52:	4b56      	ldr	r3, [pc, #344]	; (8000eac <main+0x180>)
+ 8000d54:	881b      	ldrh	r3, [r3, #0]
+ 8000d56:	f5b3 5f80 	cmp.w	r3, #4096	; 0x1000
+ 8000d5a:	d30b      	bcc.n	8000d74 <main+0x48>
+		WaitMicrosecond(50);
+ 8000d5c:	4b54      	ldr	r3, [pc, #336]	; (8000eb0 <main+0x184>)
+ 8000d5e:	2232      	movs	r2, #50	; 0x32
+ 8000d60:	601a      	str	r2, [r3, #0]
+ 8000d62:	4b53      	ldr	r3, [pc, #332]	; (8000eb0 <main+0x184>)
+ 8000d64:	681b      	ldr	r3, [r3, #0]
+ 8000d66:	2b00      	cmp	r3, #0
+ 8000d68:	d1fb      	bne.n	8000d62 <main+0x36>
+	for (i=0; i < 500; i ++)
+ 8000d6a:	4a4f      	ldr	r2, [pc, #316]	; (8000ea8 <main+0x17c>)
+ 8000d6c:	6813      	ldr	r3, [r2, #0]
+ 8000d6e:	3301      	adds	r3, #1
+ 8000d70:	6013      	str	r3, [r2, #0]
+ 8000d72:	e7e7      	b.n	8000d44 <main+0x18>
+	}
+
+
+	SendCanMessage(CAN_DEV_ANALYST, 0xBB, CanMessageBuffer, 0);
+ 8000d74:	2300      	movs	r3, #0
+ 8000d76:	4a4f      	ldr	r2, [pc, #316]	; (8000eb4 <main+0x188>)
+ 8000d78:	21bb      	movs	r1, #187	; 0xbb
+ 8000d7a:	203e      	movs	r0, #62	; 0x3e
+ 8000d7c:	f7ff fc60 	bl	8000640 <SendCanMessage>
+ 8000d80:	e055      	b.n	8000e2e <main+0x102>
+		{
+			TurnOnHeartBeatLed;
+		}
+		else
+		{
+			TurnOffHeartBeatLed;
+ 8000d82:	4a4d      	ldr	r2, [pc, #308]	; (8000eb8 <main+0x18c>)
+ 8000d84:	f44f 4100 	mov.w	r1, #32768	; 0x8000
+ 8000d88:	6151      	str	r1, [r2, #20]
+			if(!HeartbeatCounter)	HeartbeatCounter = MAX_COUNTDOWN;//reset the counter if we are at zero
+ 8000d8a:	2b00      	cmp	r3, #0
+ 8000d8c:	d15b      	bne.n	8000e46 <main+0x11a>
+ 8000d8e:	4b4b      	ldr	r3, [pc, #300]	; (8000ebc <main+0x190>)
+ 8000d90:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000d94:	801a      	strh	r2, [r3, #0]
+ 8000d96:	e056      	b.n	8000e46 <main+0x11a>
+
+
+    	CanAddressAdcConvertCounter --; //count down AdcConvertCounter to zero
+    	if(!CanAddressAdcConvertCounter)
+    	{
+    		CanAddressAdcConvertCounter = MAX_COUNTDOWN;
+ 8000d98:	4613      	mov	r3, r2
+ 8000d9a:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000d9e:	601a      	str	r2, [r3, #0]
+
+    		AdcConvertCanAddress(); 	//get the head resister value by adc converting.
+ 8000da0:	f7ff fa8e 	bl	80002c0 <AdcConvertCanAddress>
+
+    		if(AddressAdcValue < 0x7ff) //if successful,
+ 8000da4:	4b41      	ldr	r3, [pc, #260]	; (8000eac <main+0x180>)
+ 8000da6:	881a      	ldrh	r2, [r3, #0]
+ 8000da8:	f240 73fe 	movw	r3, #2046	; 0x7fe
+ 8000dac:	429a      	cmp	r2, r3
+ 8000dae:	d850      	bhi.n	8000e52 <main+0x126>
+    		{
+    			CalculateDevicePosition(); 	//update the device address with that.
+ 8000db0:	f7ff fabe 	bl	8000330 <CalculateDevicePosition>
+ 8000db4:	e04d      	b.n	8000e52 <main+0x126>
+		//then send a ping message until it registers
+
+    	CanAddressAdcConvertCounter --; //count down AdcConvertCounter to zero
+    	if(!CanAddressAdcConvertCounter)
+    	{
+    		CanAddressAdcConvertCounter = MAX_COUNTDOWN;
+ 8000db6:	4613      	mov	r3, r2
+ 8000db8:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000dbc:	601a      	str	r2, [r3, #0]
+
+    		AdcConvertCanAddress(); 	//get the head resister value by adc converting.
+ 8000dbe:	f7ff fa7f 	bl	80002c0 <AdcConvertCanAddress>
+
+    		if(AddressAdcValue < 0x7ff) //if successful,
+ 8000dc2:	4b3a      	ldr	r3, [pc, #232]	; (8000eac <main+0x180>)
+ 8000dc4:	881a      	ldrh	r2, [r3, #0]
+ 8000dc6:	f240 73fe 	movw	r3, #2046	; 0x7fe
+ 8000dca:	429a      	cmp	r2, r3
+ 8000dcc:	d847      	bhi.n	8000e5e <main+0x132>
+    		{
+    			CalculateDevicePosition(); 	//update the device address with that.
+ 8000dce:	f7ff faaf 	bl	8000330 <CalculateDevicePosition>
+ 8000dd2:	e044      	b.n	8000e5e <main+0x132>
+
+
+    	//////////////// Can Message Transmitting Process //////////////////////////////
+    	if(CanTrasmitMsgWaitCounter) //if Can is transsming,
+    	{
+    		status = CAN_TransmitStatus(CAN1, CanTransmitMailbox); //Check the Can Transmit status
+ 8000dd4:	4b3a      	ldr	r3, [pc, #232]	; (8000ec0 <main+0x194>)
+ 8000dd6:	7819      	ldrb	r1, [r3, #0]
+ 8000dd8:	483a      	ldr	r0, [pc, #232]	; (8000ec4 <main+0x198>)
+ 8000dda:	f7ff fcb5 	bl	8000748 <CAN_TransmitStatus>
+ 8000dde:	4b3a      	ldr	r3, [pc, #232]	; (8000ec8 <main+0x19c>)
+ 8000de0:	7018      	strb	r0, [r3, #0]
+    		if((status != CAN_TxStatus_Ok) && (CanTrasmitMsgWaitCounter))
+ 8000de2:	2801      	cmp	r0, #1
+ 8000de4:	d006      	beq.n	8000df4 <main+0xc8>
+ 8000de6:	4b39      	ldr	r3, [pc, #228]	; (8000ecc <main+0x1a0>)
+ 8000de8:	681b      	ldr	r3, [r3, #0]
+ 8000dea:	b11b      	cbz	r3, 8000df4 <main+0xc8>
+    			CanTrasmitMsgWaitCounter --; //Count down the counter for CAN transmit
+ 8000dec:	3b01      	subs	r3, #1
+ 8000dee:	4a37      	ldr	r2, [pc, #220]	; (8000ecc <main+0x1a0>)
+ 8000df0:	6013      	str	r3, [r2, #0]
+ 8000df2:	e038      	b.n	8000e66 <main+0x13a>
+    		else if(status == CAN_TxStatus_Ok)
+ 8000df4:	2801      	cmp	r0, #1
+ 8000df6:	d136      	bne.n	8000e66 <main+0x13a>
+    		{
+    			//if Can transmit successfull, set the flag.
+    			CanMessageReadyToSend = 1;
+ 8000df8:	4b35      	ldr	r3, [pc, #212]	; (8000ed0 <main+0x1a4>)
+ 8000dfa:	2201      	movs	r2, #1
+ 8000dfc:	701a      	strb	r2, [r3, #0]
+    			CanTrasmitMsgWaitCounter = 0; //Can Transmit Status set as Idle.
+ 8000dfe:	4b33      	ldr	r3, [pc, #204]	; (8000ecc <main+0x1a0>)
+ 8000e00:	2200      	movs	r2, #0
+ 8000e02:	601a      	str	r2, [r3, #0]
+ 8000e04:	e02f      	b.n	8000e66 <main+0x13a>
+		}
+
+		if(CanMessageReadyToRead) // If Can message received.
+		{
+			//process the message();
+			CanRxLedStatus = MAX_COUNTDOWN;//just guessing, but 10,000 loops should be enough time to see the led.
+ 8000e06:	4b33      	ldr	r3, [pc, #204]	; (8000ed4 <main+0x1a8>)
+ 8000e08:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000e0c:	801a      	strh	r2, [r3, #0]
+			CanMessageReadyToRead = 0;  //clear the Can Message Rcv flag.
+ 8000e0e:	4b32      	ldr	r3, [pc, #200]	; (8000ed8 <main+0x1ac>)
+ 8000e10:	2200      	movs	r2, #0
+ 8000e12:	701a      	strb	r2, [r3, #0]
+			processCanMsgFunction();
+ 8000e14:	f7ff fe92 	bl	8000b3c <processCanMsgFunction>
+ 8000e18:	e033      	b.n	8000e82 <main+0x156>
+			CanTxLedStatus --;
+		}
+		else
+		{
+			//the led has had enough time to be seen, so now we can turn it off
+			ClearCanTxLed; //down count the Can Tx Semaphore
+ 8000e1a:	4b30      	ldr	r3, [pc, #192]	; (8000edc <main+0x1b0>)
+ 8000e1c:	2208      	movs	r2, #8
+ 8000e1e:	615a      	str	r2, [r3, #20]
+ 8000e20:	e039      	b.n	8000e96 <main+0x16a>
+
+		//set the can traffic receive led on or off
+		if(CanRxLedStatus)
+		{
+			//get here means the led should be on
+			SetCanRxLed;
+ 8000e22:	4a2e      	ldr	r2, [pc, #184]	; (8000edc <main+0x1b0>)
+ 8000e24:	2110      	movs	r1, #16
+ 8000e26:	6111      	str	r1, [r2, #16]
+			CanRxLedStatus --; //down count the Can Rx Semaphore.
+ 8000e28:	3b01      	subs	r3, #1
+ 8000e2a:	4a2a      	ldr	r2, [pc, #168]	; (8000ed4 <main+0x1a8>)
+ 8000e2c:	8013      	strh	r3, [r2, #0]
+		HeartbeatCounter --;//count down to zero
+ 8000e2e:	4a23      	ldr	r2, [pc, #140]	; (8000ebc <main+0x190>)
+ 8000e30:	8813      	ldrh	r3, [r2, #0]
+ 8000e32:	3b01      	subs	r3, #1
+ 8000e34:	b29b      	uxth	r3, r3
+ 8000e36:	8013      	strh	r3, [r2, #0]
+		if(HeartbeatCounter & 0x1000)
+ 8000e38:	f413 5f80 	tst.w	r3, #4096	; 0x1000
+ 8000e3c:	d0a1      	beq.n	8000d82 <main+0x56>
+			TurnOnHeartBeatLed;
+ 8000e3e:	4b1e      	ldr	r3, [pc, #120]	; (8000eb8 <main+0x18c>)
+ 8000e40:	f44f 4200 	mov.w	r2, #32768	; 0x8000
+ 8000e44:	611a      	str	r2, [r3, #16]
+    	CanAddressAdcConvertCounter --; //count down AdcConvertCounter to zero
+ 8000e46:	4a26      	ldr	r2, [pc, #152]	; (8000ee0 <main+0x1b4>)
+ 8000e48:	6813      	ldr	r3, [r2, #0]
+ 8000e4a:	3b01      	subs	r3, #1
+ 8000e4c:	6013      	str	r3, [r2, #0]
+    	if(!CanAddressAdcConvertCounter)
+ 8000e4e:	2b00      	cmp	r3, #0
+ 8000e50:	d0a2      	beq.n	8000d98 <main+0x6c>
+    	CanAddressAdcConvertCounter --; //count down AdcConvertCounter to zero
+ 8000e52:	4a23      	ldr	r2, [pc, #140]	; (8000ee0 <main+0x1b4>)
+ 8000e54:	6813      	ldr	r3, [r2, #0]
+ 8000e56:	3b01      	subs	r3, #1
+ 8000e58:	6013      	str	r3, [r2, #0]
+    	if(!CanAddressAdcConvertCounter)
+ 8000e5a:	2b00      	cmp	r3, #0
+ 8000e5c:	d0ab      	beq.n	8000db6 <main+0x8a>
+    	if(CanTrasmitMsgWaitCounter) //if Can is transsming,
+ 8000e5e:	4b1b      	ldr	r3, [pc, #108]	; (8000ecc <main+0x1a0>)
+ 8000e60:	681b      	ldr	r3, [r3, #0]
+ 8000e62:	2b00      	cmp	r3, #0
+ 8000e64:	d1b6      	bne.n	8000dd4 <main+0xa8>
+    	if (CanMessageReadyToSend)	//if Can transmitting has done.
+ 8000e66:	4b1a      	ldr	r3, [pc, #104]	; (8000ed0 <main+0x1a4>)
+ 8000e68:	781b      	ldrb	r3, [r3, #0]
+ 8000e6a:	b133      	cbz	r3, 8000e7a <main+0x14e>
+			CanTxLedStatus = MAX_COUNTDOWN;  //set the semaphore Can Tx Led status
+ 8000e6c:	4b1d      	ldr	r3, [pc, #116]	; (8000ee4 <main+0x1b8>)
+ 8000e6e:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000e72:	801a      	strh	r2, [r3, #0]
+			CanMessageReadyToSend = 0; //clear the Can Message Send flag.
+ 8000e74:	4b16      	ldr	r3, [pc, #88]	; (8000ed0 <main+0x1a4>)
+ 8000e76:	2200      	movs	r2, #0
+ 8000e78:	701a      	strb	r2, [r3, #0]
+		if(CanMessageReadyToRead) // If Can message received.
+ 8000e7a:	4b17      	ldr	r3, [pc, #92]	; (8000ed8 <main+0x1ac>)
+ 8000e7c:	781b      	ldrb	r3, [r3, #0]
+ 8000e7e:	2b00      	cmp	r3, #0
+ 8000e80:	d1c1      	bne.n	8000e06 <main+0xda>
+		if(CanTxLedStatus)
+ 8000e82:	4b18      	ldr	r3, [pc, #96]	; (8000ee4 <main+0x1b8>)
+ 8000e84:	881b      	ldrh	r3, [r3, #0]
+ 8000e86:	2b00      	cmp	r3, #0
+ 8000e88:	d0c7      	beq.n	8000e1a <main+0xee>
+			SetCanTxLed;
+ 8000e8a:	4a14      	ldr	r2, [pc, #80]	; (8000edc <main+0x1b0>)
+ 8000e8c:	2108      	movs	r1, #8
+ 8000e8e:	6111      	str	r1, [r2, #16]
+			CanTxLedStatus --;
+ 8000e90:	3b01      	subs	r3, #1
+ 8000e92:	4a14      	ldr	r2, [pc, #80]	; (8000ee4 <main+0x1b8>)
+ 8000e94:	8013      	strh	r3, [r2, #0]
+		if(CanRxLedStatus)
+ 8000e96:	4b0f      	ldr	r3, [pc, #60]	; (8000ed4 <main+0x1a8>)
+ 8000e98:	881b      	ldrh	r3, [r3, #0]
+ 8000e9a:	2b00      	cmp	r3, #0
+ 8000e9c:	d1c1      	bne.n	8000e22 <main+0xf6>
+		}else
+		{
+			//the led has had enough time to be seen, so now we can turn it off
+			ClearCanRxLed;
+ 8000e9e:	4b0f      	ldr	r3, [pc, #60]	; (8000edc <main+0x1b0>)
+ 8000ea0:	2210      	movs	r2, #16
+ 8000ea2:	615a      	str	r2, [r3, #20]
+ 8000ea4:	e7c3      	b.n	8000e2e <main+0x102>
+ 8000ea6:	bf00      	nop
+ 8000ea8:	20000490 	.word	0x20000490
+ 8000eac:	20000004 	.word	0x20000004
+ 8000eb0:	200004a4 	.word	0x200004a4
+ 8000eb4:	2000000c 	.word	0x2000000c
+ 8000eb8:	40010800 	.word	0x40010800
+ 8000ebc:	2000001c 	.word	0x2000001c
+ 8000ec0:	20000468 	.word	0x20000468
+ 8000ec4:	40006400 	.word	0x40006400
+ 8000ec8:	2000049c 	.word	0x2000049c
+ 8000ecc:	2000046c 	.word	0x2000046c
+ 8000ed0:	2000043d 	.word	0x2000043d
+ 8000ed4:	2000044e 	.word	0x2000044e
+ 8000ed8:	2000043c 	.word	0x2000043c
+ 8000edc:	40010c00 	.word	0x40010c00
+ 8000ee0:	20000008 	.word	0x20000008
+ 8000ee4:	20000470 	.word	0x20000470
+
+08000ee8 <ADC1_2_IRQHandler>:
+  * @retval None  
+  */
+static void Default_Handler(void) 
+{
+  /* Go into an infinite loop. */
+  while (1) 
+ 8000ee8:	e7fe      	b.n	8000ee8 <ADC1_2_IRQHandler>
+	...
+
+08000eec <Default_Reset_Handler>:
+{
+ 8000eec:	b508      	push	{r3, lr}
+  for(pulDest = &_sdata; pulDest < &_edata; )
+ 8000eee:	4b0c      	ldr	r3, [pc, #48]	; (8000f20 <zero_loop+0x16>)
+  pulSrc = &_sidata;
+ 8000ef0:	4a0c      	ldr	r2, [pc, #48]	; (8000f24 <zero_loop+0x1a>)
+  for(pulDest = &_sdata; pulDest < &_edata; )
+ 8000ef2:	e003      	b.n	8000efc <Default_Reset_Handler+0x10>
+    *(pulDest++) = *(pulSrc++);
+ 8000ef4:	f852 1b04 	ldr.w	r1, [r2], #4
+ 8000ef8:	f843 1b04 	str.w	r1, [r3], #4
+  for(pulDest = &_sdata; pulDest < &_edata; )
+ 8000efc:	490a      	ldr	r1, [pc, #40]	; (8000f28 <zero_loop+0x1e>)
+ 8000efe:	428b      	cmp	r3, r1
+ 8000f00:	d3f8      	bcc.n	8000ef4 <Default_Reset_Handler+0x8>
+  __asm("  ldr     r0, =_sbss\n"
+ 8000f02:	480a      	ldr	r0, [pc, #40]	; (8000f2c <zero_loop+0x22>)
+ 8000f04:	490a      	ldr	r1, [pc, #40]	; (8000f30 <zero_loop+0x26>)
+ 8000f06:	f04f 0200 	mov.w	r2, #0
+
+08000f0a <zero_loop>:
+ 8000f0a:	4288      	cmp	r0, r1
+ 8000f0c:	bfb8      	it	lt
+ 8000f0e:	f840 2b04 	strlt.w	r2, [r0], #4
+ 8000f12:	dbfa      	blt.n	8000f0a <zero_loop>
+  SystemInit();
+ 8000f14:	f000 f874 	bl	8001000 <SystemInit>
+  main();
+ 8000f18:	f7ff ff08 	bl	8000d2c <main>
+}
+ 8000f1c:	bd08      	pop	{r3, pc}
+ 8000f1e:	bf00      	nop
+ 8000f20:	20000000 	.word	0x20000000
+ 8000f24:	080010c4 	.word	0x080010c4
+ 8000f28:	20000020 	.word	0x20000020
+ 8000f2c:	20000420 	.word	0x20000420
+ 8000f30:	200004a8 	.word	0x200004a8
+
+08000f34 <SetSysClockTo72>:
+  * @note   This function should be used only after reset.
+  * @param  None
+  * @retval None
+  */
+static void SetSysClockTo72(void)
+{
+ 8000f34:	b082      	sub	sp, #8
+  __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
+ 8000f36:	2300      	movs	r3, #0
+ 8000f38:	9301      	str	r3, [sp, #4]
+ 8000f3a:	9300      	str	r3, [sp, #0]
+  
+  /* SYSCLK, HCLK, PCLK2 and PCLK1 configuration ---------------------------*/    
+  /* Enable HSE */    
+  RCC->CR |= ((uint32_t)RCC_CR_HSEON);
+ 8000f3c:	4a2c      	ldr	r2, [pc, #176]	; (8000ff0 <SetSysClockTo72+0xbc>)
+ 8000f3e:	6813      	ldr	r3, [r2, #0]
+ 8000f40:	f443 3380 	orr.w	r3, r3, #65536	; 0x10000
+ 8000f44:	6013      	str	r3, [r2, #0]
+ 
+  /* Wait till HSE is ready and if Time out is reached exit */
+  do
+  {
+    HSEStatus = RCC->CR & RCC_CR_HSERDY;
+ 8000f46:	4b2a      	ldr	r3, [pc, #168]	; (8000ff0 <SetSysClockTo72+0xbc>)
+ 8000f48:	681b      	ldr	r3, [r3, #0]
+ 8000f4a:	f403 3300 	and.w	r3, r3, #131072	; 0x20000
+ 8000f4e:	9300      	str	r3, [sp, #0]
+    StartUpCounter++;  
+ 8000f50:	9b01      	ldr	r3, [sp, #4]
+ 8000f52:	3301      	adds	r3, #1
+ 8000f54:	9301      	str	r3, [sp, #4]
+  } while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
+ 8000f56:	9b00      	ldr	r3, [sp, #0]
+ 8000f58:	b91b      	cbnz	r3, 8000f62 <SetSysClockTo72+0x2e>
+ 8000f5a:	9b01      	ldr	r3, [sp, #4]
+ 8000f5c:	f5b3 6fa0 	cmp.w	r3, #1280	; 0x500
+ 8000f60:	d1f1      	bne.n	8000f46 <SetSysClockTo72+0x12>
+
+  if ((RCC->CR & RCC_CR_HSERDY) != RESET)
+ 8000f62:	4b23      	ldr	r3, [pc, #140]	; (8000ff0 <SetSysClockTo72+0xbc>)
+ 8000f64:	681b      	ldr	r3, [r3, #0]
+ 8000f66:	f413 3f00 	tst.w	r3, #131072	; 0x20000
+ 8000f6a:	d006      	beq.n	8000f7a <SetSysClockTo72+0x46>
+  {
+    HSEStatus = (uint32_t)0x01;
+ 8000f6c:	2301      	movs	r3, #1
+ 8000f6e:	9300      	str	r3, [sp, #0]
+  else
+  {
+    HSEStatus = (uint32_t)0x00;
+  }  
+
+  if (HSEStatus == (uint32_t)0x01)
+ 8000f70:	9b00      	ldr	r3, [sp, #0]
+ 8000f72:	2b01      	cmp	r3, #1
+ 8000f74:	d004      	beq.n	8000f80 <SetSysClockTo72+0x4c>
+  }
+  else
+  { /* If HSE fails to start-up, the application will have wrong clock 
+         configuration. User can add here some code to deal with this error */
+  }
+}
+ 8000f76:	b002      	add	sp, #8
+ 8000f78:	4770      	bx	lr
+    HSEStatus = (uint32_t)0x00;
+ 8000f7a:	2300      	movs	r3, #0
+ 8000f7c:	9300      	str	r3, [sp, #0]
+ 8000f7e:	e7f7      	b.n	8000f70 <SetSysClockTo72+0x3c>
+    FLASH->ACR |= FLASH_ACR_PRFTBE;
+ 8000f80:	4b1c      	ldr	r3, [pc, #112]	; (8000ff4 <SetSysClockTo72+0xc0>)
+ 8000f82:	681a      	ldr	r2, [r3, #0]
+ 8000f84:	f042 0210 	orr.w	r2, r2, #16
+ 8000f88:	601a      	str	r2, [r3, #0]
+    FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
+ 8000f8a:	681a      	ldr	r2, [r3, #0]
+ 8000f8c:	f022 0203 	bic.w	r2, r2, #3
+ 8000f90:	601a      	str	r2, [r3, #0]
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;    
+ 8000f92:	681a      	ldr	r2, [r3, #0]
+ 8000f94:	f042 0202 	orr.w	r2, r2, #2
+ 8000f98:	601a      	str	r2, [r3, #0]
+    RCC->CFGR |= (uint32_t)RCC_CFGR_HPRE_DIV1;
+ 8000f9a:	f5a3 5380 	sub.w	r3, r3, #4096	; 0x1000
+ 8000f9e:	685a      	ldr	r2, [r3, #4]
+ 8000fa0:	605a      	str	r2, [r3, #4]
+    RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE2_DIV1;
+ 8000fa2:	685a      	ldr	r2, [r3, #4]
+ 8000fa4:	605a      	str	r2, [r3, #4]
+    RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE1_DIV2;
+ 8000fa6:	685a      	ldr	r2, [r3, #4]
+ 8000fa8:	f442 6280 	orr.w	r2, r2, #1024	; 0x400
+ 8000fac:	605a      	str	r2, [r3, #4]
+    RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
+ 8000fae:	685a      	ldr	r2, [r3, #4]
+ 8000fb0:	f422 127c 	bic.w	r2, r2, #4128768	; 0x3f0000
+ 8000fb4:	605a      	str	r2, [r3, #4]
+    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PLLMULL9);
+ 8000fb6:	685a      	ldr	r2, [r3, #4]
+ 8000fb8:	f442 12e8 	orr.w	r2, r2, #1900544	; 0x1d0000
+ 8000fbc:	605a      	str	r2, [r3, #4]
+    RCC->CR |= RCC_CR_PLLON;
+ 8000fbe:	681a      	ldr	r2, [r3, #0]
+ 8000fc0:	f042 7280 	orr.w	r2, r2, #16777216	; 0x1000000
+ 8000fc4:	601a      	str	r2, [r3, #0]
+    while((RCC->CR & RCC_CR_PLLRDY) == 0)
+ 8000fc6:	4b0a      	ldr	r3, [pc, #40]	; (8000ff0 <SetSysClockTo72+0xbc>)
+ 8000fc8:	681b      	ldr	r3, [r3, #0]
+ 8000fca:	f013 7f00 	tst.w	r3, #33554432	; 0x2000000
+ 8000fce:	d0fa      	beq.n	8000fc6 <SetSysClockTo72+0x92>
+    RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_SW));
+ 8000fd0:	4b07      	ldr	r3, [pc, #28]	; (8000ff0 <SetSysClockTo72+0xbc>)
+ 8000fd2:	685a      	ldr	r2, [r3, #4]
+ 8000fd4:	f022 0203 	bic.w	r2, r2, #3
+ 8000fd8:	605a      	str	r2, [r3, #4]
+    RCC->CFGR |= (uint32_t)RCC_CFGR_SW_PLL;    
+ 8000fda:	685a      	ldr	r2, [r3, #4]
+ 8000fdc:	f042 0202 	orr.w	r2, r2, #2
+ 8000fe0:	605a      	str	r2, [r3, #4]
+    while ((RCC->CFGR & (uint32_t)RCC_CFGR_SWS) != (uint32_t)0x08)
+ 8000fe2:	4b03      	ldr	r3, [pc, #12]	; (8000ff0 <SetSysClockTo72+0xbc>)
+ 8000fe4:	685b      	ldr	r3, [r3, #4]
+ 8000fe6:	f003 030c 	and.w	r3, r3, #12
+ 8000fea:	2b08      	cmp	r3, #8
+ 8000fec:	d1f9      	bne.n	8000fe2 <SetSysClockTo72+0xae>
+ 8000fee:	e7c2      	b.n	8000f76 <SetSysClockTo72+0x42>
+ 8000ff0:	40021000 	.word	0x40021000
+ 8000ff4:	40022000 	.word	0x40022000
+
+08000ff8 <SetSysClock>:
+{
+ 8000ff8:	b508      	push	{r3, lr}
+  SetSysClockTo72();
+ 8000ffa:	f7ff ff9b 	bl	8000f34 <SetSysClockTo72>
+}
+ 8000ffe:	bd08      	pop	{r3, pc}
+
+08001000 <SystemInit>:
+{
+ 8001000:	b508      	push	{r3, lr}
+  RCC->CR |= (uint32_t)0x00000001;
+ 8001002:	4b10      	ldr	r3, [pc, #64]	; (8001044 <SystemInit+0x44>)
+ 8001004:	681a      	ldr	r2, [r3, #0]
+ 8001006:	f042 0201 	orr.w	r2, r2, #1
+ 800100a:	601a      	str	r2, [r3, #0]
+  RCC->CFGR &= (uint32_t)0xF8FF0000;
+ 800100c:	6859      	ldr	r1, [r3, #4]
+ 800100e:	4a0e      	ldr	r2, [pc, #56]	; (8001048 <SystemInit+0x48>)
+ 8001010:	400a      	ands	r2, r1
+ 8001012:	605a      	str	r2, [r3, #4]
+  RCC->CR &= (uint32_t)0xFEF6FFFF;
+ 8001014:	681a      	ldr	r2, [r3, #0]
+ 8001016:	f022 7284 	bic.w	r2, r2, #17301504	; 0x1080000
+ 800101a:	f422 3280 	bic.w	r2, r2, #65536	; 0x10000
+ 800101e:	601a      	str	r2, [r3, #0]
+  RCC->CR &= (uint32_t)0xFFFBFFFF;
+ 8001020:	681a      	ldr	r2, [r3, #0]
+ 8001022:	f422 2280 	bic.w	r2, r2, #262144	; 0x40000
+ 8001026:	601a      	str	r2, [r3, #0]
+  RCC->CFGR &= (uint32_t)0xFF80FFFF;
+ 8001028:	685a      	ldr	r2, [r3, #4]
+ 800102a:	f422 02fe 	bic.w	r2, r2, #8323072	; 0x7f0000
+ 800102e:	605a      	str	r2, [r3, #4]
+  RCC->CIR = 0x009F0000;
+ 8001030:	f44f 021f 	mov.w	r2, #10420224	; 0x9f0000
+ 8001034:	609a      	str	r2, [r3, #8]
+  SetSysClock();
+ 8001036:	f7ff ffdf 	bl	8000ff8 <SetSysClock>
+  SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH. */
+ 800103a:	4b04      	ldr	r3, [pc, #16]	; (800104c <SystemInit+0x4c>)
+ 800103c:	f04f 6200 	mov.w	r2, #134217728	; 0x8000000
+ 8001040:	609a      	str	r2, [r3, #8]
+}
+ 8001042:	bd08      	pop	{r3, pc}
+ 8001044:	40021000 	.word	0x40021000
+ 8001048:	f8ff0000 	.word	0xf8ff0000
+ 800104c:	e000ed00 	.word	0xe000ed00
+
+08001050 <memcpy>:
+ 8001050:	440a      	add	r2, r1
+ 8001052:	4291      	cmp	r1, r2
+ 8001054:	f100 33ff 	add.w	r3, r0, #4294967295
+ 8001058:	d100      	bne.n	800105c <memcpy+0xc>
+ 800105a:	4770      	bx	lr
+ 800105c:	b510      	push	{r4, lr}
+ 800105e:	f811 4b01 	ldrb.w	r4, [r1], #1
+ 8001062:	4291      	cmp	r1, r2
+ 8001064:	f803 4f01 	strb.w	r4, [r3, #1]!
+ 8001068:	d1f9      	bne.n	800105e <memcpy+0xe>
+ 800106a:	bd10      	pop	{r4, pc}
+
+0800106c <_init>:
+ 800106c:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 800106e:	bf00      	nop
+ 8001070:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 8001072:	bc08      	pop	{r3}
+ 8001074:	469e      	mov	lr, r3
+ 8001076:	4770      	bx	lr
+
+08001078 <_fini>:
+ 8001078:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 800107a:	bf00      	nop
+ 800107c:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 800107e:	bc08      	pop	{r3}
+ 8001080:	469e      	mov	lr, r3
+ 8001082:	4770      	bx	lr
