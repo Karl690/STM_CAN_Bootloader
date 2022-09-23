@@ -156,6 +156,8 @@ void BlinkHeartBeat()
 	else
 	{ LED_HEARTBEAT_OFF;}
 
+	CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_HEARTBEAT, HeartBeat & 0x3, 0, 0, 0);
+
 }
 void ClearSliceTimes()
 {

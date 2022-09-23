@@ -374,6 +374,7 @@ typedef struct
 ////////CAN MESSAGE ID////////////////////
 #define CAN_MSG_BOOT				0x70
 #define CAN_MSG_SOAP_STRING			0x71
+#define CAN_MSG_HEARTBEAT			0x72
 
 extern CanRxMsg 			CanRxMessage;
 extern CanTxMsg 			CanTxMessage;
