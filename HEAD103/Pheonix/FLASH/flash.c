@@ -286,7 +286,7 @@ void WriteFlashData(uint32_t addr, uint8_t* data, uint8_t size)
 void ReadFlashData(uint32_t addr, uint32_t size, uint8_t* data)
 {
 	for(uint16_t i = 0; i < size; i ++) {
-		data[i] = *(__IO uint8_t*)(FLASH_BASE + addr  + i);
+		data[i] = *(__IO uint8_t*)(addr  + i);
 		if(data[i] == 0 || data[i] == 0xff) {
 			data[i] = 0;
 			break;

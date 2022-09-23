@@ -59,11 +59,12 @@ typedef enum
 #define FLASH_FLAG_BANK1_PGERR               FLASH_FLAG_PGERR     /*!< FLASH BANK1 Program error flag */
 #define FLASH_FLAG_BANK1_WRPRTERR            FLASH_FLAG_WRPRTERR  /*!< FLASH BANK1 Write protected error flag */
 
-#define FLASH_LENGTH							0x20000  //128kb
+#define FLASH_LENGTH							0x8000  //32kb
 #define FLASH_PAGE_SIZE							0x400	//a page size is 0x400 in stm32f10x series.
 
 #define FLASH_SOAP_SIZE						0x400
-#define FLASH_SOAP_START_ADDRESS			FLASH_BASE + 31 * FLASH_PAGE_SIZE //0x8007C00
+//#define FLASH_SOAP_START_ADDRESS			FLASH_BASE + 31 * FLASH_PAGE_SIZE //0x8007C00
+#define FLASH_SOAP_START_ADDRESS		(FLASH_BASE + FLASH_LENGTH - FLASH_SOAP_SIZE)
 
 #define BYTE2UINT32(a,b,c,d) 			((a << 24) + (b << 16) + (c << 8) + d)
 #define BYTES2UINT32(a)					(((*(uint8_t*)(a+3)) << 24) + ((*(uint8_t*)(a+2)) << 16) + ((*(uint8_t*)(a+1)) << 8) + ((*(uint8_t*)(a+0)) << 0))

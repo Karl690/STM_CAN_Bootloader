@@ -350,7 +350,7 @@ void ProcessCanRxMessage(void)
 		{
 		case CAN_MSG_SOAP_STRING:
 			//                   Address                            Length                           Out buffer
-			ReadFlashData(BYTES2UINT32(&pOutBuffer->Data[0]), BYTES2UINT32(&pOutBuffer->Data[4]), SoapString); //Read the soap string from Flash
+			ReadFlashData(FLASH_SOAP_START_ADDRESS + BYTES2UINT32(&pOutBuffer->Data[0]), BYTES2UINT32(&pOutBuffer->Data[4]), SoapString); //Read the soap string from Flash
 			SmallTaskCount = 0;
 			SmallTaskType = TASK_CAN_SEND_SOAPSTRING;
 			break;
