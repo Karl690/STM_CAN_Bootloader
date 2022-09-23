@@ -25,9 +25,11 @@ uint8_t 				CanMessageBuffer[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x0
 
 uint16_t				CanRxInIndex = 0;
 uint16_t				CanRxOutIndex = 0;
+uint16_t 				CanRxLedCountDown = 0;
 CANMsg 					CanRxMsgBuffer[CAN_MSG_BUFFER_SIZE];
 uint16_t				CanTxInIndex = 0;
 uint16_t				CanTxOutIndex = 0;
+uint16_t 				CanTxLedCountDown = 0;
 CANMsg 					CanTxMsgBuffer[CAN_MSG_BUFFER_SIZE];
 void InitCAN()
 {
@@ -215,6 +217,7 @@ uint8_t SendCanMessage(uint32_t id, uint8_t* data, uint8_t size)
 											 ((uint32_t)data[4]));
 	/* Request transmission */
 	CAN1->sTxMailBox[CanTransmitMailbox].TIR |= TMIDxR_TXRQ;
+	CanTxLedCountDown = LED_ON_MAXCOUNT;
 	return SUCCESS;
 }
 
@@ -279,6 +282,7 @@ void CAN1_RX1_IRQHandler(void)
 	CanRxTargetId = (CanRxMessage.ExtId >> 20) & 0xFF;
 	if(CanRxTargetId == CurrentHeadCanAddress) //if Head Address is same as Can message Head identifier.
 	{
+		CanRxLedCountDown = LED_ON_MAXCOUNT;
 		CANMsg* pInBuffer = &CanRxMsgBuffer[CanRxInIndex];
 
 		pInBuffer->ID = CanRxMessage.ExtId;

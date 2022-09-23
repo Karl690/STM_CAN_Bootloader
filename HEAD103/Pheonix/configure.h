@@ -13,7 +13,7 @@
 //#define STM32H750
 
 #ifdef STM32F103x6
-
+//#define USE_LCD
 #elif defined(STM32F407)
 #elif defined(STM32H750)
 #endif

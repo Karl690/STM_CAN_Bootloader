@@ -17,7 +17,7 @@ typedef void (*PFUNC)(void);
 
 #define ADC_CHANELS				8
 #define ADC_MAX_COUNTDOWN 			0x2000
-
+#define LED_ON_MAXCOUNT			0xFF
 
 typedef enum {
 	HZ_1000     = 0,
@@ -54,7 +54,7 @@ void BlinkHeartBeat(void);
 void PWMSweeper(void);
 void ClearSliceTimes(void);
 void ReadAdcValue();
-
+void UpdateLeds();
 void SmallTask(void);
 
 

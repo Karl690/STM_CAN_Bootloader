@@ -63,7 +63,7 @@ const PFUNC F100HZ[NUM_100HZ] =
 		Spare, //CheckCanMsgWaitingFifo1,
 		ProcessCanRxMessage,
 		ProcessCanTxMessage,
-		Spare,
+		UpdateLeds,
 		Spare, //USBTxProcessor,
 
 };
@@ -156,7 +156,7 @@ void BlinkHeartBeat()
 	else
 	{ LED_HEARTBEAT_OFF;}
 
-	CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_HEARTBEAT, HeartBeat & 0x3, 0, 0, 0);
+	//CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_HEARTBEAT, HeartBeat & 0x3, 0, 0, 0);
 
 }
 void ClearSliceTimes()
@@ -168,7 +168,15 @@ void ClearSliceTimes()
 	}
 }
 
-
+void UpdateLeds()
+{
+	if(CanRxLedCountDown) {
+		CanRxLedCountDown --;  LED_CAN_RX_ON;
+	}
+	else LED_CAN_RX_OFF;
+	if(CanTxLedCountDown) { CanTxLedCountDown --;  LED_CAN_TX_ON;	}
+	else LED_CAN_TX_OFF;
+}
 void SmallTask(void)
 {
 	switch(SmallTaskType) {

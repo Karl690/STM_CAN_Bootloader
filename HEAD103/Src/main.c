@@ -50,12 +50,16 @@ int main(void)
 //		WaitUsec(50);
 //	}
 	//Set the Initialized flag.
+
+	InitLeds();
 	Initialized = 1;
 	CurrentHeadCanAddress = HEAD_02; //for debugging. it would be removed later.
 
 	CanMessageBuffer[0] = CurrentHeadCanAddress;
 	CanMessageBuffer[1] = AddressAdcValue & 0xff;
 	CanMessageBuffer[2] = (AddressAdcValue & 0xff00 ) >> 8;
+
+
 	CanAddTxBuffer(HYDRA_CONTROLLOR, CAN_READ, CAN_MSG_BOOT, 0, 0, CanMessageBuffer, 3);
 
 	/* Loop forever */

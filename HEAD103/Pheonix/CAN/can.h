@@ -383,7 +383,8 @@ extern uint8_t 				CanTransmitMailbox;
 extern uint32_t 			CanTrasmitMsgWaitCounter;
 extern uint8_t 				CurrentHeadCanAddress; //current head position, which effects the working can bus address of packets sent and received
 extern uint8_t 				CanMessageBuffer[]; //this is a buffer for CAN message transmitting.
-
+extern uint16_t 			CanTxLedCountDown;
+extern uint16_t 			CanRxLedCountDown;
 
 void InitCAN();
 void CheckCanMsgWaitingFifo1(void);
