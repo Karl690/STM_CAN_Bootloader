@@ -354,6 +354,9 @@ void ProcessCanRxMessage(void)
 			SmallTaskCount = 0;
 			SmallTaskType = TASK_CAN_SEND_SOAPSTRING;
 			break;
+		case CAN_MSG_PING:
+			CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_PING, 0, 0, 0, 0);
+			break;
 		}
 		break;
 	}
