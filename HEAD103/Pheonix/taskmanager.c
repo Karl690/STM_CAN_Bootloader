@@ -10,12 +10,11 @@
  *      in the current version we set the value to 8000
  */
 #include <stdlib.h>
-#include "main.h"
-#include "stdint.h"
 #include "taskmanager.h"
 #include "GPIO/pinout.h"
 #include "ADC/adc.h"
 #include "CAN/can.h"
+#include "FLASH/flash.h"
 uint32_t PWMSubCounter=0;
 uint8_t  ch = 0;
 
@@ -23,6 +22,8 @@ uint8_t  ch = 0;
 //uint32_t                    	Seconds = 0;               // needed for heartbeat (number of seconds since boot)
 //uint16_t                    	SliceCnt = 0;              // current slice being processed
 
+
+uint8_t  SoapString[0x400] = {0};
 uint32_t HeartBeat = 0;
 uint32_t Seconds = 0;               // needed for heartbeat (number of seconds since boot)
 uint16_t SliceCnt = 0;              // current slice being processed
@@ -30,6 +31,9 @@ uint16_t TaskTime[32]={0};			// last execution time
 uint16_t MaxTaskTime[32]={0};       // Maximum execution time
 uint16_t SliceOffset=0;
 uint16_t ADC_Value[8] = {0};
+
+uint16_t SmallTaskType = TASK_IDLE;
+uint32_t SmallTaskCount = 0xFFFF;
 unsigned 									GlobalSync = 1;//causes all timers to reset and synchronize, makes all hot heads on canbus time toghether
 #define GLOBAL_SYNC                         (GlobalSync)
 #define SET_GLOBAL_SYNC_BIT                 (GlobalSync = 1)
@@ -58,7 +62,7 @@ const PFUNC F100HZ[NUM_100HZ] =
 		Spare, //Sequencer,
 		Spare, //CheckCanMsgWaitingFifo1,
 		ProcessCanRxMessage,
-		ProcessCanTxMessage, //Sequencer,
+		ProcessCanTxMessage,
 		Spare,
 		Spare, //USBTxProcessor,
 
@@ -69,10 +73,10 @@ const PFUNC F10HZ[NUM_10HZ] =
 		Spare,//ReportXYZLocation,
 		Spare,            // can't use slice 0 and this is time slot to execute the next slower slice
 		Spare,//loop_10Hz_simple_work,  // keep as last call in this array
-		Spare,//soapstringController,
+		SmallTask,//soapstringController,
 		Spare,//sendUpdateToHost,
 		Spare,//checkBlockingWaits,
-		Spare,//EdgeTriggerSendResults, // move into simple_work if space needed
+		Spare, //Sequencer,,//EdgeTriggerSendResults, // move into simple_work if space needed
 		Spare, //ReadAdcValue,//BlinkLed,//checkForCompletedAbort,
 };
 
@@ -161,4 +165,53 @@ void ClearSliceTimes()
 		MaxTaskTime[i]=0;
 	}
 }
+
+
+void SmallTask(void)
+{
+	switch(SmallTaskType) {
+	case TASK_CAN_SEND_SOAPSTRING:
+		if((SmallTaskCount + 1) * 6 > FLASH_SOAP_SIZE) {
+			SmallTaskType = TASK_IDLE;
+			break;
+		}
+		//in this case , TaskCoutUp means soap string's offset address.
+		//2bytes are address
+		CanMessageBuffer[0] = SmallTaskCount & 0xFF;
+		CanMessageBuffer[1] = (SmallTaskCount & 0xFF00) >> 8;
+		//6bytes are data
+		uint8_t size = 0;
+		for(uint8_t i = 0; i < 6; i ++){
+			CanMessageBuffer[i+2] = SoapString[SmallTaskCount * 6 + i];
+			if(CanMessageBuffer[i+2] == 0) {
+				break;
+			}
+			size ++;
+		}
+
+		CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_SOAP_STRING, 0, 0, CanMessageBuffer, size + 2);
+		if(size < 6) {
+			SmallTaskType = TASK_IDLE;
+		}
+		break;
+	case TASK_FLASH_WRITE_SOAPSTRING:
+		if(SmallTaskCount == 0) {
+			if(EraseFlash(FLASH_SOAP_START_ADDRESS, FLASH_PAGE_SIZE) == ERROR) {
+				SmallTaskType = TASK_IDLE;
+				break;
+			}
+		}
+		if(SmallTaskCount * 8 >= FLASH_SOAP_SIZE) {
+			SmallTaskType = TASK_IDLE;
+			break;
+		}
+		if(WriteFlash8Bytes(FLASH_SOAP_START_ADDRESS + SmallTaskCount * 8, SoapString + SmallTaskCount * 8) == ERROR) {
+			SmallTaskType = TASK_IDLE;
+			break;
+		}
+		break;
+	}
+	SmallTaskCount ++;
+}
+
 

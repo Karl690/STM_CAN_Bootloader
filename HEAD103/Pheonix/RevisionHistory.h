@@ -6,8 +6,8 @@
  */
 #pragma once
 #define RevisionHeader ">Hy:Head103:"
-#define MajorStep      "1.002"
-#define RevisionDate   "09/22/2022"
+#define MajorStep      "1.003"
+#define RevisionDate   "09/23/2022"
 #define CONNECTIONSTRING ">Hy:Pheonix Rev " MajorStep ":" RevisionDate ":STM32F103:---:"   //"1.000:0:0:0:USB"
 
 /*

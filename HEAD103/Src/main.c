@@ -62,6 +62,8 @@ int main(void)
 	while(1)
 	{
 		//lets update the heartbeat now
+		//pinToggleOutput(PIN_LED_HEARTBEAT);
+		//WaitMicrosecond(1000);
 
 	}
 }

@@ -12,7 +12,6 @@
 #define SYSCLK_FREQ_72MHz  			72000000
 #define MAX_ADC 					0x0fff
 
-#define CAN_DEV_ANALYST				0x3E
-#define CAN_DEV_TARGET				0x40
+#define CAN_DEV_HOST				0x40
 
 #endif /* CONFIGURE_H_ */

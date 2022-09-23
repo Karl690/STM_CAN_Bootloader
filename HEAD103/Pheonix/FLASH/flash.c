@@ -9,11 +9,13 @@
 #define FLASH_FLASH_C_
 
 #include "flash.h"
-
+#include "taskmanager.h"
 uint32_t 	i, result, temp, address, length;
 
 FLASH_Status 			flashStatus = FLASH_COMPLETE;
 __IO uint32_t 			flashTemp= 0;
+
+
 //////////////////////////////////////// Flash functions ///////////////////////////////////////////
 
 /**
@@ -249,7 +251,7 @@ uint8_t EraseFlash(uint32_t StartAddress, uint32_t size)
 	uint8_t result = SUCCESS;
 	FLASH_Unlock();
 
-	uint16_t temp = (size / FLASH_PAGE_SIZE) + 2; // calculate the page size of erase range.
+	uint16_t temp = (size / FLASH_PAGE_SIZE); // calculate the page size of erase range.
 	FLASH_ClearFlag(FLASH_FLAG_BSY | FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPRTERR);
 	//FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_OPTERR | FLASH_FLAG_WRPRTERR);
 	for(uint16_t i = 0; i < temp; i ++)
@@ -264,20 +266,31 @@ uint8_t EraseFlash(uint32_t StartAddress, uint32_t size)
 	return result;
 }
 
-void WriteSoapString(uint8_t* data, uint8_t page)
+void WriteFlashData(uint32_t addr, uint8_t* data, uint8_t size)
 {
-	if(page * 8 > FLASH_SOAPSTRING_SIZE) return;
-	if(page == 0) {
-		if(EraseFlash(FLASH_SOAPSTRING_OFFSET_ADDRESS, FLASH_SOAPSTRING_SIZE) == ERROR) {
-			//SendCanMessage(CAN_, CAN_MSG_, data, 0)
+	FLASH_Unlock();
+	if(FLASH_ProgramWord(addr, temp) != FLASH_COMPLETE)
+	{
+		result = ERROR;
+	}else {
+		temp = BYTE2UINT32(data[7], data[6], data[5], data[4]);
+		if(FLASH_ProgramWord(addr+ 4, temp) != FLASH_COMPLETE)
+		{
+			result = ERROR;
 		}
 	}
-	WriteFlash8Bytes(FLASH_SOAPSTRING_OFFSET_ADDRESS + page * 8, data);
+
+	FLASH_Lock();
 }
 
-void ReadSoapString(uint8_t* data, uint8_t page)
+void ReadFlashData(uint32_t addr, uint32_t size, uint8_t* data)
 {
-	if(page * 8 > FLASH_SOAPSTRING_SIZE) return;
-	ReadFlash8Bytes(FLASH_SOAPSTRING_OFFSET_ADDRESS + page * 8, data);
+	for(uint16_t i = 0; i < size; i ++) {
+		data[i] = *(__IO uint8_t*)(FLASH_BASE + addr  + i);
+		if(data[i] == 0 || data[i] == 0xff) {
+			data[i] = 0;
+			break;
+		}
+	}
 }
 #endif /* FLASH_FLASH_C_ */

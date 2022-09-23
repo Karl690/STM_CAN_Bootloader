@@ -5,9 +5,7 @@
  *      Author: hyrel
  */
 #pragma once
-#ifndef INC_TASKMANAGER_H_
-#define INC_TASKMANAGER_H_
-
+#include "main.h"
 typedef void (*PFUNC)(void);
 
 #define NUM_1000HZ              8
@@ -28,7 +26,13 @@ typedef enum {
 	HZ_1        = 3
 } indexType;
 
+enum {
+	TASK_CAN_SEND_SOAPSTRING,
+	TASK_FLASH_WRITE_SOAPSTRING,
+	TASK_IDLE,
+};
 
+extern uint8_t  SoapString[0x400];
 extern uint32_t HeartBeat;
 extern uint32_t Seconds;               // needed for heartbeat (number of seconds since boot)
 extern uint16_t SliceCnt;              // current slice being processed
@@ -37,6 +41,8 @@ extern uint16_t MaxTaskTime[32];       // Maximum execution time
 extern uint16_t SliceOffset;
 extern uint16_t ADC_Value[8];
 
+extern uint16_t SmallTaskType;
+extern uint32_t SmallTaskCount;
 
 void func_SystickCallback(void);
 void Spare (void);
@@ -49,5 +55,6 @@ void PWMSweeper(void);
 void ClearSliceTimes(void);
 void ReadAdcValue();
 
+void SmallTask(void);
 
-#endif /* INC_TASKMANAGER_H_ */
+

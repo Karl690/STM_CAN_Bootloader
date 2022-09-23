@@ -6,9 +6,11 @@
  */
 
 #include "configure.h"
+#include "taskmanager.h"
 #include "can.h"
 #include "ADC/adc.h"
 #include "RCC/rcc.h"
+#include "FLASH/flash.h"
 
 CanRxMsg 				CanRxMessage;
 CanTxMsg 				CanTxMessage;
@@ -163,7 +165,7 @@ void CAN_Receive(CAN_TypeDef* CANx, uint8_t FIFONumber, CanRxMsg* RxMessage)
 //		size is the length of buffer.
 
 
-void SendCanMessage(uint32_t id, uint8_t* data, uint8_t size)
+uint8_t SendCanMessage(uint32_t id, uint8_t* data, uint8_t size)
 {
 
 	//CanTxMessage.RTR= CAN_RTR_DATA;
@@ -187,34 +189,33 @@ void SendCanMessage(uint32_t id, uint8_t* data, uint8_t size)
 	else
 	{
 		CanTransmitMailbox = CAN_TxStatus_NoMailBox;
+		return ERROR;
 	}
 
-	if (CanTransmitMailbox != CAN_TxStatus_NoMailBox) {
-		CAN1->sTxMailBox[CanTransmitMailbox].TIR &= TMIDxR_TXRQ;
 
-		CAN1->sTxMailBox[CanTransmitMailbox].TIR |= ((id << 3) | \
-													CAN_Id_Extended | \
-														CAN_RTR_Data);
+	CAN1->sTxMailBox[CanTransmitMailbox].TIR &= TMIDxR_TXRQ;
 
-		/* Set up the DLC */
+	CAN1->sTxMailBox[CanTransmitMailbox].TIR |= ((id << 3) | \
+												CAN_Id_Extended | \
+													CAN_RTR_Data);
 
-		CAN1->sTxMailBox[CanTransmitMailbox].TDTR &= (uint32_t)0xFFFFFFF0;
-		CAN1->sTxMailBox[CanTransmitMailbox].TDTR |= size; //Data Size
+	/* Set up the DLC */
 
-		/* Set up the data field */
-		CAN1->sTxMailBox[CanTransmitMailbox].TDLR = (((uint32_t)data[3] << 24) |
-												 ((uint32_t)data[2] << 16) |
-												 ((uint32_t)data[1] << 8) |
-												 ((uint32_t)data[0]));
-		CAN1->sTxMailBox[CanTransmitMailbox].TDHR = (((uint32_t)data[7] << 24) |
-												 ((uint32_t)data[6] << 16) |
-												 ((uint32_t)data[5] << 8) |
-												 ((uint32_t)data[4]));
-		/* Request transmission */
-		CAN1->sTxMailBox[CanTransmitMailbox].TIR |= TMIDxR_TXRQ;
-	}
-	//CanTransmitMailbox = CAN_Transmit(CAN1, &CanTxMessage);
-	CanTrasmitMsgWaitCounter = 0xFFFF; //it would be count down until Can trasmit is ok..
+	CAN1->sTxMailBox[CanTransmitMailbox].TDTR &= (uint32_t)0xFFFFFFF0;
+	CAN1->sTxMailBox[CanTransmitMailbox].TDTR |= size; //Data Size
+
+	/* Set up the data field */
+	CAN1->sTxMailBox[CanTransmitMailbox].TDLR = (((uint32_t)data[3] << 24) |
+											 ((uint32_t)data[2] << 16) |
+											 ((uint32_t)data[1] << 8) |
+											 ((uint32_t)data[0]));
+	CAN1->sTxMailBox[CanTransmitMailbox].TDHR = (((uint32_t)data[7] << 24) |
+											 ((uint32_t)data[6] << 16) |
+											 ((uint32_t)data[5] << 8) |
+											 ((uint32_t)data[4]));
+	/* Request transmission */
+	CAN1->sTxMailBox[CanTransmitMailbox].TIR |= TMIDxR_TXRQ;
+	return SUCCESS;
 }
 
 /**
@@ -291,7 +292,7 @@ void CAN1_RX1_IRQHandler(void)
 		pInBuffer->SourceAddress = (CanRxMessage.ExtId >> 12) & 0xFF;
 		pInBuffer->TargetAddress = (CanRxMessage.ExtId >> 20) & 0xFF;
 		CanRxInIndex ++;
-		CanRxInIndex &= CAN_MSG_BUFFER_SIZE;
+		if(CanRxInIndex >= CAN_MSG_BUFFER_SIZE) CanRxInIndex = 0;
 	}
 	//CAN1->RF1R |= CAN_RF1R_RFOM1;   // Release FIFO1
 }
@@ -324,14 +325,23 @@ void ProcessCanRxMessage(void)
 {
 	if(CanRxInIndex == CanRxOutIndex) return;
 	CANMsg* pOutBuffer = &CanRxMsgBuffer[CanRxOutIndex];
-
+	uint16_t address = 0;
 	switch(pOutBuffer->MsgType)
 	{
 	case CAN_WRITE:
 		switch(pOutBuffer->MsgId)
 		{
 		case CAN_MSG_SOAP_STRING:
-			WriteSoapString(pOutBuffer->Data, pOutBuffer->Page);
+			address = (uint16_t)(pOutBuffer->Data[0] + (pOutBuffer->Data[1] << 8));
+			for(uint8_t i = 2; i < pOutBuffer->DataSize; i ++)
+			{
+				SoapString[address + i -2] = pOutBuffer->Data[i];
+				if(SoapString[address + i -2] == 0) {
+					SmallTaskCount = 0;
+					SmallTaskType = TASK_FLASH_WRITE_SOAPSTRING; //Start the task to write SoapString to Flash 0x8007C00 address
+					break;
+				}
+			}
 			break;
 		}
 		break;
@@ -339,20 +349,23 @@ void ProcessCanRxMessage(void)
 		switch(pOutBuffer->MsgId)
 		{
 		case CAN_MSG_SOAP_STRING:
-			ReadSoapString(pOutBuffer->Data, pOutBuffer->Page);
-			CanAddTxBuffer(HYDRA_CONTROLLOR, CAN_READ, CAN_MSG_SOAP_STRING, pOutBuffer->Page, 0, pOutBuffer->Data, 8);
+			//                   Address                            Length                           Out buffer
+			ReadFlashData(BYTES2UINT32(&pOutBuffer->Data[0]), BYTES2UINT32(&pOutBuffer->Data[4]), SoapString); //Read the soap string from Flash
+			SmallTaskCount = 0;
+			SmallTaskType = TASK_CAN_SEND_SOAPSTRING;
 			break;
 		}
 		break;
 	}
 	CanRxOutIndex ++;
-	CanRxOutIndex &= CAN_MSG_BUFFER_SIZE;
+	if(CanRxOutIndex >= CAN_MSG_BUFFER_SIZE) CanRxOutIndex =0;
 }
 void ProcessCanTxMessage(void)
 {
 	if(CanTxInIndex == CanTxOutIndex) return;
 	CANMsg* pOutBuffer = &CanTxMsgBuffer[CanTxOutIndex];
-	SendCanMessage(pOutBuffer->ID, pOutBuffer->Data, pOutBuffer->DataSize);
-	CanTxOutIndex ++;
-	CanTxOutIndex &= CAN_MSG_BUFFER_SIZE;
+	if(SendCanMessage(pOutBuffer->ID, pOutBuffer->Data, pOutBuffer->DataSize) == SUCCESS) {
+		CanTxOutIndex ++;
+		if(CanTxOutIndex >= CAN_MSG_BUFFER_SIZE) CanTxOutIndex = 0;
+	}
 }
