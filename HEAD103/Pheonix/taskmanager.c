@@ -222,6 +222,7 @@ void SmallTask(void)
 		break;
 	}
 	SmallTaskCount ++;
+	if(SmallTaskCount >= TASK_MAXCOUNT) SmallTaskCount = 0;;
 }
 
 

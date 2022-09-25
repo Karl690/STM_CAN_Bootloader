@@ -32,6 +32,8 @@ enum {
 	TASK_IDLE,
 };
 
+#define TASK_MAXCOUNT	0xFFFF
+
 extern uint8_t  SoapString[0x400];
 extern uint32_t HeartBeat;
 extern uint32_t Seconds;               // needed for heartbeat (number of seconds since boot)

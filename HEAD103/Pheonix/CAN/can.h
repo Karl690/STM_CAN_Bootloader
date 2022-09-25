@@ -369,7 +369,7 @@ typedef struct
 #define CAN_READ                    0b00        // 0x00
 #define CAN_WRITE                   0b01        // 0x01
 
-#define CAN_MSG_BUFFER_SIZE			0x3F
+#define CAN_MSG_BUFFER_SIZE			0x0F
 
 ////////CAN MESSAGE ID////////////////////
 #define CAN_MSG_BOOT				0x70

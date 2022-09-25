@@ -322,7 +322,7 @@ void CanAddTxBuffer(uint16_t target, uint8_t msgType, uint8_t msgId, uint8_t pag
 	pOutBuffer->TargetAddress = target;
 
 	CanTxInIndex ++;
-	CanTxInIndex &= CAN_MSG_BUFFER_SIZE;
+	if(CanTxInIndex >= CAN_MSG_BUFFER_SIZE) CanTxInIndex =0;
 }
 
 void ProcessCanRxMessage(void)
