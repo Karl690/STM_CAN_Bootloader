@@ -44,8 +44,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-GPIO_TypeDef PGIOZ_fake;
-GPIO_TypeDef *GPIOZ = &PGIOZ_fake;
+//HYREL_GPIO_TypeDef PGIOZ_fake;
+//HYREL_GPIO_TypeDef *GPIOZ = &PGIOZ_fake;
 
 GPIO_TypeDef *pinExtractPortPtr(pinType pin)
 {   // return address pointer to this pin's port
@@ -56,7 +56,6 @@ GPIO_TypeDef *pinExtractPortPtr(pinType pin)
 		case GPIO_PortSourceGPIOA : return(GPIOA);
 		case GPIO_PortSourceGPIOB : return(GPIOB);
 		case GPIO_PortSourceGPIOC : return(GPIOC);
-		default: return(GPIOZ); // pointer to fake I/O mem area
 		}
 	}
 	else
@@ -104,7 +103,9 @@ void pinClear(pinType pin)
 
 	if (pin != PIN_UNDEFINED)
 	{
-		pinExtractPortPtr(pin)->BRR = pinExtractPinMask(pin);
+		pinExtractPortPtr(pin)->BSRR = pinExtractPinMask(pin)<<16;
+
+
 	}
 }
 
@@ -137,7 +138,10 @@ void pinWrite(pinType pin, uint32_t value)
 ////////////////////////////////////////////////////////////////////////////////
 
 uint32_t pinRead(pinType pin)
-{
+{   // grab the IDR for the port belong to the pin and shift results down to move
+	// the desired bit position to the LBS and AND with 0x1 to make sure only
+	// the value from the requested bit is return (returns a 0 or 1)
+
 	if (pin == PIN_UNDEFINED) return(0);
 
 	return((uint32_t)(pinExtractPortPtr(pin)->IDR >> pinExtractPinNum(pin)) & 0x1);
@@ -163,7 +167,7 @@ void pinToggleOutput(pinType pin)
 
 	if (pin == PIN_UNDEFINED) return;
 
-		pinWrite(pin, (~pinReadOutput(pin)) & 0x1);
+	pinWrite(pin, (~pinReadOutput(pin)) & 0x1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

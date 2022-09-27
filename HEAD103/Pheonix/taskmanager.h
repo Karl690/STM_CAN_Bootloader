@@ -57,6 +57,6 @@ void PWMSweeper(void);
 void ClearSliceTimes(void);
 void ReadAdcValue();
 void UpdateLeds();
-void SmallTask(void);
+void CanBusExtendedMessageProcessor(void);
 
 

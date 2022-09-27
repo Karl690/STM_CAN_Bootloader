@@ -16,9 +16,91 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "pins.h"
-#include "gpio.h"
+//#include "gpio.h"
 
 typedef uint32_t pinType;
+
+
+#define PIN_NUM_SHIFT          0        // pin[3:0]
+#define PIN_PORT_NUM_SHIFT     4        // pin[7:4]
+#define PIN_MODE_SHIFT         8        // pin[11:8]
+#define PIN_INIT_VAL_SHIFT     12       // pin[14:12]
+#define PIN_INIT_EN_SHIFT      15       // pin[15]
+#define PIN_MASK_SHIFT         16       // pin[31:16]
+
+
+#define GPIO_PortSourceGPIOA       ((uint8_t)0x00)
+#define GPIO_PortSourceGPIOB       ((uint8_t)0x01)
+#define GPIO_PortSourceGPIOC       ((uint8_t)0x02)
+#define GPIO_PortSourceGPIOD       ((uint8_t)0x03)
+#define GPIO_PortSourceGPIOE       ((uint8_t)0x04)
+#define GPIO_PortSourceGPIOF       ((uint8_t)0x05)
+#define GPIO_PortSourceGPIOG       ((uint8_t)0x06)
+#define GPIO_PortSourceGPIOH       ((uint8_t)0x07)
+#define GPIO_PortSourceGPIOI       ((uint8_t)0x08)
+
+#define PIN_NUM_00             ((0x0 << PIN_NUM_SHIFT) | (0x0001 << PIN_MASK_SHIFT))
+#define PIN_NUM_01             ((0x1 << PIN_NUM_SHIFT) | (0x0002 << PIN_MASK_SHIFT))
+#define PIN_NUM_02             ((0x2 << PIN_NUM_SHIFT) | (0x0004 << PIN_MASK_SHIFT))
+#define PIN_NUM_03             ((0x3 << PIN_NUM_SHIFT) | (0x0008 << PIN_MASK_SHIFT))
+#define PIN_NUM_04             ((0x4 << PIN_NUM_SHIFT) | (0x0010 << PIN_MASK_SHIFT))
+#define PIN_NUM_05             ((0x5 << PIN_NUM_SHIFT) | (0x0020 << PIN_MASK_SHIFT))
+#define PIN_NUM_06             ((0x6 << PIN_NUM_SHIFT) | (0x0040 << PIN_MASK_SHIFT))
+#define PIN_NUM_07             ((0x7 << PIN_NUM_SHIFT) | (0x0080 << PIN_MASK_SHIFT))
+#define PIN_NUM_08             ((0x8 << PIN_NUM_SHIFT) | (0x0100 << PIN_MASK_SHIFT))
+#define PIN_NUM_09             ((0x9 << PIN_NUM_SHIFT) | (0x0200 << PIN_MASK_SHIFT))
+#define PIN_NUM_10             ((0xa << PIN_NUM_SHIFT) | (0x0400 << PIN_MASK_SHIFT))
+#define PIN_NUM_11             ((0xb << PIN_NUM_SHIFT) | (0x0800 << PIN_MASK_SHIFT))
+#define PIN_NUM_12             ((0xc << PIN_NUM_SHIFT) | (0x1000 << PIN_MASK_SHIFT))
+#define PIN_NUM_13             ((0xd << PIN_NUM_SHIFT) | (0x2000 << PIN_MASK_SHIFT))
+#define PIN_NUM_14             ((0xe << PIN_NUM_SHIFT) | (0x4000 << PIN_MASK_SHIFT))
+#define PIN_NUM_15             ((0xf << PIN_NUM_SHIFT) | (0x8000 << PIN_MASK_SHIFT))
+
+#define PIN_MASK_00  0x0001
+#define PIN_MASK_01  0x0002
+#define PIN_MASK_02  0x0004
+#define PIN_MASK_03  0x0008
+#define PIN_MASK_04  0x0010
+#define PIN_MASK_05  0x0020
+#define PIN_MASK_06  0x0040
+#define PIN_MASK_07  0x0080
+#define PIN_MASK_08  0x0100
+#define PIN_MASK_09  0x0200
+#define PIN_MASK_10  0x0400
+#define PIN_MASK_11  0x0800
+#define PIN_MASK_12  0x1000
+#define PIN_MASK_13  0x2000
+#define PIN_MASK_14  0x4000
+#define PIN_MASK_15  0x8000
+
+
+#define ANALOG_IN       (0b0000 << PIN_MODE_SHIFT)
+#define IN_HI_Z         (0b0100 << PIN_MODE_SHIFT)
+#define IN_PULL_UP      (0b1000 << PIN_MODE_SHIFT)
+#define IN_PULL_DN      (0b1000 << PIN_MODE_SHIFT)
+
+#define OUT_PP_02MHZ    (0b0010 << PIN_MODE_SHIFT)
+#define OUT_OD_02MHZ    (0b0110 << PIN_MODE_SHIFT)
+#define AF_OPP_02MHZ    (0b1010 << PIN_MODE_SHIFT)
+#define AF_OOD_02MHZ    (0b1110 << PIN_MODE_SHIFT)
+
+#define OUT_PP_10MHZ    (0b0001 << PIN_MODE_SHIFT)
+#define OUT_OD_10MHZ    (0b0101 << PIN_MODE_SHIFT)
+#define AF_OPP_10MHZ    (0b1001 << PIN_MODE_SHIFT)
+#define AF_OOD_10MHZ    (0b1101 << PIN_MODE_SHIFT)
+
+#define OUT_PP_50MHZ    (0b0011 << PIN_MODE_SHIFT)
+#define OUT_OD_50MHZ    (0b0111 << PIN_MODE_SHIFT)
+#define AF_OPP_50MHZ    (0b1011 << PIN_MODE_SHIFT)
+#define AF_OOD_50MHZ    (0b1111 << PIN_MODE_SHIFT)
+
+#define PIN_INIT_NONE   (0 << PIN_INIT_EN_SHIFT)
+#define PIN_INIT_LOW    ((1 << PIN_INIT_EN_SHIFT) | (0 << PIN_INIT_VAL_SHIFT))   // lsb 0
+#define PIN_INIT_HIGH   ((1 << PIN_INIT_EN_SHIFT) | (1 << PIN_INIT_VAL_SHIFT))   // lsb 1
+#define PIN_INIT_PLDN   ((1 << PIN_INIT_EN_SHIFT) | (2 << PIN_INIT_VAL_SHIFT))   // lsb 0
+#define PIN_INIT_PLUP   ((1 << PIN_INIT_EN_SHIFT) | (3 << PIN_INIT_VAL_SHIFT))   // lsb 1
+#define PIN_INIT_HIZ    ((1 << PIN_INIT_EN_SHIFT) | (4 << PIN_INIT_VAL_SHIFT))   // lsb 0
+
 
 #define PIN_PORT_A      ((uint32_t)(GPIO_PortSourceGPIOA) << PIN_PORT_NUM_SHIFT)
 #define PIN_PORT_B      ((uint32_t)(GPIO_PortSourceGPIOB) << PIN_PORT_NUM_SHIFT)
@@ -103,10 +185,29 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////
 //  Public Methods available in pin
 ////////////////////////////////////////////////////////////////////////////////
+typedef union {
+	uint32_t u32;
+	struct {
+		unsigned pinNum     : 4;    // shift 0
+		unsigned portNum    : 4;    // shift 4
+		unsigned mode       : 4;    // shift 8
+		unsigned initVal    : 3;    // shift 12
+		unsigned initEn     : 1;    // shift 15
+		unsigned pinMask    : 16;   // shift 16
+	} b;
+} pinUnion_t;
 
-#define PIN_CLEAR(a,b) (if (a) a->BRR  = b;)
-//pinExtractPortPtr(pin)->BSRR = pinExtractPinMask(pin);
-#define PIN_SET(a,b)   (if (a) a->BSRR = b;)
+typedef enum
+{ GPIO_Mode_AIN = 0x0,
+  GPIO_Mode_IN_FLOATING = 0x04,
+  GPIO_Mode_IPD = 0x28,
+  GPIO_Mode_IPU = 0x48,
+  GPIO_Mode_Out_OD = 0x14,
+  GPIO_Mode_Out_PP = 0x10,
+  GPIO_Mode_AF_OD = 0x1C,
+  GPIO_Mode_AF_PP = 0x18
+}GPIOMode_TypeDef;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

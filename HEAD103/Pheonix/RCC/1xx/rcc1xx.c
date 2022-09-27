@@ -81,29 +81,6 @@ void RCC_DeInit(void)
 
 }
 
-void wait500ns(void)
-{
-	uint8_t i;
-	for (i=0; i<8; i++);
-}
-void wait1usec(void)
-{
-	wait500ns();
-	wait500ns();
-}
-
-void wait2usec(void)
-{//kills a few microseconds
-	wait1usec();
-	wait1usec();
-}
-void WaitUsec(uint32_t delay) // it is micro second
-{
-	while(delay) {
-		wait1usec();
-		delay --;
-	}
-}
 // SysTick_Handler function will be called every 1 us
 void SysTick_Handler(uint32_t us)
 {

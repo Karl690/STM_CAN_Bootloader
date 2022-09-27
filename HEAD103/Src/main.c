@@ -19,14 +19,14 @@
  ******************************************************************************
  */
 
+#include <ANALOG/adc.h>
 #include <stdint.h>
 #include "stm32f10x.h"
 #include "system_stm32f10x.h"
 
 #include "main.h"
 #include "RCC/rcc.h"
-#include "CAN/can.h"
-#include "ADC/adc.h"
+#include "Communication/can.h"
 #include "GPIO/pinout.h"
 #include "taskmanager.h"
 
@@ -35,9 +35,9 @@ uint8_t Initialized = 0;
 int main(void)
 {
 	InitRCC();
-	InitGPIO();
-	InitADC();
-	InitCAN();
+	GPIO_Init();
+	ADC_Init();
+	CAN_Init();
 
 	WaitMicrosecond(1000); //wait 1s until plugging head in safely
 	//it wait until getting current Head position from ADC.
@@ -51,7 +51,7 @@ int main(void)
 //	}
 	//Set the Initialized flag.
 
-	InitLeds();
+	Leds_Init();
 	Initialized = 1;
 	CurrentHeadCanAddress = HEAD_02; //for debugging. it would be removed later.
 

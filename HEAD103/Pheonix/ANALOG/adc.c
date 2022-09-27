@@ -1,4 +1,4 @@
-#include "adc.h"
+#include <ANALOG/adc.h>
 #include "RCC/rcc.h"
 
 AdcPositionTableStruct const DevicePositionTable[] __attribute__((aligned(4))) =
@@ -39,7 +39,7 @@ uint16_t                AddressAdcValue=0xFFFF;//invalid value until it starts u
 uint16_t				TempADCReading;
 uint32_t 				AdcReadWaitCounter = MAX_COUNTDOWN;
 
-void InitADC()		// bootloader version
+void ADC_Init()		// bootloader version
 {
 	RCC->CFGR &= CFGR_ADCPRE_Reset_Mask; 					//clock for ADC (max 14MHz --> 72/6=12MHz)
 	RCC->CFGR |= RCC_PCLK2_Div6; // 0x0008000

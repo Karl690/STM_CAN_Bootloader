@@ -5,10 +5,10 @@
  *      Author: hyrel
  */
 
+#include <ANALOG/adc.h>
 #include "configure.h"
 #include "taskmanager.h"
 #include "can.h"
-#include "ADC/adc.h"
 #include "RCC/rcc.h"
 #include "FLASH/flash.h"
 
@@ -31,7 +31,7 @@ uint16_t				CanTxInIndex = 0;
 uint16_t				CanTxOutIndex = 0;
 uint16_t 				CanTxLedCountDown = 0;
 CANMsg 					CanTxMsgBuffer[CAN_MSG_BUFFER_SIZE];
-void InitCAN()
+void CAN_Init()
 {
 	/* CAN register init*/
 		//First, Deinitializes the CAN peripheral registers to their default reset values.
@@ -219,59 +219,6 @@ uint8_t SendCanMessage(uint32_t id, uint8_t* data, uint8_t size)
 	CAN1->sTxMailBox[CanTransmitMailbox].TIR |= TMIDxR_TXRQ;
 	CanTxLedCountDown = LED_ON_MAXCOUNT;
 	return SUCCESS;
-}
-
-/**
-  * @brief  Checks the transmission of a message.
-  * @param  CANx:            where x can be 1 or 2 to to select the
-  *                          CAN peripheral.
-  * @param  TransmitMailbox: the number of the mailbox that is used for
-  *                          transmission.
-  * @retval CAN_TxStatus_Ok if the CAN driver transmits the message, CAN_TxStatus_Failed
-  *         in an other case.
-  */
-uint8_t CAN_TransmitStatus(CAN_TypeDef* CANx, uint8_t TransmitMailbox)
-{
-  uint32_t state = 0;
-
-  switch (TransmitMailbox)
-  {
-    case (CAN_TXMAILBOX_0):
-      state =   CANx->TSR &  (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0);
-      break;
-    case (CAN_TXMAILBOX_1):
-      state =   CANx->TSR &  (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1);
-      break;
-    case (CAN_TXMAILBOX_2):
-      state =   CANx->TSR &  (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2);
-      break;
-    default:
-      state = CAN_TxStatus_Failed;
-      break;
-  }
-  switch (state)
-  {
-      /* transmit pending  */
-    case (0x0): state = CAN_TxStatus_Pending;
-      break;
-      /* transmit failed  */
-     case (CAN_TSR_RQCP0 | CAN_TSR_TME0): state = CAN_TxStatus_Failed;
-      break;
-     case (CAN_TSR_RQCP1 | CAN_TSR_TME1): state = CAN_TxStatus_Failed;
-      break;
-     case (CAN_TSR_RQCP2 | CAN_TSR_TME2): state = CAN_TxStatus_Failed;
-      break;
-      /* transmit succeeded  */
-    case (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0):state = CAN_TxStatus_Ok;
-      break;
-    case (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1):state = CAN_TxStatus_Ok;
-      break;
-    case (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2):state = CAN_TxStatus_Ok;
-      break;
-    default: state = CAN_TxStatus_Failed;
-      break;
-  }
-  return (uint8_t) state;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

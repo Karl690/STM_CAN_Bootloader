@@ -386,7 +386,7 @@ extern uint8_t 				CanMessageBuffer[]; //this is a buffer for CAN message transm
 extern uint16_t 			CanTxLedCountDown;
 extern uint16_t 			CanRxLedCountDown;
 
-void InitCAN();
+void CAN_Init();
 void CheckCanMsgWaitingFifo1(void);
 void ProcessCanRxMessage(void);
 void ProcessCanTxMessage(void);

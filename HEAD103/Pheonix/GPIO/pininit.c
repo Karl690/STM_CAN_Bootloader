@@ -1,17 +1,7 @@
-/*
- * pininit.c
- *
- *  Created on: May 18, 2022
- *      Author: hyrel
- */
-
-#ifndef PININIT_C_
-#define PININIT_C_
-
 #include "pinout.h"
 #include "pins.h"
 
-void InitGPIO(void)
+void GPIO_Init(void)
 {
 	AFIO->MAPR &= 0xf8ffffff;
 	AFIO->MAPR |= 0x02000000; //FOR JTAG
@@ -31,8 +21,9 @@ void InitGPIO(void)
 	pinInit(PIN_ADC_POSITION);
 }
 
-void InitLeds()
+void Leds_Init()
 {
+	//Turn off all leds.
 	LED_CAN_RX_OFF;
 	LED_CAN_TX_OFF;
 	LED_ERROR_OFF;
@@ -41,5 +32,3 @@ void InitLeds()
 	LED_FANCOD_POWER_OFF;
 	LED_MOTOR_POWER_OFF;
 }
-
-#endif /* PININIT_C_ */

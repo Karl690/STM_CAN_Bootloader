@@ -51,6 +51,6 @@ typedef struct {
 extern uint16_t             AddressAdcValue;//invalid value until it starts updating
 extern uint16_t				TempADCReading;
 
-void InitADC();		// bootloader version
+void ADC_Init();		// bootloader version
 void AdcConvertCanAddress();
 void CalculateDevicePosition();

@@ -9,19 +9,14 @@
  *      it is in stm32h7xx_hal.c
  *      in the current version we set the value to 8000
  */
+#include <ANALOG/adc.h>
 #include <stdlib.h>
 #include "taskmanager.h"
 #include "GPIO/pinout.h"
-#include "ADC/adc.h"
-#include "CAN/can.h"
+#include "Communication/can.h"
 #include "FLASH/flash.h"
 uint32_t PWMSubCounter=0;
 uint8_t  ch = 0;
-
-//uint16_t                    	ExtendedSliceTimeNeeded = 0;   // down counter of extra slice times needed
-//uint32_t                    	Seconds = 0;               // needed for heartbeat (number of seconds since boot)
-//uint16_t                    	SliceCnt = 0;              // current slice being processed
-
 
 uint8_t  SoapString[0x400] = {0};
 uint32_t HeartBeat = 0;
@@ -51,8 +46,8 @@ const PFUNC F1000HZ[NUM_1000HZ] =
 {
 		Spare,    // keep as last call in this array
 		Spare, //ParseIncomingLineIntoGCodeArgs,//canProcessTxQueueNoReturn,
-		Spare, //ConvertArgsToFloat,
-		Spare, //CheckForUart6TxRx,//serialProcessor,
+		ProcessCanRxMessage,
+		ProcessCanTxMessage,
 };
 
 const PFUNC F100HZ[NUM_100HZ] =
@@ -61,8 +56,8 @@ const PFUNC F100HZ[NUM_100HZ] =
 		Spare,//ParseIncomingGcodeLine,             // can't use slice 0 and this is time slot to execute the next slower slice
 		Spare, //Sequencer,
 		Spare, //CheckCanMsgWaitingFifo1,
-		ProcessCanRxMessage,
-		ProcessCanTxMessage,
+		CanBusExtendedMessageProcessor,
+		Spare,
 		UpdateLeds,
 		Spare, //USBTxProcessor,
 
@@ -73,7 +68,7 @@ const PFUNC F10HZ[NUM_10HZ] =
 		Spare,//ReportXYZLocation,
 		Spare,            // can't use slice 0 and this is time slot to execute the next slower slice
 		Spare,//loop_10Hz_simple_work,  // keep as last call in this array
-		SmallTask,//soapstringController,
+		Spare,//soapstringController,
 		Spare,//sendUpdateToHost,
 		Spare,//checkBlockingWaits,
 		Spare, //Sequencer,,//EdgeTriggerSendResults, // move into simple_work if space needed
@@ -177,7 +172,7 @@ void UpdateLeds()
 	if(CanTxLedCountDown) { CanTxLedCountDown --;  LED_CAN_TX_ON;	}
 	else LED_CAN_TX_OFF;
 }
-void SmallTask(void)
+void CanBusExtendedMessageProcessor(void)
 {
 	switch(SmallTaskType) {
 	case TASK_CAN_SEND_SOAPSTRING:

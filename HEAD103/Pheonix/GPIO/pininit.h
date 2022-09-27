@@ -5,9 +5,7 @@
  *      Author: hyrel
  */
 #pragma once
-#ifndef PININIT_H_
-#define PININIT_H_
 
 
-extern void InitGPIO(void);
-#endif /* PININIT_H_ */
+void GPIO_Init(void);
+

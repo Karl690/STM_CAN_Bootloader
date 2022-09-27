@@ -8,18 +8,27 @@
 #ifndef CONFIGURE_H_
 #define CONFIGURE_H_
 
-#define STM32F103x6
-//#define STM32F407
-//#define STM32H750
 
-#ifdef STM32F103x6
-//#define USE_LCD
-#elif defined(STM32F407)
-#elif defined(STM32H750)
+#define HH103
+//#define PHEONIX750
+//#define ESR407
+
+#ifdef HH103
+#elif defined(PHEONIX750)
+#ifndef STM32H750xx
+#define STM32H750xx
+#endif
+#elif defined(ESR407)
 #endif
 
-#define POSITION_UNPLUGGED           0xFE	//254
-#define SYSCLK_FREQ_72MHz  			72000000
+
+
+/* Display Compiling Option */
+#define LCD_SPI_PORT 4
+
+//#define ST7735
+#define ST7789
+//#define ILI9341
 #define MAX_ADC 					0x0fff
 
 #define CAN_DEV_HOST				0x40
