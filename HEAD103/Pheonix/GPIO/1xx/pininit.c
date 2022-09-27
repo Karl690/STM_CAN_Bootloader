@@ -1,5 +1,7 @@
-#include "pinout.h"
-#include "pins.h"
+#include "configure.h"
+#ifdef HH103
+#include "pins1xx.h"
+#include <GPIO/1xx/pinoutHH103.h>
 
 void GPIO_Init(void)
 {
@@ -32,3 +34,4 @@ void Leds_Init()
 	LED_FANCOD_POWER_OFF;
 	LED_MOTOR_POWER_OFF;
 }
+#endif

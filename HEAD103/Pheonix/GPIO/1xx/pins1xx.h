@@ -1,23 +1,7 @@
-#ifndef pins_HEADER // prevent double dipping
-#define pins_HEADER
-////////////////////////////////////////////////////////////////////////////////
-//
-// File:    pins.h
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// Purpose: Contains common pin/gpio specific defines, global references, and method prototypes
-//          for both 103 and 407/429 designed
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// Copyright 2013  HYREL 3D, LLC.   All rights reserved.
-//
-////////////////////////////////////////////////////////////////////////////////
-
-#include "pins.h"
-//#include "gpio.h"
-
+#pragma once
+#include "configure.h"
+#ifdef HH103
+#include "main.h"
 typedef uint32_t pinType;
 
 
@@ -275,10 +259,6 @@ typedef enum
 #define PGout(n)   BIT_ADDR(GPIOG_ODR_ADDR,n)
 #define PGin(n)    BIT_ADDR(GPIOG_IDR_ADDR,n)
 
-////////////////////////////////////////////////////////////////////////////////
-
-extern GPIO_TypeDef *GPIOZ;
-
 extern GPIO_TypeDef *pinExtractPortPtr(pinType);
 extern void pinInit(pinType);
 extern void pinClear(pinType);
@@ -289,4 +269,4 @@ extern uint32_t pinReadOutput(pinType);
 extern void pinToggleOutput(pinType);
 
 ////////////////////////////////////////////////////////////////////////////////
-#endif // #ifndef pins_HEADER // prevent double dipping - MUST BE LAST LINE OF FILE
+#endif

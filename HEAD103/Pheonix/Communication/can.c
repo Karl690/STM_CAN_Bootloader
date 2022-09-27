@@ -5,7 +5,6 @@
  *      Author: hyrel
  */
 
-#include <ANALOG/adc.h>
 #include "configure.h"
 #include "taskmanager.h"
 #include "can.h"

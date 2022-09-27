@@ -14,10 +14,18 @@
 //#define ESR407
 
 #ifdef HH103
+#ifndef STM32F103x6
+#define STM32F103x6s
+#ifndef STM32F10X_LD
+#define STM32F10X_LD
+#endif
+#endif
+
 #elif defined(PHEONIX750)
 #ifndef STM32H750xx
 #define STM32H750xx
 #endif
+
 #elif defined(ESR407)
 #endif
 

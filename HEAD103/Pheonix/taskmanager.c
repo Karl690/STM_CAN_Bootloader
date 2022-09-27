@@ -9,10 +9,10 @@
  *      it is in stm32h7xx_hal.c
  *      in the current version we set the value to 8000
  */
-#include <ANALOG/adc.h>
 #include <stdlib.h>
 #include "taskmanager.h"
 #include "GPIO/pinout.h"
+#include "ANALOG/adc.h"
 #include "Communication/can.h"
 #include "FLASH/flash.h"
 uint32_t PWMSubCounter=0;
@@ -146,11 +146,12 @@ void BlinkHeartBeat()
 {
 
 	HeartBeat++;
-	if(HeartBeat&1)
-	{ LED_HEARTBEAT_ON;}
-	else
-	{ LED_HEARTBEAT_OFF;}
-
+//	if(HeartBeat&1)
+//	{ LED_HEARTBEAT_ON;}
+//	else
+//	{ LED_HEARTBEAT_OFF;}
+//
+	pinToggleOutput(LED_HEARTBEAT);
 	//CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_HEARTBEAT, HeartBeat & 0x3, 0, 0, 0);
 
 }

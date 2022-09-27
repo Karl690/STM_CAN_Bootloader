@@ -388,6 +388,7 @@ extern uint16_t 			CanRxLedCountDown;
 
 void CAN_Init();
 void CheckCanMsgWaitingFifo1(void);
+void CanAddTxBuffer(uint16_t target, uint8_t msgType, uint8_t msgId, uint8_t page, uint8_t immediate,  uint8_t* data, uint8_t size);
 void ProcessCanRxMessage(void);
 void ProcessCanTxMessage(void);
 #endif /* CAN_CAN_H_ */

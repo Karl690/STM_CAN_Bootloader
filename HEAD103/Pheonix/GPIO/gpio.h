@@ -1,5 +1,14 @@
+#pragma once
+#include "configure.h"
+#ifdef HH103
+#include "1xx/pins1xx.h"
 
-#ifdef STM32F103x6
-//#include <GPIO/1xx_/gpio1xx.h>
-//#include <GPIO/1xx_/pins1xx.h>
-#endif /* GPIO_GPIO_H_ */
+#elif defined(ESR407)
+#include "4xx/pins4xx.h"
+
+#elif defined(PHEONIX750)
+#include "7xx/pins7xx.h"
+#endif
+
+extern void GPIO_Init(void);
+extern void Leds_Init(void);

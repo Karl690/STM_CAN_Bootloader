@@ -19,15 +19,16 @@
  ******************************************************************************
  */
 
-#include <ANALOG/adc.h>
 #include <stdint.h>
 #include "stm32f10x.h"
 #include "system_stm32f10x.h"
 
 #include "main.h"
+
 #include "RCC/rcc.h"
 #include "Communication/can.h"
-#include "GPIO/pinout.h"
+#include "GPIO/gpio.h"
+#include "ANALOG/adc.h"
 #include "taskmanager.h"
 
 uint8_t Initialized = 0;
