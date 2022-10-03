@@ -23,13 +23,13 @@ void RCC_APB2PeriphResetCmd(uint32_t RCC_APB2Periph, FunctionalState NewState)
 }
 
 
-void InitRCC()
+void RCC_Init()
 {
     // Update SystemCoreClock value
 	SystemCoreClockUpdate();
     // Configure the SysTick timer to overflow every 1 us
     //SysTick_Config(SYSCLK_FREQ_72MHz / 1000000);
-	SysTick_Config(SYSCLK_FREQ_72MHz / SYSTICKS_PER_SECOND);
+	SysTick_Config(SystemCoreClock / 2000);//SYSTICKS_PER_SECOND);
 	//SysTick->LOAD = 72000-1;
 	//SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
     //Enable GPIOA clock

@@ -34,8 +34,6 @@ void CAN_Init()
 {
 	/* CAN register init*/
 		//First, Deinitializes the CAN peripheral registers to their default reset values.
-	RCC->APB1RSTR |= RCC_APB1Periph_CAN1;  /* Enable CAN1 reset state */
-	RCC->APB1RSTR &= ~RCC_APB1Periph_CAN1; /* Release CAN1 from reset state */
 
 	uint32_t temp = 0;
 	//Initializes the CAN peripheral according to the specified         parameters in the CAN_InitStruct.(CAN_Init(CAN1, &CAN_InitStructure))
@@ -226,7 +224,7 @@ void CAN1_RX1_IRQHandler(void)
 {
 	CAN_Receive(CAN1, CAN_FIFO1, &CanRxMessage);
 	CanRxTargetId = (CanRxMessage.ExtId >> 20) & 0xFF;
-	if(CanRxTargetId == CurrentHeadCanAddress) //if Head Address is same as Can message Head identifier.
+	if(CanRxTargetId == CurrentHeadCanAddress || CanRxTargetId == CAN_BROADCAST_ADDRESS) //if Head Address is same as Can message Head identifier.
 	{
 		CanRxLedCountDown = LED_ON_MAXCOUNT;
 		CANMsg* pInBuffer = &CanRxMsgBuffer[CanRxInIndex];
@@ -287,8 +285,8 @@ void ProcessCanRxMessage(void)
 			{
 				SoapString[address + i -2] = pOutBuffer->Data[i];
 				if(SoapString[address + i -2] == 0) {
-					SmallTaskCount = 0;
-					SmallTaskType = TASK_FLASH_WRITE_SOAPSTRING; //Start the task to write SoapString to Flash 0x8007C00 address
+					CanMsgProcessorCount = 0;
+					CanMsgProcessorType = TASK_FLASH_WRITE_SOAPSTRING; //Start the task to write SoapString to Flash 0x8007C00 address
 					break;
 				}
 			}
@@ -299,10 +297,10 @@ void ProcessCanRxMessage(void)
 		switch(pOutBuffer->MsgId)
 		{
 		case CAN_MSG_SOAP_STRING:
-			//                   Address                            Length                           Out buffer
+			//                   							Address                            Length                           Out buffer
 			ReadFlashData(FLASH_SOAP_START_ADDRESS + BYTES2UINT32(&pOutBuffer->Data[0]), BYTES2UINT32(&pOutBuffer->Data[4]), SoapString); //Read the soap string from Flash
-			SmallTaskCount = 0;
-			SmallTaskType = TASK_CAN_SEND_SOAPSTRING;
+			CanMsgProcessorCount = 0;
+			CanMsgProcessorType = TASK_CAN_SEND_SOAPSTRING;
 			break;
 		case CAN_MSG_PING:
 			CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_PING, 0, 0, 0, 0);

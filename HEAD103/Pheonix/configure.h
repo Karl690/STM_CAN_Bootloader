@@ -39,6 +39,7 @@
 //#define ILI9341
 #define MAX_ADC 					0x0fff
 
-#define CAN_DEV_HOST				0x40
+#define CAN_DEV_HOST 0x40
+#define CAN_BROADCAST_ADDRESS	0xFF
 
 #endif /* CONFIGURE_H_ */

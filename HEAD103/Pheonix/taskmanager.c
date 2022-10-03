@@ -27,8 +27,8 @@ uint16_t MaxTaskTime[32]={0};       // Maximum execution time
 uint16_t SliceOffset=0;
 uint16_t ADC_Value[8] = {0};
 
-uint16_t SmallTaskType = TASK_IDLE;
-uint32_t SmallTaskCount = 0xFFFF;
+uint16_t CanMsgProcessorType = TASK_IDLE;
+uint32_t CanMsgProcessorCount = 0xFFFF;
 unsigned 									GlobalSync = 1;//causes all timers to reset and synchronize, makes all hot heads on canbus time toghether
 #define GLOBAL_SYNC                         (GlobalSync)
 #define SET_GLOBAL_SYNC_BIT                 (GlobalSync = 1)
@@ -146,13 +146,13 @@ void BlinkHeartBeat()
 {
 
 	HeartBeat++;
-//	if(HeartBeat&1)
-//	{ LED_HEARTBEAT_ON;}
-//	else
-//	{ LED_HEARTBEAT_OFF;}
-//
-	pinToggleOutput(LED_HEARTBEAT);
-	//CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_HEARTBEAT, HeartBeat & 0x3, 0, 0, 0);
+	if(HeartBeat&1)
+	{ LED_HEARTBEAT_ON;}
+	else
+	{ LED_HEARTBEAT_OFF;}
+
+//	pinToggleOutput(LED_HEARTBEAT);
+	CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_HEARTBEAT, HeartBeat & 0x3, 0, 0, 0);
 
 }
 void ClearSliceTimes()
@@ -175,20 +175,20 @@ void UpdateLeds()
 }
 void CanBusExtendedMessageProcessor(void)
 {
-	switch(SmallTaskType) {
+	switch(CanMsgProcessorType) {
 	case TASK_CAN_SEND_SOAPSTRING:
-		if((SmallTaskCount + 1) * 6 > FLASH_SOAP_SIZE) {
-			SmallTaskType = TASK_IDLE;
+		if((CanMsgProcessorCount + 1) * 6 > FLASH_SOAP_SIZE) {
+			CanMsgProcessorType = TASK_IDLE;
 			break;
 		}
 		//in this case , TaskCoutUp means soap string's offset address.
 		//2bytes are address
-		CanMessageBuffer[0] = SmallTaskCount & 0xFF;
-		CanMessageBuffer[1] = (SmallTaskCount & 0xFF00) >> 8;
+		CanMessageBuffer[0] = CanMsgProcessorCount & 0xFF;
+		CanMessageBuffer[1] = (CanMsgProcessorCount & 0xFF00) >> 8;
 		//6bytes are data
 		uint8_t size = 0;
 		for(uint8_t i = 0; i < 6; i ++){
-			CanMessageBuffer[i+2] = SoapString[SmallTaskCount * 6 + i];
+			CanMessageBuffer[i+2] = SoapString[CanMsgProcessorCount * 6 + i];
 			if(CanMessageBuffer[i+2] == 0) {
 				break;
 			}
@@ -197,28 +197,28 @@ void CanBusExtendedMessageProcessor(void)
 
 		CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_SOAP_STRING, 0, 0, CanMessageBuffer, size + 2);
 		if(size < 6) {
-			SmallTaskType = TASK_IDLE;
+			CanMsgProcessorType = TASK_IDLE;
 		}
 		break;
 	case TASK_FLASH_WRITE_SOAPSTRING:
-		if(SmallTaskCount == 0) {
+		if(CanMsgProcessorCount == 0) {
 			if(EraseFlash(FLASH_SOAP_START_ADDRESS, FLASH_PAGE_SIZE) == ERROR) {
-				SmallTaskType = TASK_IDLE;
+				CanMsgProcessorType = TASK_IDLE;
 				break;
 			}
 		}
-		if(SmallTaskCount * 8 >= FLASH_SOAP_SIZE) {
-			SmallTaskType = TASK_IDLE;
+		if(CanMsgProcessorCount * 8 >= FLASH_SOAP_SIZE) {
+			CanMsgProcessorType = TASK_IDLE;
 			break;
 		}
-		if(WriteFlash8Bytes(FLASH_SOAP_START_ADDRESS + SmallTaskCount * 8, SoapString + SmallTaskCount * 8) == ERROR) {
-			SmallTaskType = TASK_IDLE;
+		if(WriteFlash8Bytes(FLASH_SOAP_START_ADDRESS + CanMsgProcessorCount * 8, SoapString + CanMsgProcessorCount * 8) == ERROR) {
+			CanMsgProcessorType = TASK_IDLE;
 			break;
 		}
 		break;
 	}
-	SmallTaskCount ++;
-	if(SmallTaskCount >= TASK_MAXCOUNT) SmallTaskCount = 0;;
+	CanMsgProcessorCount ++;
+	if(CanMsgProcessorCount >= TASK_MAXCOUNT) CanMsgProcessorCount = 0;;
 }
 
 

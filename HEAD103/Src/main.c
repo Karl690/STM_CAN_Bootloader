@@ -35,7 +35,7 @@ uint8_t Initialized = 0;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
-	InitRCC();
+	RCC_Init();
 	GPIO_Init();
 	ADC_Init();
 	CAN_Init();
@@ -61,7 +61,7 @@ int main(void)
 	CanMessageBuffer[2] = (AddressAdcValue & 0xff00 ) >> 8;
 
 
-	CanAddTxBuffer(HYDRA_CONTROLLOR, CAN_READ, CAN_MSG_BOOT, 0, 0, CanMessageBuffer, 3);
+	CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_BOOT, 0, 0, CanMessageBuffer, 3);
 
 	/* Loop forever */
 	while(1)

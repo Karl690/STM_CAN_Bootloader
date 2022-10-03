@@ -43,8 +43,8 @@ extern uint16_t MaxTaskTime[32];       // Maximum execution time
 extern uint16_t SliceOffset;
 extern uint16_t ADC_Value[8];
 
-extern uint16_t SmallTaskType;
-extern uint32_t SmallTaskCount;
+extern uint16_t CanMsgProcessorType;
+extern uint32_t CanMsgProcessorCount;
 
 void func_SystickCallback(void);
 void Spare (void);

@@ -29,4 +29,4 @@
 
 extern volatile uint32_t usTicks;
 #define WaitMicrosecond(us) 		({usTicks = us; while (usTicks);})
-void InitRCC();
+void RCC_Init();
