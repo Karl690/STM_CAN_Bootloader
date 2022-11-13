@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Project version="2G - 1.7.8" name="HEAD103">
+  <Target name="HEAD103_GD" isCurrent="1">
+    <Device manufacturerId="9" manufacturerName="ST" chipId="306" chipName="STM32F103CB" boardId="" boardName=""/>
+    <BuildOption>
+      <Compile>
+        <Option name="OptimizationLevel" value="0"/>
+        <Option name="UseFPU" value="0"/>
+        <Option name="UserEditCompiler" value=""/>
+        <Option name="SupportCPlusplus" value="0"/>
+        <Includepaths>
+          <Includepath path="."/>
+        </Includepaths>
+        <DefinedSymbols>
+          <Define name="STM32F103CB"/>
+          <Define name="STM32F10X_MD"/>
+          <Define name="USE_STDPERIPH_DRIVER"/>
+          <Define name="__ASSEMBLY__"/>
+        </DefinedSymbols>
+      </Compile>
+      <Link useDefault="0">
+        <Option name="DiscardUnusedSection" value="0"/>
+        <Option name="UserEditLinkder" value=""/>
+        <Option name="UseMemoryLayout" value="1"/>
+        <Option name="nostartfiles" value="1"/>
+        <Option name="LTO" value="0"/>
+        <Option name="IsNewStartupCode" value="1"/>
+        <Option name="Library" value="Not use C Library"/>
+        <Option name="UserEditLinker" value=""/>
+        <LinkedLibraries/>
+        <MemoryAreas debugInFlashNotRAM="1">
+          <Memory name="IROM1" type="ReadOnly" size="0x00020000" startValue="0x08000000"/>
+          <Memory name="IRAM1" type="ReadWrite" size="0x00005000" startValue="0x20000000"/>
+          <Memory name="IROM2" type="ReadOnly" size="" startValue=""/>
+          <Memory name="IRAM2" type="ReadWrite" size="" startValue=""/>
+        </MemoryAreas>
+        <LocateLinkFile path="c:/coocox/coide/configuration/programdata/head103/link.ld" type="0"/>
+      </Link>
+      <Output>
+        <Option name="OutputFileType" value="0"/>
+        <Option name="Path" value="./"/>
+        <Option name="Name" value="HH103"/>
+        <Option name="HEX" value="1"/>
+        <Option name="BIN" value="1"/>
+      </Output>
+      <User>
+        <UserRun name="Run#1" type="Before" checked="0" value=""/>
+        <UserRun name="Run#1" type="After" checked="0" value=""/>
+      </User>
+    </BuildOption>
+    <DebugOption>
+      <Option name="org.coocox.codebugger.gdbjtag.core.adapter" value="ST-Link"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.debugMode" value="SWD"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.clockDiv" value="1M"/>
+      <Option name="org.coocox.codebugger.gdbjtag.corerunToMain" value="1"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.jlinkgdbserver" value=""/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.userDefineGDBScript" value=""/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.targetEndianess" value="0"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.jlinkResetMode" value="Type 0: Normal"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.resetMode" value="SYSRESETREQ"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.ifSemihost" value="0"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.ifCacheRom" value="1"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.ipAddress" value="127.0.0.1"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.portNumber" value="2009"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.autoDownload" value="1"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.verify" value="1"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.downloadFuction" value="Erase Effected"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.defaultAlgorithm" value="STM32F10x_MD_128.elf"/>
+    </DebugOption>
+    <ExcludeFile/>
+  </Target>
+  <Target name="HEAD103_STM" isCurrent="0">
+    <Device manufacturerId="9" manufacturerName="ST" chipId="306" chipName="STM32F103CB" boardId="" boardName=""/>
+    <BuildOption>
+      <Compile>
+        <Option name="OptimizationLevel" value="0"/>
+        <Option name="UseFPU" value="0"/>
+        <Option name="UserEditCompiler" value=""/>
+        <Option name="SupportCPlusplus" value="0"/>
+        <Includepaths>
+          <Includepath path="."/>
+        </Includepaths>
+        <DefinedSymbols>
+          <Define name="USE_STDPERIPH_DRIVER"/>
+          <Define name="__ASSEMBLY__"/>
+          <Define name="STM32F103C6"/>
+          <Define name="STM32F10X_LD"/>
+        </DefinedSymbols>
+      </Compile>
+      <Link useDefault="0">
+        <Option name="DiscardUnusedSection" value="0"/>
+        <Option name="UserEditLinkder" value=""/>
+        <Option name="UseMemoryLayout" value="1"/>
+        <Option name="nostartfiles" value="1"/>
+        <Option name="LTO" value="0"/>
+        <Option name="IsNewStartupCode" value="1"/>
+        <Option name="Library" value="Not use C Library"/>
+        <Option name="UserEditLinker" value=""/>
+        <LinkedLibraries/>
+        <MemoryAreas debugInFlashNotRAM="1">
+          <Memory name="IROM1" type="ReadOnly" size="0x00020000" startValue="0x08000000"/>
+          <Memory name="IRAM1" type="ReadWrite" size="0x00005000" startValue="0x20000000"/>
+          <Memory name="IROM2" type="ReadOnly" size="" startValue=""/>
+          <Memory name="IRAM2" type="ReadWrite" size="" startValue=""/>
+        </MemoryAreas>
+        <LocateLinkFile path="c:/coocox/coide/configuration/programdata/head103/link.ld" type="0"/>
+      </Link>
+      <Output>
+        <Option name="OutputFileType" value="0"/>
+        <Option name="Path" value="./"/>
+        <Option name="Name" value="HEAD103"/>
+        <Option name="HEX" value="1"/>
+        <Option name="BIN" value="1"/>
+      </Output>
+      <User>
+        <UserRun name="Run#1" type="Before" checked="0" value=""/>
+        <UserRun name="Run#1" type="After" checked="0" value=""/>
+      </User>
+    </BuildOption>
+    <DebugOption>
+      <Option name="org.coocox.codebugger.gdbjtag.core.adapter" value="ST-Link"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.debugMode" value="SWD"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.clockDiv" value="1M"/>
+      <Option name="org.coocox.codebugger.gdbjtag.corerunToMain" value="1"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.jlinkgdbserver" value=""/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.userDefineGDBScript" value=""/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.targetEndianess" value="0"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.jlinkResetMode" value="Type 0: Normal"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.resetMode" value="SYSRESETREQ"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.ifSemihost" value="0"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.ifCacheRom" value="1"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.ipAddress" value="127.0.0.1"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.portNumber" value="2009"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.autoDownload" value="1"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.verify" value="1"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.downloadFuction" value="Erase Effected"/>
+      <Option name="org.coocox.codebugger.gdbjtag.core.defaultAlgorithm" value="./stm32f10x_ld_32.elf"/>
+    </DebugOption>
+    <ExcludeFile/>
+  </Target>
+  <Components path="./">
+    <Component id="31" name="Retarget printf" path="" type="2"/>
+    <Component id="50" name="CMSIS core" path="" type="2"/>
+    <Component id="439" name="CMSIS_Boot" path="" type="2"/>
+    <Component id="440" name="RCC" path="" type="2"/>
+    <Component id="444" name="GPIO" path="" type="2"/>
+    <Component id="446" name="DMA" path="" type="2"/>
+    <Component id="452" name="SPI" path="" type="2"/>
+    <Component id="467" name="MISC" path="" type="2"/>
+  </Components>
+  <Files>
+    <File name="Pheonix/Communication/1xx/can_1xx.c" path="Pheonix/Communication/1xx/can_1xx.c" type="1"/>
+    <File name="Pheonix/Display/ILI9341/ILI9341_STM32_Driver.c" path="Pheonix/Display/ILI9341/ILI9341_STM32_Driver.c" type="1"/>
+    <File name="Pheonix/Display/display.h" path="Pheonix/Display/display.h" type="1"/>
+    <File name="cmsis/core_cmFunc.h" path="cmsis/core_cmFunc.h" type="1"/>
+    <File name="Pheonix/Display/4xx/lcdspi_4xx.h" path="Pheonix/Display/4xx/lcdspi_4xx.h" type="1"/>
+    <File name="Pheonix/GPIO/1xx/pininit.h" path="Pheonix/GPIO/1xx/pininit.h" type="1"/>
+    <File name="stm_lib/src/misc.c" path="stm_lib/src/misc.c" type="1"/>
+    <File name="cmsis_boot/stm32f10x.h" path="cmsis_boot/stm32f10x.h" type="1"/>
+    <File name="Pheonix/GPIO/1xx/pins_1xx.h" path="Pheonix/GPIO/1xx/pins1xx.h" type="1"/>
+    <File name="cmsis_boot/stm32f10x_conf.h" path="cmsis_boot/stm32f10x_conf.h" type="1"/>
+    <File name="Pheonix/FLASH" path="" type="2"/>
+    <File name="main.h" path="main.h" type="1"/>
+    <File name="Pheonix/GPIO/1xx/pins_1xx.c" path="Pheonix/GPIO/1xx/pins1xx.c" type="1"/>
+    <File name="stm_lib/inc/stm32f10x_flash.h" path="stm_lib/inc/stm32f10x_flash.h" type="1"/>
+    <File name="Pheonix/ANALOG/1xx/adc_1xx.c" path="Pheonix/ANALOG/1xx/adc_1xx.c" type="1"/>
+    <File name="syscalls/syscalls.c" path="syscalls/syscalls.c" type="1"/>
+    <File name="Pheonix/GPIO" path="" type="2"/>
+    <File name="stm_lib/inc/stm32f10x_spi.h" path="stm_lib/inc/stm32f10x_spi.h" type="1"/>
+    <File name="stm_lib/inc/stm32f10x_dma.h" path="stm_lib/inc/stm32f10x_dma.h" type="1"/>
+    <File name="stm_lib/src/stm32f10x_adc.c" path="stm_lib/src/stm32f10x_adc.c" type="1"/>
+    <File name="Pheonix/RCC/rcc.h" path="Pheonix/RCC/rcc.h" type="1"/>
+    <File name="Pheonix/Display/display.c" path="Pheonix/Display/display.c" type="1"/>
+    <File name="Pheonix/Communication/1xx/can_1xx.h" path="Pheonix/Communication/1xx/can_1xx.h" type="1"/>
+    <File name="Pheonix/RCC" path="" type="2"/>
+    <File name="Pheonix/Display/1xx/lcdspi_1xx.h" path="Pheonix/Display/1xx/lcdspi_1xx.h" type="1"/>
+    <File name="Pheonix/taskmanager.h" path="Pheonix/taskmanager.h" type="1"/>
+    <File name="Pheonix/Display/1xx" path="" type="2"/>
+    <File name="cmsis_boot/startup/startup_stm32f10x_md.c" path="cmsis_boot/startup/startup_stm32f10x_md.c" type="1"/>
+    <File name="stm_lib/src/stm32f10x_gpio.c" path="stm_lib/src/stm32f10x_gpio.c" type="1"/>
+    <File name="Pheonix/Display/LcdDefinitions.h" path="Pheonix/Display/LcdDefinitions.h" type="1"/>
+    <File name="cmsis_boot/system_stm32f10x.c" path="cmsis_boot/system_stm32f10x.c" type="1"/>
+    <File name="stm_lib/inc/misc.h" path="stm_lib/inc/misc.h" type="1"/>
+    <File name="Pheonix/Display/ILI9341/ILI9341_Touchscreen.c" path="Pheonix/Display/ILI9341/ILI9341_Touchscreen.c" type="1"/>
+    <File name="cmsis/core_cmInstr.h" path="cmsis/core_cmInstr.h" type="1"/>
+    <File name="Pheonix/Display/ST7735" path="" type="2"/>
+    <File name="stm_lib/src/stm32f10x_rcc.c" path="stm_lib/src/stm32f10x_rcc.c" type="1"/>
+    <File name="Pheonix/Communication" path="" type="2"/>
+    <File name="Pheonix/Display/ILI9341/ILI9341_GFX.h" path="Pheonix/Display/ILI9341/ILI9341_GFX.h" type="1"/>
+    <File name="Pheonix/Display/7xx" path="" type="2"/>
+    <File name="Pheonix/FLASH/1xx/flash_1xx.h" path="Pheonix/FLASH/1xx/flash_1xx.h" type="1"/>
+    <File name="Pheonix/Display/4xx" path="" type="2"/>
+    <File name="stm_lib/src/stm32f10x_dma.c" path="stm_lib/src/stm32f10x_dma.c" type="1"/>
+    <File name="Pheonix/Display/DisplayList.c" path="Pheonix/Display/DisplayList.c" type="1"/>
+    <File name="stm_lib/src" path="" type="2"/>
+    <File name="cmsis" path="" type="2"/>
+    <File name="stm_lib" path="" type="2"/>
+    <File name="stm_lib/inc/stm32f10x_adc.h" path="stm_lib/inc/stm32f10x_adc.h" type="1"/>
+    <File name="cmsis_boot/system_stm32f10x.h" path="cmsis_boot/system_stm32f10x.h" type="1"/>
+    <File name="Pheonix/GPIO/1xx" path="" type="2"/>
+    <File name="Pheonix/Display/ILI9341/ILI9341_STM32_Driver.h" path="Pheonix/Display/ILI9341/ILI9341_STM32_Driver.h" type="1"/>
+    <File name="Pheonix/Display/ILI9341" path="" type="2"/>
+    <File name="Pheonix/GPIO/1xx/pininit.c" path="Pheonix/GPIO/1xx/pininit.c" type="1"/>
+    <File name="Pheonix/RCC/1xx" path="" type="2"/>
+    <File name="Pheonix/Display/ILI9341/ILI9341_Touchscreen.h" path="Pheonix/Display/ILI9341/ILI9341_Touchscreen.h" type="1"/>
+    <File name="main.c" path="main.c" type="1"/>
+    <File name="Pheonix/Display/font.h" path="Pheonix/Display/font.h" type="1"/>
+    <File name="Pheonix/Display/colortables.h" path="Pheonix/Display/colortables.h" type="1"/>
+    <File name="Pheonix/Display/ST7789" path="" type="2"/>
+    <File name="Pheonix/Display/ST7789/st7789.c" path="Pheonix/Display/ST7789/st7789.c" type="1"/>
+    <File name="stm_lib/inc/stm32f10x_tim.h" path="stm_lib/inc/stm32f10x_tim.h" type="1"/>
+    <File name="Pheonix/Display/DisplayList.h" path="Pheonix/Display/DisplayList.h" type="1"/>
+    <File name="cmsis_boot" path="" type="2"/>
+    <File name="Pheonix/Communication/1xx" path="" type="2"/>
+    <File name="Pheonix/Display/gui.c" path="Pheonix/Display/gui.c" type="1"/>
+    <File name="stm_lib/src/stm32f10x_tim.c" path="stm_lib/src/stm32f10x_tim.c" type="1"/>
+    <File name="Pheonix/FLASH/1xx" path="" type="2"/>
+    <File name="cmsis_boot/startup" path="" type="2"/>
+    <File name="Pheonix/Display/7xx/lcdspi_7xx.c" path="Pheonix/Display/7xx/lcdspi_7xx.c" type="1"/>
+    <File name="stm_lib/src/stm32f10x_spi.c" path="stm_lib/src/stm32f10x_spi.c" type="1"/>
+    <File name="Pheonix/Display/ST7735/st7735.h" path="Pheonix/Display/ST7735/st7735.h" type="1"/>
+    <File name="Pheonix/Display/7xx/lcdspi_7xx.h" path="Pheonix/Display/7xx/lcdspi_7xx.h" type="1"/>
+    <File name="Pheonix/Display/gui.h" path="Pheonix/Display/gui.h" type="1"/>
+    <File name="Pheonix/Display/ST7735/st7735.c" path="Pheonix/Display/ST7735/st7735.c" type="1"/>
+    <File name="Pheonix/Communication/can.c" path="Pheonix/Communication/can.c" type="1"/>
+    <File name="Pheonix/GPIO/gpio.h" path="Pheonix/GPIO/gpio.h" type="1"/>
+    <File name="Pheonix/Display/ILI9341/ILI9341_GFX.c" path="Pheonix/Display/ILI9341/ILI9341_GFX.c" type="1"/>
+    <File name="Pheonix/configure.h" path="Pheonix/configure.h" type="1"/>
+    <File name="Pheonix/ANALOG/adc.c" path="Pheonix/ANALOG/adc.c" type="1"/>
+    <File name="Pheonix/Display/ST7735/st7735_lcd.h" path="Pheonix/Display/ST7735/st7735_lcd.h" type="1"/>
+    <File name="stm_lib/inc/stm32f10x_gpio.h" path="stm_lib/inc/stm32f10x_gpio.h" type="1"/>
+    <File name="Pheonix/FLASH/1xx/flash_1xx.c" path="Pheonix/FLASH/1xx/flash_1xx.c" type="1"/>
+    <File name="Pheonix/RevisionHistory.h" path="Pheonix/RevisionHistory.h" type="1"/>
+    <File name="Pheonix/RCC/1xx/rcc_1xx.h" path="Pheonix/RCC/1xx/rcc1xx.h" type="1"/>
+    <File name="Pheonix/FLASH/flash.h" path="Pheonix/FLASH/flash.h" type="1"/>
+    <File name="Pheonix" path="" type="2"/>
+    <File name="Pheonix/Display" path="" type="2"/>
+    <File name="Pheonix/taskmanager.c" path="Pheonix/taskmanager.c" type="1"/>
+    <File name="Pheonix/ANALOG/adc.h" path="Pheonix/ANALOG/adc.h" type="1"/>
+    <File name="cmsis/core_cm3.h" path="cmsis/core_cm3.h" type="1"/>
+    <File name="Pheonix/Display/1xx/lcdspi_1xx.c" path="Pheonix/Display/1xx/lcdspi_1xx.c" type="1"/>
+    <File name="Pheonix/Display/4xx/lcdspi_4xx.c" path="Pheonix/Display/4xx/lcdspi_4xx.c" type="1"/>
+    <File name="Pheonix/ANALOG" path="" type="2"/>
+    <File name="Pheonix/ANALOG/1xx" path="" type="2"/>
+    <File name="Pheonix/Display/ST7789/st7789.h" path="Pheonix/Display/ST7789/st7789.h" type="1"/>
+    <File name="Pheonix/GPIO/1xx/pinoutHH103.h" path="Pheonix/GPIO/1xx/pinoutHH103.h" type="1"/>
+    <File name="Pheonix/ANALOG/1xx/adc_1xx.h" path="Pheonix/ANALOG/1xx/adc_1xx.h" type="1"/>
+    <File name="Pheonix/ANALOG/AD_Definitions.h" path="Pheonix/ANALOG/AD_Definitions.h" type="1"/>
+    <File name="Pheonix/Display/colortables.c" path="Pheonix/Display/colortables.c" type="1"/>
+    <File name="Pheonix/ANALOG/AD_Definitions.c" path="Pheonix/ANALOG/AD_Definitions.c" type="1"/>
+    <File name="stm_lib/src/stm32f10x_flash.c" path="stm_lib/src/stm32f10x_flash.c" type="1"/>
+    <File name="Pheonix/Display/ST7735/st7735_lcd.c" path="Pheonix/Display/ST7735/st7735_lcd.c" type="1"/>
+    <File name="Pheonix/RCC/1xx/rcc_1xx.c" path="Pheonix/RCC/1xx/rcc1xx.c" type="1"/>
+    <File name="stm_lib/inc/stm32f10x_rcc.h" path="stm_lib/inc/stm32f10x_rcc.h" type="1"/>
+    <File name="Pheonix/Display/lcdspi.h" path="Pheonix/Display/lcdspi.h" type="1"/>
+    <File name="syscalls" path="" type="2"/>
+    <File name="Pheonix/Communication/can.h" path="Pheonix/Communication/can.h" type="1"/>
+    <File name="stm_lib/inc" path="" type="2"/>
+    <File name="Pheonix/GPIO/pinout.h" path="Pheonix/GPIO/pinout.h" type="1"/>
+  </Files>
+</Project>

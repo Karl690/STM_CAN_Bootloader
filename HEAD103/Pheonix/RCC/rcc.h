@@ -5,7 +5,7 @@
  *      Author: hyrel
  */
 
-
+#include "configure.h"
 #ifdef STM32F103x6
 #include "1xx/rcc1xx.h"
 

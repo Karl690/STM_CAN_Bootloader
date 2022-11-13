@@ -10,5 +10,5 @@
 #include "7xx/pins7xx.h"
 #endif
 
-extern void GPIO_Init(void);
-extern void Leds_Init(void);
+extern void Init_GPIO(void);
+extern void Init_LEDs(void);

@@ -2,7 +2,8 @@
 #include "configure.h"
 #ifdef HH103
 #include "main.h"
-typedef uint32_t pinType;
+#include "stm32f10x_gpio.h"
+
 
 
 #define PIN_NUM_SHIFT          0        // pin[3:0]
@@ -12,16 +13,6 @@ typedef uint32_t pinType;
 #define PIN_INIT_EN_SHIFT      15       // pin[15]
 #define PIN_MASK_SHIFT         16       // pin[31:16]
 
-
-#define GPIO_PortSourceGPIOA       ((uint8_t)0x00)
-#define GPIO_PortSourceGPIOB       ((uint8_t)0x01)
-#define GPIO_PortSourceGPIOC       ((uint8_t)0x02)
-#define GPIO_PortSourceGPIOD       ((uint8_t)0x03)
-#define GPIO_PortSourceGPIOE       ((uint8_t)0x04)
-#define GPIO_PortSourceGPIOF       ((uint8_t)0x05)
-#define GPIO_PortSourceGPIOG       ((uint8_t)0x06)
-#define GPIO_PortSourceGPIOH       ((uint8_t)0x07)
-#define GPIO_PortSourceGPIOI       ((uint8_t)0x08)
 
 #define PIN_NUM_00             ((0x0 << PIN_NUM_SHIFT) | (0x0001 << PIN_MASK_SHIFT))
 #define PIN_NUM_01             ((0x1 << PIN_NUM_SHIFT) | (0x0002 << PIN_MASK_SHIFT))
@@ -56,6 +47,24 @@ typedef uint32_t pinType;
 #define PIN_MASK_13  0x2000
 #define PIN_MASK_14  0x4000
 #define PIN_MASK_15  0x8000
+
+#define GPIO_PIN_0                 ((uint16_t)0x0001)  /*!< Pin 0 selected */
+#define GPIO_PIN_1                 ((uint16_t)0x0002)  /*!< Pin 1 selected */
+#define GPIO_PIN_2                 ((uint16_t)0x0004)  /*!< Pin 2 selected */
+#define GPIO_PIN_3                 ((uint16_t)0x0008)  /*!< Pin 3 selected */
+#define GPIO_PIN_4                 ((uint16_t)0x0010)  /*!< Pin 4 selected */
+#define GPIO_PIN_5                 ((uint16_t)0x0020)  /*!< Pin 5 selected */
+#define GPIO_PIN_6                 ((uint16_t)0x0040)  /*!< Pin 6 selected */
+#define GPIO_PIN_7                 ((uint16_t)0x0080)  /*!< Pin 7 selected */
+#define GPIO_PIN_8                 ((uint16_t)0x0100)  /*!< Pin 8 selected */
+#define GPIO_PIN_9                 ((uint16_t)0x0200)  /*!< Pin 9 selected */
+#define GPIO_PIN_10                ((uint16_t)0x0400)  /*!< Pin 10 selected */
+#define GPIO_PIN_11                ((uint16_t)0x0800)  /*!< Pin 11 selected */
+#define GPIO_PIN_12                ((uint16_t)0x1000)  /*!< Pin 12 selected */
+#define GPIO_PIN_13                ((uint16_t)0x2000)  /*!< Pin 13 selected */
+#define GPIO_PIN_14                ((uint16_t)0x4000)  /*!< Pin 14 selected */
+#define GPIO_PIN_15                ((uint16_t)0x8000)  /*!< Pin 15 selected */
+#define GPIO_PIN_All               ((uint16_t)0xFFFF)  /*!< All pins selected */
 
 
 #define ANALOG_IN       (0b0000 << PIN_MODE_SHIFT)
@@ -99,73 +108,6 @@ typedef uint32_t pinType;
 
 #define PIN_UNDEFINED   (0xffffffff)
 
-typedef enum {
-	GPIO_INDEX_PA0 = 0,
-	GPIO_INDEX_PA1,
-	GPIO_INDEX_PA2,
-	GPIO_INDEX_PA3,
-	GPIO_INDEX_PA4,
-	GPIO_INDEX_PA5,
-	GPIO_INDEX_PA6,
-	GPIO_INDEX_PA7,
-	GPIO_INDEX_PA8,
-	GPIO_INDEX_PA9,
-	GPIO_INDEX_PA10,
-	GPIO_INDEX_PA11,
-	GPIO_INDEX_PA12,
-	GPIO_INDEX_PA13,
-	GPIO_INDEX_PA14,
-	GPIO_INDEX_PA15,
-	GPIO_INDEX_PB0,
-	GPIO_INDEX_PB1,
-	GPIO_INDEX_PB2,
-	GPIO_INDEX_PB3,
-	GPIO_INDEX_PB4,
-	GPIO_INDEX_PB5,
-	GPIO_INDEX_PB6,
-	GPIO_INDEX_PB7,
-	GPIO_INDEX_PB8,
-	GPIO_INDEX_PB9,
-	GPIO_INDEX_PB10,
-	GPIO_INDEX_PB11,
-	GPIO_INDEX_PB12,
-	GPIO_INDEX_PB13,
-	GPIO_INDEX_PB14,
-	GPIO_INDEX_PB15,
-	GPIO_INDEX_PC0,
-	GPIO_INDEX_PC1,
-	GPIO_INDEX_PC2,
-	GPIO_INDEX_PC3,
-	GPIO_INDEX_PC4,
-	GPIO_INDEX_PC5,
-	GPIO_INDEX_PC6,
-	GPIO_INDEX_PC7,
-	GPIO_INDEX_PC8,
-	GPIO_INDEX_PC9,
-	GPIO_INDEX_PC10,
-	GPIO_INDEX_PC11,
-	GPIO_INDEX_PC12,
-	GPIO_INDEX_PC13,
-	GPIO_INDEX_PC14,
-	GPIO_INDEX_PC15,
-	GPIO_INDEX_PD0,
-	GPIO_INDEX_PD1,
-	GPIO_INDEX_PD2,
-	GPIO_INDEX_PD3,
-	GPIO_INDEX_PD4,
-	GPIO_INDEX_PD5,
-	GPIO_INDEX_PD6,
-	GPIO_INDEX_PD7,
-	GPIO_INDEX_PD8,
-	GPIO_INDEX_PD9,
-	GPIO_INDEX_PD10,
-	GPIO_INDEX_PD11,
-	GPIO_INDEX_PD12,
-	GPIO_INDEX_PD13,
-	GPIO_INDEX_PD14,
-	GPIO_INDEX_PD15,
-} gpioIndex_t;
-
 ////////////////////////////////////////////////////////////////////////////////
 //  Public Methods available in pin
 ////////////////////////////////////////////////////////////////////////////////
@@ -180,18 +122,6 @@ typedef union {
 		unsigned pinMask    : 16;   // shift 16
 	} b;
 } pinUnion_t;
-
-typedef enum
-{ GPIO_Mode_AIN = 0x0,
-  GPIO_Mode_IN_FLOATING = 0x04,
-  GPIO_Mode_IPD = 0x28,
-  GPIO_Mode_IPU = 0x48,
-  GPIO_Mode_Out_OD = 0x14,
-  GPIO_Mode_Out_PP = 0x10,
-  GPIO_Mode_AF_OD = 0x1C,
-  GPIO_Mode_AF_PP = 0x18
-}GPIOMode_TypeDef;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
