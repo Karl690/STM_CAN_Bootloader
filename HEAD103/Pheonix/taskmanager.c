@@ -238,15 +238,27 @@ uint8_t DutyCycleCounter = 0;//range is 0-7
 uint8_t desiredDutyHSS1=0;//range is 0-255
 void SetFanDuty()
 {
+	if(DutyCycleCounter&1)
+	{BB_HSS1_FAN=1;}
+	else {BB_HSS1_FAN=0;}
+
+	if(DutyCycleCounter&2)
+	{BB_HSS2_Heater=1;}
+	else {BB_HSS2_Heater=0;}
+
+
+//#define BB_HSS1_FAN       		PBout(0)
+//#define BB_HSS2_Heater
+
 	DutyCycleCounter ++;
 	DutyCycleCounter&=0x7;//if(DutyCycleCounter > 8) DutyCycleCounter = 0;
-	if((SliceCnt & 0x7) <= (DesiredFanDutyCycle << 5))//adjust for duty range of 0-7
-	{
-		SET_HSS1;// HSS turn off
-
-	}
-	else{
-		CLR_HSS1;
-	}
+//	if((SliceCnt & 0x7) <= (DesiredFanDutyCycle << 5))//adjust for duty range of 0-7
+//	{
+//		SET_HSS1;// HSS turn off
+//
+//	}
+//	else{
+//		CLR_HSS1;
+//	}
 
 }

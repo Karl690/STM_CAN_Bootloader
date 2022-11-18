@@ -10,6 +10,14 @@
 //#define PHEONIX750
 //#define ESR407
 
+//////for debugging 103
+////#define HH103
+////#define USE_LCD
+//////
+////for debugging 407
+//#define HH407
+//#define USE_LCD
+////
 
 #ifdef HH103
 #ifdef HEAD_STM

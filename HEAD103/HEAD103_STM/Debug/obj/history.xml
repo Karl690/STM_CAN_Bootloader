@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="arm-none-eabi-gcc noversion nomachine -mcpu=cortex-m3 -mthumb -Wall -ffunction-sections -g -O0 -c -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__ -DSTM32F103C6 -DSTM32F10X_LD -DHEAD_STM -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\Display\1xx -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\cmsis_boot -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\ANALOG\1xx -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\FLASH\1xx -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\Display\4xx -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\Display\ST7735 -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\Display -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\Communication\1xx -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\Display\7xx -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103 -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\FLASH -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\stm_lib -I..\..\..\..\..\Users\karl6\Documents\GitHub -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\GPIO -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\ANALOG -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\Communication -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\cmsis -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\RCC -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\RCC\1xx -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\GPIO\1xx -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\Display\ST7789 -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\Pheonix\Display\ILI9341 -I..\..\..\..\..\Users\karl6\Documents\GitHub\STM_CAN_Bootloader\HEAD103\stm_lib\inc">
+      <target file="lcdspi_1xx.o" lastModified="1848ad56d5c">
+         <source file="..\..\..\Pheonix\Display\1xx\lcdspi_1xx.c" lastModified="1848ababddd"/>
+      </target>
+      <target file="rcc1xx.o" lastModified="1848ad57174">
+         <source file="..\..\..\Pheonix\RCC\1xx\rcc1xx.c" lastModified="1848ababdea"/>
+      </target>
+      <target file="syscalls.o" lastModified="1848ad56e78">
+         <source file="..\..\..\syscalls\syscalls.c" lastModified="1848ababdfa"/>
+      </target>
+      <target file="stm32f10x_gpio.o" lastModified="1848ad56a55">
+         <source file="..\..\..\stm_lib\src\stm32f10x_gpio.c" lastModified="1848ababdf9"/>
+      </target>
+      <target file="misc.o" lastModified="1848ad57004">
+         <source file="..\..\..\stm_lib\src\misc.c" lastModified="1848ababdf6"/>
+      </target>
+      <target file="system_stm32f10x.o" lastModified="1848ad569ae">
+         <source file="..\..\..\cmsis_boot\system_stm32f10x.c" lastModified="1848ababdf2"/>
+      </target>
+      <target file="lcdspi_4xx.o" lastModified="1848ad57127">
+         <source file="..\..\..\Pheonix\Display\4xx\lcdspi_4xx.c" lastModified="1848ababdde"/>
+      </target>
+      <target file="adc_1xx.o" lastModified="1848ad57092">
+         <source file="..\..\..\Pheonix\ANALOG\1xx\adc_1xx.c" lastModified="1848ababdd9"/>
+      </target>
+      <target file="st7735.o" lastModified="1848ad56f33">
+         <source file="..\..\..\Pheonix\Display\ST7735\st7735.c" lastModified="1848ababde3"/>
+      </target>
+      <target file="taskmanager.o" lastModified="1848ad56b92">
+         <source file="..\..\..\Pheonix\taskmanager.c" lastModified="1848ad56720"/>
+      </target>
+      <target file="colortables.o" lastModified="1848ad56d86">
+         <source file="..\..\..\Pheonix\Display\colortables.c" lastModified="1848ababde4"/>
+      </target>
+      <target file="pins1xx.o" lastModified="1848ad5690c">
+         <source file="..\..\..\Pheonix\GPIO\1xx\pins1xx.c" lastModified="1848ababde9"/>
+      </target>
+      <target file="flash_1xx.o" lastModified="1848ad56968">
+         <source file="..\..\..\Pheonix\FLASH\1xx\flash_1xx.c" lastModified="1848ababde6"/>
+      </target>
+      <target file="stm32f10x_flash.o" lastModified="1848ad56ebf">
+         <source file="..\..\..\stm_lib\src\stm32f10x_flash.c" lastModified="1848ababdf8"/>
+      </target>
+      <target file="stm32f10x_tim.o" lastModified="1848ad568bd">
+         <source file="..\..\..\stm_lib\src\stm32f10x_tim.c" lastModified="1848ababdfa"/>
+      </target>
+      <target file="lcdspi_7xx.o" lastModified="1848ad56bb9">
+         <source file="..\..\..\Pheonix\Display\7xx\lcdspi_7xx.c" lastModified="1848ababddf"/>
+      </target>
+      <target file="ILI9341_STM32_Driver.o" lastModified="1848ad56fcf">
+         <source file="..\..\..\Pheonix\Display\ILI9341\ILI9341_STM32_Driver.c" lastModified="1848ababde1"/>
+      </target>
+      <target file="gui.o" lastModified="1848ad56a7f">
+         <source file="..\..\..\Pheonix\Display\gui.c" lastModified="1848ababde6"/>
+      </target>
+      <target file="AD_Definitions.o" lastModified="1848ad570de">
+         <source file="..\..\..\Pheonix\ANALOG\AD_Definitions.c" lastModified="1848ababdda"/>
+      </target>
+      <target file="stm32f10x_rcc.o" lastModified="1848ad56cf0">
+         <source file="..\..\..\stm_lib\src\stm32f10x_rcc.c" lastModified="1848ababdf9"/>
+      </target>
+      <target file="stm32f10x_adc.o" lastModified="1848ad56e1b">
+         <source file="..\..\..\stm_lib\src\stm32f10x_adc.c" lastModified="1848ababdf7"/>
+      </target>
+      <target file="DisplayList.o" lastModified="1848ad56f8f">
+         <source file="..\..\..\Pheonix\Display\DisplayList.c" lastModified="1848ababde0"/>
+      </target>
+      <target file="ILI9341_GFX.o" lastModified="1848ad56faf">
+         <source file="..\..\..\Pheonix\Display\ILI9341\ILI9341_GFX.c" lastModified="1848ababde0"/>
+      </target>
+      <target file="pininit.o" lastModified="1848ad56dd1">
+         <source file="..\..\..\Pheonix\GPIO\1xx\pininit.c" lastModified="1848ababde8"/>
+      </target>
+      <target file="stm32f10x_dma.o" lastModified="1848ad56f6e">
+         <source file="..\..\..\stm_lib\src\stm32f10x_dma.c" lastModified="1848ababdf8"/>
+      </target>
+      <target file="can.o" lastModified="1848ad56ca5">
+         <source file="..\..\..\Pheonix\Communication\can.c" lastModified="1848ababddc"/>
+      </target>
+      <target file="st7789.o" lastModified="1848ad57108">
+         <source file="..\..\..\Pheonix\Display\ST7789\st7789.c" lastModified="1848ababde4"/>
+      </target>
+      <target file="adc.o" lastModified="1848ad56f14">
+         <source file="..\..\..\Pheonix\ANALOG\adc.c" lastModified="1848ababdda"/>
+      </target>
+      <target file="can_1xx.o" lastModified="1848ad571d7">
+         <source file="..\..\..\Pheonix\Communication\1xx\can_1xx.c" lastModified="1848ababddb"/>
+      </target>
+      <target file="ILI9341_Touchscreen.o" lastModified="1848ad571f6">
+         <source file="..\..\..\Pheonix\Display\ILI9341\ILI9341_Touchscreen.c" lastModified="1848ababde2"/>
+      </target>
+      <target file="hyrelcan.o" lastModified="1848ad56a05">
+         <source file="..\..\..\Pheonix\Communication\hyrelcan.c" lastModified="1848ababddc"/>
+      </target>
+      <target file="main.o" lastModified="1848ad56b36">
+         <source file="..\..\..\main.c" lastModified="1848ababdf2"/>
+      </target>
+      <target file="st7735_lcd.o" lastModified="1848ad56e3a">
+         <source file="..\..\..\Pheonix\Display\ST7735\st7735_lcd.c" lastModified="1848ababde3"/>
+      </target>
+      <target file="startup_stm32f10x_md.o" lastModified="1848ad569db">
+         <source file="..\..\..\cmsis_boot\startup\startup_stm32f10x_md.c" lastModified="1848ababdee"/>
+      </target>
+      <target file="stm32f10x_spi.o" lastModified="1848ad57044">
+         <source file="..\..\..\stm_lib\src\stm32f10x_spi.c" lastModified="1848ababdf9"/>
+      </target>
+      <target file="display.o" lastModified="1848ad56d10">
+         <source file="..\..\..\Pheonix\Display\display.c" lastModified="1848ababde5"/>
+      </target>
+   </processor>
+</history>

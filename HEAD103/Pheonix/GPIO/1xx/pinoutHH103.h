@@ -59,6 +59,10 @@
 #define SET_HSS2				GPIOA->BSRR = PIN_MASK_05
 #define CLR_HSS2				GPIOA->BSRR = PIN_MASK_05 << PIN_MASK_SHIFT
 
+
+#define BB_HSS1_FAN       		PBout(0)
+#define BB_HSS2_Heater      	PAout(5)
+
 #ifdef HEAD_STM
 #define PIN_POSITION			PIN_ADC_CH9_B1
 #define PIN_RTD1_ADC_IN			PIN_ADC_CH0_A0

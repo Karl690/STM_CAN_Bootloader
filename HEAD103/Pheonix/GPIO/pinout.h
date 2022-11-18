@@ -9,3 +9,9 @@
 #elif defined(PHEONIX750)
 #include "7xx/pinout.h"
 #endif
+
+#define PAout(n)   BIT_ADDR(GPIOA_ODR_ADDR,n)
+#define PAin(n)    BIT_ADDR(GPIOA_IDR_ADDR,n)
+
+#define PBout(n)   BIT_ADDR(GPIOB_ODR_ADDR,n)
+#define PBin(n)    BIT_ADDR(GPIOB_IDR_ADDR,n)
