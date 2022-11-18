@@ -242,12 +242,11 @@ void SetFanDuty()
 	DutyCycleCounter&=0x7;//if(DutyCycleCounter > 8) DutyCycleCounter = 0;
 	if((SliceCnt & 0x7) <= (DesiredFanDutyCycle << 5))//adjust for duty range of 0-7
 	{
-		//SET_HSS1;// HSS turn off
-		pinWrite(PIN_HSS2_4988, 1);
+		SET_HSS1;// HSS turn off
+
 	}
 	else{
-		//CLR_HSS1;
-		pinWrite(PIN_HSS2_4988, 0);
+		CLR_HSS1;
 	}
 
 }
