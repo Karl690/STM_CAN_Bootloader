@@ -80,7 +80,21 @@ void ProcessCanRxMessage(void)
 				}
 			}
 			break;
+		case CAN_MSG_HSS_CONTROL:
+			switch(pOutBuffer->Page) {
+			case SWITCH_CONTROL_BY_TEMP:
+				DesiredTemperature = pOutBuffer->Data[0] + (pOutBuffer->Data[1] << 8);
+				break;
+			case SWITCH_CONTROL_BY_FAN:
+				DesiredFanDutyCycle = pOutBuffer->Data[0] + (pOutBuffer->Data[1] << 8);
+				break;
+			case SWITCH_CONTROL_BY_FEEDRATE:
+				DesiredFeedRate = pOutBuffer->Data[0] + (pOutBuffer->Data[1] << 8);
+				break;
+			}
+			break;
 		}
+
 		break;
 	case CAN_READ:
 		switch(pOutBuffer->MsgId)

@@ -12,7 +12,7 @@
 
 
 #ifdef HH103
-#ifdef STM32F10X_LD
+#ifdef HEAD_STM
 #else
 #define USE_LCD
 #endif

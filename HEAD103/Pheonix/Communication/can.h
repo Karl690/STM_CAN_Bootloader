@@ -10,6 +10,7 @@
 #include "7xx/can_7xx.h"
 #endif
 
+#include "hyrelcan.h"
 
 typedef struct
 {
@@ -38,6 +39,7 @@ typedef struct
 #define CAN_MSG_READ_SOAPSTRING		0x11
 #define CAN_MSG_WRITE_SOAPSTRING	0x12
 
+#define CAN_MSG_HSS_CONTROL			0x20
 
 extern uint8_t 				RemoteSoapString[0x400];
 extern uint16_t				CanRxInIndex;

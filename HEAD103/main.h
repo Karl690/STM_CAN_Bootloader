@@ -19,8 +19,12 @@ typedef int16_t temp_t; // temperature (s10.5 format - 1/32 degree resolution)
 
 extern uint8_t Initialized;
 extern uint16_t HeadPosition;
-extern uint16_t HeadTemperature;
-extern uint16_t HeadHeaterDuty;
-extern uint16_t	HeadFanDuty;
-extern uint16_t	HeadAuxAnalog;
+extern uint16_t 	ActualTemperature;
+extern uint16_t 	DesiredTemperature;
+extern uint16_t 	ActualFeedRate;
+extern uint16_t 	DesiredFeedRate;
+extern uint16_t		ActualFanDutyCycle;
+extern uint16_t		DesiredFanDutyCycle;
+extern uint16_t		HeadAuxAnalog;
+
 

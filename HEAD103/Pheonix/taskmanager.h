@@ -59,5 +59,6 @@ void ClearSliceTimes(void);
 void ReadAdcValue();
 void UpdateLeds();
 void CanBusExtendedMessageProcessor(void);
-
+void CheckHeadTemperature();
+void SetFanDuty();
 

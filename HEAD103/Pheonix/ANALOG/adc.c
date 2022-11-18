@@ -56,10 +56,10 @@ void CalculateHeadPosition(){
 }
 
 void CalculateHeadTemperature() {
-	HeadTemperature = convertDataFromRawADCValue(RtdTable_1K, ADC_Channel[1].adcAvg);
+	ActualTemperature = convertDataFromRawADCValue(RtdTable_1K, ADC_Channel[1].adcAvg);
 }
 void ProcessRawADC_Data() {
 	SmoothDataUsingOlympicVotingAverage();
-	CalculateHeadPosition();
+	//CalculateHeadPosition();
 	CalculateHeadTemperature();
 }

@@ -16,7 +16,7 @@ char TestString[] ="test String 12345";
 LcdVariableInfo LcdVarsTable[] = {
 	{&HeartBeat,               				"HB1     ", FUNC_INT32,		COLOR_RED,	COLOR_YELLOW, 	0},
 	{&HeadPosition,               			"POSITION", FUNC_INT16,		COLOR_RED,	COLOR_YELLOW, 	0},
-	{&HeadTemperature,               		"TEMP    ", FUNC_INT16,		COLOR_RED,	COLOR_YELLOW, 	0},
+	{&ActualTemperature,               		"TEMP    ", FUNC_INT16,		COLOR_RED,	COLOR_YELLOW, 	0},
 	{&ScaledADCData[0],           			"CH0-PA0 ", FUNC_FLOAT,		COLOR_RED,	COLOR_YELLOW, 	0},
 	{&ScaledADCData[1],           			"CH0-PA1 ", FUNC_FLOAT,		COLOR_RED,  COLOR_YELLOW, 	0},
 	{&RawADCDataBuffer[0],        			"ADC-PA0 ", FUNC_INT16, 	COLOR_RED,	COLOR_YELLOW, 		0},

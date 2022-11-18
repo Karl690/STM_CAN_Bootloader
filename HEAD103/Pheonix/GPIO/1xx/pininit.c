@@ -22,6 +22,9 @@ void Init_GPIO(void)
 #endif
 	pinInit(PIN_CAN_RX);
 	pinInit(PIN_CAN_TX);
+
+	pinInit(PIN_HSS1_4988);
+	pinInit(PIN_HSS2_4988);
 }
 
 void Init_LEDs()

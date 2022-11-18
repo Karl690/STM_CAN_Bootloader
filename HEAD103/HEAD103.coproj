@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Project version="2G - 1.7.8" name="HEAD103">
-  <Target name="HEAD103_GD" isCurrent="1">
+  <Target name="HEAD103_GD" isCurrent="0">
     <Device manufacturerId="9" manufacturerName="ST" chipId="306" chipName="STM32F103CB" boardId="" boardName=""/>
     <BuildOption>
       <Compile>
@@ -16,6 +16,7 @@
           <Define name="STM32F10X_MD"/>
           <Define name="USE_STDPERIPH_DRIVER"/>
           <Define name="__ASSEMBLY__"/>
+          <Define name="HEAD_GD"/>
         </DefinedSymbols>
       </Compile>
       <Link useDefault="0">
@@ -69,7 +70,7 @@
     </DebugOption>
     <ExcludeFile/>
   </Target>
-  <Target name="HEAD103_STM" isCurrent="0">
+  <Target name="HEAD103_STM" isCurrent="1">
     <Device manufacturerId="9" manufacturerName="ST" chipId="306" chipName="STM32F103CB" boardId="" boardName=""/>
     <BuildOption>
       <Compile>
@@ -85,6 +86,7 @@
           <Define name="__ASSEMBLY__"/>
           <Define name="STM32F103C6"/>
           <Define name="STM32F10X_LD"/>
+          <Define name="HEAD_STM"/>
         </DefinedSymbols>
       </Compile>
       <Link useDefault="0">
@@ -166,14 +168,15 @@
     <File name="Pheonix/ANALOG/1xx/adc_1xx.c" path="Pheonix/ANALOG/1xx/adc_1xx.c" type="1"/>
     <File name="syscalls/syscalls.c" path="syscalls/syscalls.c" type="1"/>
     <File name="Pheonix/GPIO" path="" type="2"/>
+    <File name="Pheonix/Communication/hyrelcan.h" path="Pheonix/Communication/hyrelcan.h" type="1"/>
     <File name="stm_lib/inc/stm32f10x_spi.h" path="stm_lib/inc/stm32f10x_spi.h" type="1"/>
     <File name="stm_lib/inc/stm32f10x_dma.h" path="stm_lib/inc/stm32f10x_dma.h" type="1"/>
     <File name="stm_lib/src/stm32f10x_adc.c" path="stm_lib/src/stm32f10x_adc.c" type="1"/>
     <File name="Pheonix/RCC/rcc.h" path="Pheonix/RCC/rcc.h" type="1"/>
     <File name="Pheonix/Display/display.c" path="Pheonix/Display/display.c" type="1"/>
     <File name="Pheonix/Communication/1xx/can_1xx.h" path="Pheonix/Communication/1xx/can_1xx.h" type="1"/>
-    <File name="Pheonix/RCC" path="" type="2"/>
     <File name="Pheonix/Display/1xx/lcdspi_1xx.h" path="Pheonix/Display/1xx/lcdspi_1xx.h" type="1"/>
+    <File name="Pheonix/RCC" path="" type="2"/>
     <File name="Pheonix/taskmanager.h" path="Pheonix/taskmanager.h" type="1"/>
     <File name="Pheonix/Display/1xx" path="" type="2"/>
     <File name="cmsis_boot/startup/startup_stm32f10x_md.c" path="cmsis_boot/startup/startup_stm32f10x_md.c" type="1"/>
@@ -196,8 +199,8 @@
     <File name="cmsis" path="" type="2"/>
     <File name="stm_lib" path="" type="2"/>
     <File name="stm_lib/inc/stm32f10x_adc.h" path="stm_lib/inc/stm32f10x_adc.h" type="1"/>
-    <File name="cmsis_boot/system_stm32f10x.h" path="cmsis_boot/system_stm32f10x.h" type="1"/>
     <File name="Pheonix/GPIO/1xx" path="" type="2"/>
+    <File name="cmsis_boot/system_stm32f10x.h" path="cmsis_boot/system_stm32f10x.h" type="1"/>
     <File name="Pheonix/Display/ILI9341/ILI9341_STM32_Driver.h" path="Pheonix/Display/ILI9341/ILI9341_STM32_Driver.h" type="1"/>
     <File name="Pheonix/Display/ILI9341" path="" type="2"/>
     <File name="Pheonix/GPIO/1xx/pininit.c" path="Pheonix/GPIO/1xx/pininit.c" type="1"/>
@@ -236,6 +239,7 @@
     <File name="Pheonix" path="" type="2"/>
     <File name="Pheonix/Display" path="" type="2"/>
     <File name="Pheonix/taskmanager.c" path="Pheonix/taskmanager.c" type="1"/>
+    <File name="Pheonix/Communication/hyrelcan.c" path="Pheonix/Communication/hyrelcan.c" type="1"/>
     <File name="Pheonix/ANALOG/adc.h" path="Pheonix/ANALOG/adc.h" type="1"/>
     <File name="cmsis/core_cm3.h" path="cmsis/core_cm3.h" type="1"/>
     <File name="Pheonix/Display/1xx/lcdspi_1xx.c" path="Pheonix/Display/1xx/lcdspi_1xx.c" type="1"/>

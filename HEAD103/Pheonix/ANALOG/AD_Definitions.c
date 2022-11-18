@@ -1,11 +1,13 @@
+#include "configure.h"
 #include "GPIO/pinout.h"
 #include "AD_Definitions.h"
 
 #ifdef HH103
 #include "stm32f10x_adc.h"
 ADC_ChannelDef AdcChannelTable[ADC_CHANNEL_NUM] = {
-		{ADC_Channel_0, 	1, 	PIN_ADC_CH0_A0},
-		{ADC_Channel_1, 	2, 	PIN_ADC_CH0_A0},
+		{ADC_Channel_9, 	1, 	PIN_ADC_CH9_B1},
+		{ADC_Channel_0, 	2, 	PIN_ADC_CH0_A0},
+		{ADC_Channel_1, 	3, 	PIN_ADC_CH1_A1}
 };
 #elif defined(PHEONIX750)
 ADC_ChannelDef AdcChannelTable[ADC_CHANNEL_NUM] = {

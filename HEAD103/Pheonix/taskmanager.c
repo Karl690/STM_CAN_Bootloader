@@ -56,17 +56,17 @@ const PFUNC F100HZ[NUM_100HZ] =
 		Spare,//ParseIncomingGcodeLine,             // can't use slice 0 and this is time slot to execute the next slower slice
 		Spare, //Sequencer,
 		Spare, //CheckCanMsgWaitingFifo1,
-		CanBusExtendedMessageProcessor, //CanBusExtendedMessageProcessor,
+		CanBusExtendedMessageProcessor,
 		ProcessRawADC_Data,
 		UpdateLeds,
-		Spare, //USBTxProcessor,
+		SetFanDuty,
 
 };
 
 const PFUNC F10HZ[NUM_10HZ] =
 {
 		Spare,//ReportXYZLocation,
-		Spare,            // can't use slice 0 and this is time slot to execute the next slower slice
+		CheckHeadTemperature,            // can't use slice 0 and this is time slot to execute the next slower slice
 		Spare,//loop_10Hz_simple_work,  // keep as last call in this array
 		Spare,//soapstringController,
 		Spare,//sendUpdateToHost,
@@ -153,12 +153,12 @@ void BlinkHeartBeat()
 //
 ////	pinToggleOutput(LED_HEARTBEAT);
 
-	CanMessageBuffer[0] = (uint8_t)(HeadTemperature & 0xff);
-	CanMessageBuffer[1] = (uint8_t)(HeadTemperature >> 8);
-	CanMessageBuffer[2] = (uint8_t)(HeadHeaterDuty & 0xff);
-	CanMessageBuffer[3] = (uint8_t)(HeadHeaterDuty >> 8);
-	CanMessageBuffer[4] = (uint8_t)(HeadFanDuty & 0xff);
-	CanMessageBuffer[5] = (uint8_t)(HeadFanDuty >> 8);
+	CanMessageBuffer[0] = (uint8_t)(ActualTemperature & 0xff);
+	CanMessageBuffer[1] = (uint8_t)(ActualTemperature >> 8);
+	CanMessageBuffer[2] = (uint8_t)(ActualFeedRate & 0xff);
+	CanMessageBuffer[3] = (uint8_t)(ActualFeedRate >> 8);
+	CanMessageBuffer[4] = (uint8_t)(ActualFanDutyCycle & 0xff);
+	CanMessageBuffer[5] = (uint8_t)(ActualFanDutyCycle >> 8);
 	CanMessageBuffer[5] = (uint8_t)(HeadAuxAnalog & 0xff);
 	CanMessageBuffer[7] = (uint8_t)(HeadAuxAnalog >> 8);
 
@@ -203,7 +203,6 @@ void CanBusExtendedMessageProcessor(void)
 			if(CanMessageBuffer[i+2] == 0) {
 				break;
 			}
-
 		}
 
 		CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_READ_SOAPSTRING, 0, 0, CanMessageBuffer, size + 2);
@@ -231,3 +230,24 @@ void CanBusExtendedMessageProcessor(void)
 }
 
 
+void CheckHeadTemperature()
+{
+
+}
+uint8_t DutyCycleCounter = 0;//range is 0-7
+uint8_t desiredDutyHSS1=0;//range is 0-255
+void SetFanDuty()
+{
+	DutyCycleCounter ++;
+	DutyCycleCounter&=0x7;//if(DutyCycleCounter > 8) DutyCycleCounter = 0;
+	if((SliceCnt & 0x7) <= (DesiredFanDutyCycle << 5))//adjust for duty range of 0-7
+	{
+		//SET_HSS1;// HSS turn off
+		pinWrite(PIN_HSS2_4988, 1);
+	}
+	else{
+		//CLR_HSS1;
+		pinWrite(PIN_HSS2_4988, 0);
+	}
+
+}

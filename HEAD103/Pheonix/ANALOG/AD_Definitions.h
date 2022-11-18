@@ -12,7 +12,7 @@ typedef struct {
 	temp_t      value;              // if temperature (s10.5 format - 1/32 degree) at specified adcValue; position, just value, etc
 } AdcTableStruct;
 
-#define ADC_CHANNEL_NUM 2
+#define ADC_CHANNEL_NUM 3
 
 #define MAX_ADC12 						4096
 #define TEMP_FRAC_BITS                  0

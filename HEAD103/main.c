@@ -13,10 +13,13 @@ uint8_t Initialized = 0;
 SPI_LCD_HandleTypeDef LCDSpi1;
 #endif
 uint32_t 	DisplayIndex = 0;
-uint16_t 	HeadPosition =  HH_POSITION_UNPLUGGED;
-uint16_t 	HeadTemperature = MAX_ADC;
-uint16_t 	HeadHeaterDuty;
-uint16_t	HeadFanDuty;
+uint16_t 	HeadPosition = 12;// HH_POSITION_UNPLUGGED;
+uint16_t 	ActualTemperature = MAX_ADC;
+uint16_t 	DesiredTemperature = 255;
+uint16_t 	ActualFeedRate;
+uint16_t 	DesiredFeedRate;
+uint16_t	ActualFanDutyCycle;
+uint16_t	DesiredFanDutyCycle = 0;
 uint16_t	HeadAuxAnalog;
 
 int main(void)
@@ -26,7 +29,7 @@ int main(void)
 	Init_ADC();
 	Init_CAN();
 #ifdef USE_LCD
-	Init_Display(&LCDSpi1, 	2, COLOR_MODE_NORMAL);
+	Init_Display(&LCDSpi1, 	LCD_SPI_PORT, COLOR_MODE_NORMAL);
 #else
 	Init_LEDs();
 #endif

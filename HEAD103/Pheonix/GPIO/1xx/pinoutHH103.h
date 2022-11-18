@@ -2,11 +2,11 @@
 #include "configure.h"
 #ifdef HH103
 #include "pins1xx.h"
-#ifdef STM32F10X_MD
+#ifdef HEAD_GD
 #define LED_HEARTBEAT       (PIN_PORT_C | PIN_NUM_13 | PIN_INIT_HIGH    | OUT_PP_02MHZ) // DEFAULT
 #define LED_HEARTBEAT_ON		GPIOC->BSRR = PIN_MASK_13
 #define LED_HEARTBEAT_OFF		GPIOC->BSRR = PIN_MASK_13 << PIN_MASK_SHIFT
-#elif defined(STM32F10X_LD)
+#elif defined(HEAD_STM)
 #define LED_HEARTBEAT       (PIN_PORT_A | PIN_NUM_15 | PIN_INIT_HIGH    | OUT_PP_02MHZ) // DEFAULT
 #define LED_HEARTBEAT_ON		GPIOA->BSRR = PIN_MASK_15
 #define LED_HEARTBEAT_OFF		GPIOA->BSRR = PIN_MASK_15 << PIN_MASK_SHIFT
@@ -48,7 +48,25 @@
 
 #define PIN_CAN_RX              (PIN_PORT_A | PIN_NUM_11 | PIN_INIT_PLUP    | IN_PULL_UP)
 #define PIN_CAN_TX              (PIN_PORT_A | PIN_NUM_12 | PIN_INIT_HIGH    | AF_OPP_50MHZ)
-#define PIN_ADC_CH0_A0        		(PIN_PORT_A | PIN_NUM_00  | PIN_INIT_HIZ     | ANALOG_IN )
-#define PIN_ADC_CH1_A1        		(PIN_PORT_A | PIN_NUM_01  | PIN_INIT_HIZ     | ANALOG_IN )
+#define PIN_ADC_CH0_A0        	(PIN_PORT_A | PIN_NUM_00  | PIN_INIT_HIZ     | ANALOG_IN )
+#define PIN_ADC_CH1_A1        	(PIN_PORT_A | PIN_NUM_01  | PIN_INIT_HIZ     | ANALOG_IN )
+#define PIN_ADC_CH9_B1			(PIN_PORT_B | PIN_NUM_01  | PIN_INIT_HIZ     | ANALOG_IN )
+
+#define PIN_HSS1_4988           (PIN_PORT_B | PIN_NUM_00 | PIN_INIT_LOW  | OUT_PP_02MHZ) //FAN
+#define SET_HSS1				GPIOB->BSRR = PIN_MASK_00
+#define CLR_HSS1				GPIOB->BSRR = PIN_MASK_00 << PIN_MASK_SHIFT
+#define PIN_HSS2_4988           (PIN_PORT_A | PIN_NUM_05 | PIN_INIT_LOW | OUT_PP_02MHZ) //HEATER
+#define SET_HSS2				GPIOA->BSRR = PIN_MASK_05
+#define CLR_HSS2				GPIOA->BSRR = PIN_MASK_05 << PIN_MASK_SHIFT
+
+#ifdef HEAD_STM
+#define PIN_POSITION			PIN_ADC_CH9_B1
+#define PIN_RTD1_ADC_IN			PIN_ADC_CH0_A0
+#define PIN_RTD2_ADC_IN			PIN_ADC_CH0_A1
+#elif HEAD_GD
+#define PIN_POSITION			PIN_ADC_CH9_N1
+#define PIN_RTD1_ADC_IN			PIN_ADC_CH0_A0
+#define PIN_RTD2_ADC_IN			PIN_ADC_CH0_A1
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 #endif
