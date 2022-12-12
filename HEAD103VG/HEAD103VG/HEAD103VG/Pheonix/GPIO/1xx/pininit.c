@@ -1,8 +1,5 @@
 #include "configure.h"
 #ifdef HH103
-#include "pins1xx.h"
-#include "GPIO/1xx/pinoutHH103.h"
-
 void Init_GPIO(void)
 {
 	AFIO->MAPR &= 0xf8ffffff;

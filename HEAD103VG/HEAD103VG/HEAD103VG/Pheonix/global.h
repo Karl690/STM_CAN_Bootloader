@@ -1,0 +1,2 @@
+#define CAN_BROADCAST_ADDRESS		0xFF
+#define CAN_DEV_HOST 0x40

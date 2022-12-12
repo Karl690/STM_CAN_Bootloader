@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|VisualGDB">
+      <Configuration>Debug</Configuration>
+      <Platform>VisualGDB</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|VisualGDB">
+      <Configuration>Release</Configuration>
+      <Platform>VisualGDB</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{55F5D082-8515-4D32-84BD-80D59DD78AB1}</ProjectGuid>
+    <BSP_ID>com.sysprogs.arm.stm32</BSP_ID>
+    <BSP_VERSION>2022.08</BSP_VERSION>
+    <InPlaceBSPSubdir />
+    <RelativeBSPPath />
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
+    <GNUConfigurationType>Debug</GNUConfigurationType>
+    <ToolchainID>com.visualgdb.arm-eabi</ToolchainID>
+    <ToolchainVersion>10.3.1/10.2.90/r1</ToolchainVersion>
+    <MCUPropertyListFile>$(ProjectDir)stm32.props</MCUPropertyListFile>
+    <GenerateHexFile>true</GenerateHexFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
+    <ToolchainID>com.visualgdb.arm-eabi</ToolchainID>
+    <ToolchainVersion>10.3.1/10.2.90/r1</ToolchainVersion>
+    <MCUPropertyListFile>$(ProjectDir)stm32.props</MCUPropertyListFile>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>./cmsis;./cmsis_boot;./stm_lib/inc;./Pheonix;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-D STM32F10X_LD %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>DEBUG=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
+      <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
+      <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
+      <LinkerScript>STM32F103CB_flash.lds</LinkerScript>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
+    <ClCompile>
+      <AdditionalOptions>-D STM32F10X_LD %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>./cmsis;./cmsis_boot;./stm_lib/inc;./Pheonix;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="cmsis\core_cm3.h" />
+    <ClInclude Include="cmsis\core_cmFunc.h" />
+    <ClInclude Include="cmsis\core_cmInstr.h" />
+    <ClInclude Include="cmsis_boot\stm32f10x.h" />
+    <ClInclude Include="cmsis_boot\stm32f10x_conf.h" />
+    <ClInclude Include="cmsis_boot\system_stm32f10x.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="Pheonix\ADC\1xx\adc_1xx.h" />
+    <ClInclude Include="Pheonix\ADC\adc.h" />
+    <ClInclude Include="Pheonix\ADC\AD_Definitions.h" />
+    <ClInclude Include="Pheonix\CAN\1xx\can_1xx.h" />
+    <ClInclude Include="Pheonix\CAN\can.h" />
+    <ClInclude Include="Pheonix\CAN\hyrelcan.h" />
+    <ClInclude Include="Pheonix\configure.h" />
+    <ClInclude Include="Pheonix\Display\1xx\lcdspi_1xx.h" />
+    <ClInclude Include="Pheonix\Display\colortables.h" />
+    <ClInclude Include="Pheonix\Display\display.h" />
+    <ClInclude Include="Pheonix\Display\DisplayList.h" />
+    <ClInclude Include="Pheonix\Display\font.h" />
+    <ClInclude Include="Pheonix\Display\gui.h" />
+    <ClInclude Include="Pheonix\Display\LcdDefinitions.h" />
+    <ClInclude Include="Pheonix\Display\lcdspi.h" />
+    <ClInclude Include="Pheonix\Display\ST7735\st7735.h" />
+    <ClInclude Include="Pheonix\Display\ST7735\st7735_lcd.h" />
+    <ClInclude Include="Pheonix\Display\ST7789\st7789.h" />
+    <ClInclude Include="Pheonix\FLASH\1xx\flash_1xx.h" />
+    <ClInclude Include="Pheonix\FLASH\flash.h" />
+    <ClInclude Include="Pheonix\global.h" />
+    <ClInclude Include="Pheonix\GPIO\1xx\pininit.h" />
+    <ClInclude Include="Pheonix\GPIO\1xx\pinoutHH103.h" />
+    <ClInclude Include="Pheonix\GPIO\1xx\pins_1xx.h" />
+    <ClInclude Include="Pheonix\GPIO\gpio.h" />
+    <ClInclude Include="Pheonix\RCC\1xx\rcc_1xx.h" />
+    <ClInclude Include="Pheonix\RevisionHistory.h" />
+    <ClInclude Include="Pheonix\taskmanager.h" />
+    <ClInclude Include="stm_lib\inc\misc.h" />
+    <ClInclude Include="stm_lib\inc\stm32f10x_adc.h" />
+    <ClInclude Include="stm_lib\inc\stm32f10x_can.h" />
+    <ClInclude Include="stm_lib\inc\stm32f10x_dma.h" />
+    <ClInclude Include="stm_lib\inc\stm32f10x_flash.h" />
+    <ClInclude Include="stm_lib\inc\stm32f10x_gpio.h" />
+    <ClInclude Include="stm_lib\inc\stm32f10x_rcc.h" />
+    <ClInclude Include="stm_lib\inc\stm32f10x_spi.h" />
+    <ClInclude Include="stm_lib\inc\stm32f10x_tim.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ItemGroup>
+    <None Include="HEAD103VG-Debug.vgdbsettings" />
+    <None Include="HEAD103VG-Release.vgdbsettings" />
+    <None Include="stm32.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cmsis_boot\startup\startup_stm32f10x_ld.c" />
+    <ClCompile Include="cmsis_boot\startup\startup_stm32f10x_md.c" />
+    <ClCompile Include="cmsis_boot\system_stm32f10x.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="Pheonix\ADC\1xx\adc_1xx.c" />
+    <ClCompile Include="Pheonix\ADC\adc.c" />
+    <ClCompile Include="Pheonix\ADC\AD_Definitions.c" />
+    <ClCompile Include="Pheonix\CAN\1xx\can_1xx.c" />
+    <ClCompile Include="Pheonix\CAN\can.c" />
+    <ClCompile Include="Pheonix\CAN\hyrelcan.c" />
+    <ClCompile Include="Pheonix\Display\1xx\lcdspi_1xx.c" />
+    <ClCompile Include="Pheonix\Display\colortables.c" />
+    <ClCompile Include="Pheonix\Display\display.c" />
+    <ClCompile Include="Pheonix\Display\DisplayList.c" />
+    <ClCompile Include="Pheonix\Display\gui.c" />
+    <ClCompile Include="Pheonix\Display\ST7735\st7735.c" />
+    <ClCompile Include="Pheonix\Display\ST7735\st7735_lcd.c" />
+    <ClCompile Include="Pheonix\Display\ST7789\st7789.c" />
+    <ClCompile Include="Pheonix\FLASH\1xx\flash_1xx.c" />
+    <ClCompile Include="Pheonix\GPIO\1xx\pininit.c" />
+    <ClCompile Include="Pheonix\GPIO\1xx\pins_1xx.c" />
+    <ClCompile Include="Pheonix\RCC\1xx\rcc_1xx.c" />
+    <ClCompile Include="Pheonix\taskmanager.c" />
+    <ClCompile Include="stm_lib\src\misc.c" />
+    <ClCompile Include="stm_lib\src\stm32f10x_adc.c" />
+    <ClCompile Include="stm_lib\src\stm32f10x_can.c" />
+    <ClCompile Include="stm_lib\src\stm32f10x_dma.c" />
+    <ClCompile Include="stm_lib\src\stm32f10x_flash.c" />
+    <ClCompile Include="stm_lib\src\stm32f10x_gpio.c" />
+    <ClCompile Include="stm_lib\src\stm32f10x_rcc.c" />
+    <ClCompile Include="stm_lib\src\stm32f10x_spi.c" />
+    <ClCompile Include="stm_lib\src\stm32f10x_tim.c" />
+    <ClCompile Include="syscalls\syscalls.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <LinkerScript Include="STM32F103CB_flash.lds" />
+  </ItemGroup>
+</Project>

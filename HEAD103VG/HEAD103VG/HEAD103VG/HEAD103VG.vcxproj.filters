@@ -1,0 +1,319 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{ca313a90-0291-4b7a-808a-08dfae4abfd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cmsis">
+      <UniqueIdentifier>{f3ce51b6-c881-489c-b5e0-36ed91559a2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cmsis_boot">
+      <UniqueIdentifier>{f117ff28-0e97-4f6c-9ba9-588a8eadc2a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix">
+      <UniqueIdentifier>{f9e60b90-3cab-44c0-a366-bf273a7b2c17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stm_lib">
+      <UniqueIdentifier>{0834d653-1c14-4043-b233-b19c3f88641c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="syscalls">
+      <UniqueIdentifier>{1da4fa68-bbe4-446a-af21-91eb34f6d362}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stm_lib\inc">
+      <UniqueIdentifier>{859a1d41-7e13-451d-8fcb-857ed9844e49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stm_lib\src">
+      <UniqueIdentifier>{69b27641-9df5-4d48-907e-9483cb6ad9fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cmsis_boot\startup">
+      <UniqueIdentifier>{876b8e23-bb9a-4e6e-94bb-453c80b247ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\ADC">
+      <UniqueIdentifier>{47529d8b-33ae-470a-af5b-2b410bcafcfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\ADC\1xx">
+      <UniqueIdentifier>{7d08c56e-4f9c-4bda-bf24-b3e9e1b5cab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\CAN">
+      <UniqueIdentifier>{f07eaeb3-83e6-4029-bed6-5bfbfdcfdf6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\CAN\1xx">
+      <UniqueIdentifier>{6d17fa8e-ca4b-442b-a1fe-0578ddb531bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\Display">
+      <UniqueIdentifier>{0bbd5f7a-21ff-45da-8b0d-cc939941e3c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\Display\1xx">
+      <UniqueIdentifier>{4c531d82-e21a-457e-abfe-4664e140ffea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\Display\ST7735">
+      <UniqueIdentifier>{ba18d2e9-0ae8-410c-b04c-43669aecc893}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\Display\ST7789">
+      <UniqueIdentifier>{2179a004-5a0a-4b88-af01-70743139a786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\FLASH">
+      <UniqueIdentifier>{cdb40c0f-77fa-4483-9b5d-880db3f13e74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\GPIO">
+      <UniqueIdentifier>{266a38e8-9662-45c2-b872-7a60f5a142d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\RCC">
+      <UniqueIdentifier>{50ea5b93-ad09-4a4d-990f-a16769c98108}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\RCC\1xx">
+      <UniqueIdentifier>{624a2d3e-6dc2-4a18-8a2f-7d38d7ab7c8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\GPIO\1xx">
+      <UniqueIdentifier>{e1f8b77d-0fad-495c-a709-be795ec9940b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\FLASH\1xx">
+      <UniqueIdentifier>{def7a7bc-8f6c-4f17-a994-215929d7a73f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HEAD103VG-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="HEAD103VG-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="stm32.xml">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h" />
+    <ClInclude Include="stm_lib\inc\stm32f10x_tim.h">
+      <Filter>stm_lib\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="stm_lib\inc\stm32f10x_spi.h">
+      <Filter>stm_lib\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="stm_lib\inc\stm32f10x_rcc.h">
+      <Filter>stm_lib\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="stm_lib\inc\stm32f10x_gpio.h">
+      <Filter>stm_lib\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="stm_lib\inc\stm32f10x_flash.h">
+      <Filter>stm_lib\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="stm_lib\inc\stm32f10x_dma.h">
+      <Filter>stm_lib\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="stm_lib\inc\stm32f10x_can.h">
+      <Filter>stm_lib\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="stm_lib\inc\stm32f10x_adc.h">
+      <Filter>stm_lib\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="stm_lib\inc\misc.h">
+      <Filter>stm_lib\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="cmsis\core_cmInstr.h">
+      <Filter>cmsis</Filter>
+    </ClInclude>
+    <ClInclude Include="cmsis\core_cmFunc.h">
+      <Filter>cmsis</Filter>
+    </ClInclude>
+    <ClInclude Include="cmsis\core_cm3.h">
+      <Filter>cmsis</Filter>
+    </ClInclude>
+    <ClInclude Include="cmsis_boot\system_stm32f10x.h">
+      <Filter>cmsis_boot</Filter>
+    </ClInclude>
+    <ClInclude Include="cmsis_boot\stm32f10x_conf.h">
+      <Filter>cmsis_boot</Filter>
+    </ClInclude>
+    <ClInclude Include="cmsis_boot\stm32f10x.h">
+      <Filter>cmsis_boot</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\ADC\adc.h">
+      <Filter>Pheonix\ADC</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\ADC\AD_Definitions.h">
+      <Filter>Pheonix\ADC</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\ADC\1xx\adc_1xx.h">
+      <Filter>Pheonix\ADC\1xx</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\CAN\hyrelcan.h">
+      <Filter>Pheonix\CAN</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\CAN\can.h">
+      <Filter>Pheonix\CAN</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\CAN\1xx\can_1xx.h">
+      <Filter>Pheonix\CAN\1xx</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\Display\lcdspi.h">
+      <Filter>Pheonix\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\Display\LcdDefinitions.h">
+      <Filter>Pheonix\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\Display\gui.h">
+      <Filter>Pheonix\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\Display\font.h">
+      <Filter>Pheonix\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\Display\DisplayList.h">
+      <Filter>Pheonix\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\Display\display.h">
+      <Filter>Pheonix\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\Display\colortables.h">
+      <Filter>Pheonix\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\Display\ST7735\st7735_lcd.h">
+      <Filter>Pheonix\Display\ST7735</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\Display\ST7735\st7735.h">
+      <Filter>Pheonix\Display\ST7735</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\Display\ST7789\st7789.h">
+      <Filter>Pheonix\Display\ST7789</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\RCC\1xx\rcc_1xx.h">
+      <Filter>Pheonix\RCC\1xx</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\GPIO\gpio.h">
+      <Filter>Pheonix\GPIO\1xx</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\GPIO\1xx\pins_1xx.h">
+      <Filter>Pheonix\GPIO\1xx</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\GPIO\1xx\pinoutHH103.h">
+      <Filter>Pheonix\GPIO\1xx</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\GPIO\1xx\pininit.h">
+      <Filter>Pheonix\GPIO\1xx</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\Display\1xx\lcdspi_1xx.h">
+      <Filter>Pheonix\Display\1xx</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\configure.h">
+      <Filter>Pheonix</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\global.h">
+      <Filter>Pheonix</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\RevisionHistory.h">
+      <Filter>Pheonix</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\taskmanager.h">
+      <Filter>Pheonix</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\FLASH\1xx\flash_1xx.h">
+      <Filter>Pheonix\FLASH\1xx</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\FLASH\flash.h">
+      <Filter>Pheonix\FLASH</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c" />
+    <ClCompile Include="syscalls\syscalls.c">
+      <Filter>syscalls</Filter>
+    </ClCompile>
+    <ClCompile Include="stm_lib\src\stm32f10x_tim.c">
+      <Filter>stm_lib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="stm_lib\src\stm32f10x_spi.c">
+      <Filter>stm_lib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="stm_lib\src\stm32f10x_rcc.c">
+      <Filter>stm_lib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="stm_lib\src\stm32f10x_gpio.c">
+      <Filter>stm_lib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="stm_lib\src\stm32f10x_flash.c">
+      <Filter>stm_lib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="stm_lib\src\stm32f10x_dma.c">
+      <Filter>stm_lib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="stm_lib\src\stm32f10x_can.c">
+      <Filter>stm_lib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="stm_lib\src\stm32f10x_adc.c">
+      <Filter>stm_lib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="stm_lib\src\misc.c">
+      <Filter>stm_lib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="cmsis_boot\system_stm32f10x.c">
+      <Filter>cmsis_boot</Filter>
+    </ClCompile>
+    <ClCompile Include="cmsis_boot\startup\startup_stm32f10x_md.c">
+      <Filter>cmsis_boot\startup</Filter>
+    </ClCompile>
+    <ClCompile Include="cmsis_boot\startup\startup_stm32f10x_ld.c">
+      <Filter>cmsis_boot\startup</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\ADC\adc.c">
+      <Filter>Pheonix\ADC</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\ADC\AD_Definitions.c">
+      <Filter>Pheonix\ADC</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\ADC\1xx\adc_1xx.c">
+      <Filter>Pheonix\ADC\1xx</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\CAN\hyrelcan.c">
+      <Filter>Pheonix\CAN</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\CAN\can.c">
+      <Filter>Pheonix\CAN</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\CAN\1xx\can_1xx.c">
+      <Filter>Pheonix\CAN\1xx</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\Display\gui.c">
+      <Filter>Pheonix\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\Display\DisplayList.c">
+      <Filter>Pheonix\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\Display\display.c">
+      <Filter>Pheonix\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\Display\colortables.c">
+      <Filter>Pheonix\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\Display\ST7735\st7735_lcd.c">
+      <Filter>Pheonix\Display\ST7735</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\Display\ST7735\st7735.c">
+      <Filter>Pheonix\Display\ST7735</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\Display\ST7789\st7789.c">
+      <Filter>Pheonix\Display\ST7789</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\RCC\1xx\rcc_1xx.c">
+      <Filter>Pheonix\RCC\1xx</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\GPIO\1xx\pins_1xx.c">
+      <Filter>Pheonix\GPIO\1xx</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\GPIO\1xx\pininit.c">
+      <Filter>Pheonix\GPIO\1xx</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\Display\1xx\lcdspi_1xx.c">
+      <Filter>Pheonix\Display\1xx</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\taskmanager.c">
+      <Filter>Pheonix</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\FLASH\1xx\flash_1xx.c">
+      <Filter>Pheonix\FLASH\1xx</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <LinkerScript Include="STM32F103CB_flash.lds" />
+  </ItemGroup>
+</Project>
