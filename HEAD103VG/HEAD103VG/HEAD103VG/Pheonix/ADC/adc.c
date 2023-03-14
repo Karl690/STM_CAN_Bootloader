@@ -4,6 +4,8 @@ adcStruct *ADC_Work_Channel;
 float ScaledADCData[ADC_CHANNEL_NUM] = {0};//converted adc buffer values
 uint16_t ADC_Work_Channel_Index=0;//used to walk thru the channels and update the working variables.
 adcStruct ADC_Channel[ADC_CHANNEL_NUM];
+uint16_t WaitForHeadPosistionCountDown = 50;
+
 
 void SmoothDataUsingOlympicVotingAverage(void)
 {
@@ -68,6 +70,12 @@ void CalculateHeadTemperature() {
 }
 void ProcessRawADC_Data() {
 	SmoothDataUsingOlympicVotingAverage();
-	//CalculateHeadPosition();
+	if (WaitForHeadPosistionCountDown > 0)	WaitForHeadPosistionCountDown--; 
+	else {
+		if (WaitForHeadPosistionCountDown == 0) {
+			CalculateHeadPosition(); //wait for 1s from power off.
+			WaitForHeadPosistionCountDown = -1; //anymore, does not get the head position.
+		}
+	}
 	CalculateHeadTemperature();
 }

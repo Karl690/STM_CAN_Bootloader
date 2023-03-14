@@ -28,6 +28,7 @@ uint32_t GenerateFrameID(uint16_t target, uint8_t msgType, uint8_t msgId, uint8_
 
 void CanAddTxBuffer(uint16_t target, uint8_t msgType, uint8_t msgId, uint8_t page, uint8_t immediate,  uint8_t* data, uint8_t size)
 {
+	if (HeadPosition == HH_POSITION_UNPLUGGED) return;
 	CANMsg* pOutBuffer = &CanTxMsgBuffer[CanTxOutIndex];
 	pOutBuffer->ID = GenerateFrameID(target, msgType, msgId, page, immediate);
 

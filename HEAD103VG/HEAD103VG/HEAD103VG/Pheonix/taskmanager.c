@@ -234,16 +234,22 @@ void SetHeaterDutyCycle()
 }
 
 uint8_t DutyCycleCounter = 0;//range is 0-7
+#define HEATER_TRANSITION_RANGE 5.0f
+#define HEATER_MAX_DUTYCYCLE	50
 void SmoothDutyCycleControl()
 {
 	if(ActualFanDutyCycle != DesiredFanDutyCycle) {
 		if(ActualFanDutyCycle > DesiredFanDutyCycle) ActualFanDutyCycle --;
 		else ActualFanDutyCycle ++;
 	}
-	if(DesiredTemperature == 0) ActualHeaterDutyCycle = 0;
+	if(DesiredTemperature == 0) ActualHeaterDutyCycle = 0; //that is when the heater is off
 	else if(ActualTemperature != MAX_TEMP &&  ActualTemperature != DesiredTemperature) {
-		if(ActualTemperature > DesiredTemperature) ActualHeaterDutyCycle --;
-		else ActualHeaterDutyCycle ++;
+		if (ActualTemperature > DesiredTemperature) ActualHeaterDutyCycle = 0;
+		else if (ActualTemperature > DesiredTemperature - HEATER_TRANSITION_RANGE)
+		{
+			ActualHeaterDutyCycle = HEATER_MAX_DUTYCYCLE * (DesiredTemperature - ActualTemperature) / HEATER_TRANSITION_RANGE; //Duty Cycle is linearly reduced.
+		}		
+		else ActualHeaterDutyCycle = 50;
 	}
 }
 void SetDutyCycle()
@@ -254,8 +260,8 @@ void SetDutyCycle()
 	uint8_t onOff = (uint8_t)(ActualFanDutyCycle && (DutyCycleCounter <= (ActualFanDutyCycle>>5))? 1: 0);
 	BB_HSS1_FAN = onOff;
 	BB_LED_HSS1_FAN = onOff;
-
-	onOff = (uint8_t)(ActualHeaterDutyCycle && (DutyCycleCounter <= (ActualHeaterDutyCycle>>5))? 1: 0);
+	
+	onOff = (uint8_t)(ActualHeaterDutyCycle && (DutyCycleCounter <= (ActualHeaterDutyCycle>>5))? 1: 0);	
 	BB_HSS2_HEATER = onOff;
 	BB_LED_HSS2_HEATER = onOff;
 }

@@ -29,5 +29,8 @@ typedef struct {
 extern ADC_ChannelDef AdcChannelTable[ADC_CHANNEL_NUM];
 extern AdcTableStruct const HeadPositionTable[];
 extern AdcTableStruct const RtdTable_1K[];
+extern AdcTableStruct const RtdTable_50K[];
+extern AdcTableStruct const RtdTable_1M[];
+extern AdcTableStruct const RtdTable_100[];
 
 int16_t convertDataFromRawADCValue(const AdcTableStruct* adcTable, uint16_t raw);

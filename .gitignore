@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.visualgdb
+/.vs
+/bin
+HEAD103VG/HEAD103VG/.visualgdb
+HEAD103VG/HEAD103VG/VisualGDB
+HEAD103VG/HEAD103VG/*.user
+
+HEAD103VG/HEAD103VG/.vs
+HEAD103VG/HEAD103VG/HEAD103VG/.visualgdb
+HEAD103VG/HEAD103VG/HEAD103VG/*.user
+HEAD103VG/HEAD103VG/HEAD103VG/VisualGDB

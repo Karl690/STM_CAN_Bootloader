@@ -43,14 +43,6 @@
     <PostDebugActions />
     <DebugStopActions />
     <BreakMode>Default</BreakMode>
-    <CustomBreakCommand>
-      <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>
-      <RemoteHost>
-        <HostName>BuildMachine</HostName>
-        <Transport>BuiltinShortcut</Transport>
-      </RemoteHost>
-      <BackgroundMode xsi:nil="true" />
-    </CustomBreakCommand>
   </CustomDebug>
   <CustomShortcuts>
     <Shortcuts />
@@ -111,7 +103,7 @@
     <DebugMethod>
       <ID>com.sysprogs.arm.openocd</ID>
       <InterfaceID>stlink-v2</InterfaceID>
-      <InterfaceSerialNumber>7&amp;F2D9D63&amp;0&amp;4</InterfaceSerialNumber>
+      <InterfaceSerialNumber>E</InterfaceSerialNumber>
       <Configuration xsi:type="com.visualgdb.edp.openocd.settings">
         <CommandLine>-f interface/stlink-v2.cfg -f target/stm32f1x.cfg -c init -c "reset init"</CommandLine>
         <ExtraParameters>

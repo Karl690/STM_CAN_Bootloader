@@ -12,9 +12,9 @@ uint8_t Initialized = 0;
 SPI_LCD_HandleTypeDef LCDSpi1;
 #endif
 uint32_t 	DisplayIndex = 0;
-uint16_t 	HeadPosition = 12;// HH_POSITION_UNPLUGGED;
+uint16_t 	HeadPosition = HH_POSITION_UNPLUGGED;
 int16_t 	ActualTemperature = MAX_ADC;
-int16_t 	DesiredTemperature = 255;
+int16_t 	DesiredTemperature = 0;
 uint16_t 	ActualFeedRate;
 uint16_t 	DesiredFeedRate;
 uint16_t	ActualFanDutyCycle = 0;
@@ -34,9 +34,8 @@ int main(void)
 #else
 	Init_LEDs();
 #endif
-
 	Initialized = 1;
-    while(1)
+	while(1)
     {
 #ifdef USE_LCD
     	switch (DisplayIndex)

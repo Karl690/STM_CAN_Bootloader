@@ -22,6 +22,9 @@ void Init_GPIO(void)
 
 	pinInit(PIN_HSS1_4988);
 	pinInit(PIN_HSS2_4988);
+	
+	BB_HSS2_HEATER = 0;
+	BB_HSS1_FAN = 0;
 }
 
 void Init_LEDs()
