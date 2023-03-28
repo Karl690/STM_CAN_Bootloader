@@ -17,6 +17,7 @@
 #include "ADC/AD_Definitions.h"
 #include "CAN/can.h"
 #include "FLASH/flash.h"
+#include "SETTINGS/settings.h"
 uint32_t PWMSubCounter=0;
 uint8_t  ch = 0;
 
@@ -185,43 +186,18 @@ void CanBusExtendedMessageProcessor(void)
 {
 	switch(CanMsgProcessorType) {
 	case TASK_CAN_READ_SOAPSTRING:
-		if((CanMsgProcessorCount + 1) * 6 > FLASH_SOAP_SIZE) {
+		if((CanMsgProcessorCount + 1) * 8 > SOAP_STRING_FLASH_SIZE) {
 			CanMsgProcessorType = TASK_IDLE;
 			break;
 		}
-		//in this case , TaskCoutUp means soap string's offset address.
-		//2bytes are address
-		CanMessageBuffer[0] = CanMsgProcessorCount & 0xFF;
-		CanMessageBuffer[1] = (CanMsgProcessorCount & 0xFF00) >> 8;
-		//6bytes are data
-		uint8_t size = 0;
-		for(uint8_t i = 0; i < 6; i ++){
-			size ++;
-			CanMessageBuffer[i+2] = SoapString[CanMsgProcessorCount * 6 + i];
-			if(CanMessageBuffer[i+2] == 0) {
-				break;
-			}
-		}
+		uint8_t readBytes = ReadSoapString(SOAP_STRING_BASE_ADDRESS + CanMsgProcessorCount * 8, CanMessageBuffer);
 
-		CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_READ_SOAPSTRING, 0, 0, CanMessageBuffer, size + 2);
-		if(size < 6) {
+		CanAddTxBuffer(CAN_DEV_HOST, CAN_READ, CAN_MSG_READ_SOAPSTRING, 0, 0, CanMessageBuffer, readBytes);
+		if (readBytes < 8) {//completed reading soap string
 			CanMsgProcessorType = TASK_IDLE;
 		}
 		break;
-	case TASK_CAN_ERASE_SOAPSTRING:
-		EraseFlash(FLASH_SOAP_START_ADDRESS, FLASH_PAGE_SIZE);
-		CanMsgProcessorType = TASK_IDLE;
-		break;
-	case TASK_CAN_WRITE_SOAPSTRING:
-		if(CanMsgProcessorCount * 8 >= FLASH_SOAP_SIZE) {
-			CanMsgProcessorType = TASK_IDLE;
-			break;
-		}
-		if(WriteFlash8Bytes(FLASH_SOAP_START_ADDRESS + CanMsgProcessorCount * 8, SoapString + CanMsgProcessorCount * 8) == ERROR) {
-			CanMsgProcessorType = TASK_IDLE;
-			break;
-		}
-		break;
+	
 	}
 	CanMsgProcessorCount ++;
 	if(CanMsgProcessorCount >= TASK_MAXCOUNT) CanMsgProcessorCount = 0;;

@@ -70,6 +70,15 @@
     <Filter Include="Pheonix\FLASH\1xx">
       <UniqueIdentifier>{def7a7bc-8f6c-4f17-a994-215929d7a73f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pheonix\Settings">
+      <UniqueIdentifier>{9617f055-efff-43c7-8aa3-ede0934e5070}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\Motor">
+      <UniqueIdentifier>{aa20124e-167f-4c7a-a355-51e5031b9805}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pheonix\TIMER">
+      <UniqueIdentifier>{8bfb337e-d00d-47fc-8466-d298204fa440}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="HEAD103VG-Debug.vgdbsettings">
@@ -195,16 +204,7 @@
     <ClInclude Include="Pheonix\Display\1xx\lcdspi_1xx.h">
       <Filter>Pheonix\Display\1xx</Filter>
     </ClInclude>
-    <ClInclude Include="Pheonix\configure.h">
-      <Filter>Pheonix</Filter>
-    </ClInclude>
     <ClInclude Include="Pheonix\global.h">
-      <Filter>Pheonix</Filter>
-    </ClInclude>
-    <ClInclude Include="Pheonix\RevisionHistory.h">
-      <Filter>Pheonix</Filter>
-    </ClInclude>
-    <ClInclude Include="Pheonix\taskmanager.h">
       <Filter>Pheonix</Filter>
     </ClInclude>
     <ClInclude Include="Pheonix\FLASH\1xx\flash_1xx.h">
@@ -212,6 +212,18 @@
     </ClInclude>
     <ClInclude Include="Pheonix\FLASH\flash.h">
       <Filter>Pheonix\FLASH</Filter>
+    </ClInclude>
+    <ClInclude Include="configure.h" />
+    <ClInclude Include="RevisionHistory.h" />
+    <ClInclude Include="taskmanager.h" />
+    <ClInclude Include="Pheonix\SETTINGS\settings.h">
+      <Filter>Pheonix\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\MOTOR\motor.h">
+      <Filter>Pheonix\Motor</Filter>
+    </ClInclude>
+    <ClInclude Include="Pheonix\TIMER\timer.h">
+      <Filter>Pheonix\TIMER</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -306,11 +318,21 @@
     <ClCompile Include="Pheonix\Display\1xx\lcdspi_1xx.c">
       <Filter>Pheonix\Display\1xx</Filter>
     </ClCompile>
-    <ClCompile Include="Pheonix\taskmanager.c">
-      <Filter>Pheonix</Filter>
-    </ClCompile>
     <ClCompile Include="Pheonix\FLASH\1xx\flash_1xx.c">
       <Filter>Pheonix\FLASH\1xx</Filter>
+    </ClCompile>
+    <ClCompile Include="taskmanager.c" />
+    <ClCompile Include="Pheonix\FLASH\flash.c">
+      <Filter>Pheonix\FLASH</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\SETTINGS\settings.c">
+      <Filter>Pheonix\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\MOTOR\motor.c">
+      <Filter>Pheonix\Motor</Filter>
+    </ClCompile>
+    <ClCompile Include="Pheonix\TIMER\timer.c">
+      <Filter>Pheonix\TIMER</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

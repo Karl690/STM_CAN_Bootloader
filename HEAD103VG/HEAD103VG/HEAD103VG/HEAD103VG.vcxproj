@@ -67,6 +67,7 @@
     <ClInclude Include="cmsis_boot\stm32f10x.h" />
     <ClInclude Include="cmsis_boot\stm32f10x_conf.h" />
     <ClInclude Include="cmsis_boot\system_stm32f10x.h" />
+    <ClInclude Include="configure.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Pheonix\ADC\1xx\adc_1xx.h" />
     <ClInclude Include="Pheonix\ADC\adc.h" />
@@ -74,7 +75,6 @@
     <ClInclude Include="Pheonix\CAN\1xx\can_1xx.h" />
     <ClInclude Include="Pheonix\CAN\can.h" />
     <ClInclude Include="Pheonix\CAN\hyrelcan.h" />
-    <ClInclude Include="Pheonix\configure.h" />
     <ClInclude Include="Pheonix\Display\1xx\lcdspi_1xx.h" />
     <ClInclude Include="Pheonix\Display\colortables.h" />
     <ClInclude Include="Pheonix\Display\display.h" />
@@ -93,9 +93,11 @@
     <ClInclude Include="Pheonix\GPIO\1xx\pinoutHH103.h" />
     <ClInclude Include="Pheonix\GPIO\1xx\pins_1xx.h" />
     <ClInclude Include="Pheonix\GPIO\gpio.h" />
+    <ClInclude Include="Pheonix\MOTOR\motor.h" />
     <ClInclude Include="Pheonix\RCC\1xx\rcc_1xx.h" />
-    <ClInclude Include="Pheonix\RevisionHistory.h" />
-    <ClInclude Include="Pheonix\taskmanager.h" />
+    <ClInclude Include="Pheonix\SETTINGS\settings.h" />
+    <ClInclude Include="Pheonix\TIMER\timer.h" />
+    <ClInclude Include="RevisionHistory.h" />
     <ClInclude Include="stm_lib\inc\misc.h" />
     <ClInclude Include="stm_lib\inc\stm32f10x_adc.h" />
     <ClInclude Include="stm_lib\inc\stm32f10x_can.h" />
@@ -105,6 +107,7 @@
     <ClInclude Include="stm_lib\inc\stm32f10x_rcc.h" />
     <ClInclude Include="stm_lib\inc\stm32f10x_spi.h" />
     <ClInclude Include="stm_lib\inc\stm32f10x_tim.h" />
+    <ClInclude Include="taskmanager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -134,10 +137,13 @@
     <ClCompile Include="Pheonix\Display\ST7735\st7735_lcd.c" />
     <ClCompile Include="Pheonix\Display\ST7789\st7789.c" />
     <ClCompile Include="Pheonix\FLASH\1xx\flash_1xx.c" />
+    <ClCompile Include="Pheonix\FLASH\flash.c" />
     <ClCompile Include="Pheonix\GPIO\1xx\pininit.c" />
     <ClCompile Include="Pheonix\GPIO\1xx\pins_1xx.c" />
+    <ClCompile Include="Pheonix\MOTOR\motor.c" />
     <ClCompile Include="Pheonix\RCC\1xx\rcc_1xx.c" />
-    <ClCompile Include="Pheonix\taskmanager.c" />
+    <ClCompile Include="Pheonix\SETTINGS\settings.c" />
+    <ClCompile Include="Pheonix\TIMER\timer.c" />
     <ClCompile Include="stm_lib\src\misc.c" />
     <ClCompile Include="stm_lib\src\stm32f10x_adc.c" />
     <ClCompile Include="stm_lib\src\stm32f10x_can.c" />
@@ -148,6 +154,7 @@
     <ClCompile Include="stm_lib\src\stm32f10x_spi.c" />
     <ClCompile Include="stm_lib\src\stm32f10x_tim.c" />
     <ClCompile Include="syscalls\syscalls.c" />
+    <ClCompile Include="taskmanager.c" />
   </ItemGroup>
   <ItemGroup>
     <LinkerScript Include="STM32F103CB_flash.lds" />

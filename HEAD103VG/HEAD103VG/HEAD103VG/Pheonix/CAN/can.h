@@ -31,6 +31,8 @@ typedef struct
 
 #define CAN_MSG_HSS_CONTROL			0x20
 
+#define CAN_MSG_MOTOR_VELOCIYFACTOR		0x30
+
 extern uint8_t 				RemoteSoapString[0x400];
 extern uint16_t				CanRxInIndex;
 extern uint16_t				CanRxOutIndex;

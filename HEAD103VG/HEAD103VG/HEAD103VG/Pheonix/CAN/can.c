@@ -3,6 +3,8 @@
 #include "taskmanager.h"
 #include "can.h"
 #include "FLASH/flash.h"
+#include "SETTINGS/settings.h"
+#include "MOTOR/motor.h"
 
 uint8_t 				CanTransmitMailbox;
 uint32_t 				CanTrasmitMsgWaitCounter = 0;
@@ -57,22 +59,10 @@ void ProcessCanRxMessage(void)
 		switch(pOutBuffer->MsgId)
 		{
 		case CAN_MSG_ERASE_SOAPSTRING:
-			CanMsgProcessorCount = 0;
-			memset(SoapString, 0, FLASH_SOAP_SIZE);
-			CanMsgProcessorType = TASK_CAN_ERASE_SOAPSTRING;
+			EraseSoapString();			
 			break;
 		case CAN_MSG_WRITE_SOAPSTRING:
-			address = (uint16_t)(pOutBuffer->Data[0] + (pOutBuffer->Data[1] << 8));
-			address *= 6;
-			for(uint8_t i = 2; i < pOutBuffer->DataSize; i ++)
-			{
-				SoapString[address + i -2] = pOutBuffer->Data[i];
-				if(SoapString[address + i -2] == 0) {
-					CanMsgProcessorCount = 0;
-					CanMsgProcessorType = TASK_CAN_WRITE_SOAPSTRING; //Start the task to write SoapString to Flash 0x8007C00 address
-					break;
-				}
-			}
+			AppendToSoapString(pOutBuffer->Data, pOutBuffer->DataSize);
 			break;
 		case CAN_MSG_HSS_CONTROL:
 			switch(pOutBuffer->Page) {
@@ -88,14 +78,15 @@ void ProcessCanRxMessage(void)
 			}
 			break;
 		}
-
+	case CAN_MSG_MOTOR_VELOCIYFACTOR:
+		VelocityFactor = pOutBuffer->Data[0] + (pOutBuffer->Data[1] << 8) + (pOutBuffer->Data[2] << 16) + (pOutBuffer->Data[3] << 24);
 		break;
 	case CAN_READ:
 		switch(pOutBuffer->MsgId)
 		{
 		case CAN_MSG_READ_SOAPSTRING:
 			//                   							Address                            Length                           Out buffer
-			ReadFlashData(FLASH_SOAP_START_ADDRESS + BYTES2UINT32(&pOutBuffer->Data[0]), BYTES2UINT32(&pOutBuffer->Data[4]), SoapString); //Read the soap string from Flash
+//			ReadFlashData(FLASH_SOAP_START_ADDRESS + BYTES2UINT32(&pOutBuffer->Data[0]), BYTES2UINT32(&pOutBuffer->Data[4]), SoapString); //Read the soap string from Flash
 			CanMsgProcessorCount = 0;
 			CanMsgProcessorType = TASK_CAN_READ_SOAPSTRING;
 			break;
