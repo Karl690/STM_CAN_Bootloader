@@ -2,10 +2,12 @@
 #include "configure.h"
 #include "main.h"
 #include "GPIO/gpio.h"
+#include "TIMER/timer.h"
 #include "taskmanager.h"
 #include "Display/DisplayList.h"
 #include "Display/display.h"
 #include "Display/lcdspi.h"
+
 
 uint8_t Initialized = 0;
 #ifdef USE_LCD
@@ -29,6 +31,8 @@ int main(void)
 	Init_GPIO();
 	Init_ADC();
 	Init_CAN();
+	init_TIM1();
+	InitMotionTimer(TIM2, TIM2_IRQn);
 #ifdef USE_LCD
 	Init_Display(&LCDSpi1, 	LCD_SPI_PORT, COLOR_MODE_NORMAL);
 #else

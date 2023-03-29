@@ -11,6 +11,7 @@
 #include "stm32f10x_dma.h"
 #include "stm32f10x_adc.h"
 #include "stm32f10x_flash.h"
+#include "stm32f10x_tim.h"
 #include "ADC/1xx/adc_1xx.h"
 #include "CAN/1xx/can_1xx.h"
 #include "Display/1xx/lcdspi_1xx.h"
